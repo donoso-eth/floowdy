@@ -81,7 +81,8 @@ export class AppTopBarComponent extends DappBaseComponent {
   
 override async hookFailedtoConnectNetwork(): Promise<void> {
 
- this.router.navigateByUrl('minimal')
+   
+ this.router.navigateByUrl('landing')
 }
 
  

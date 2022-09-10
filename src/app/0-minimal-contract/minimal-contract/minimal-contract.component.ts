@@ -7,6 +7,7 @@ import {
   angular_web3,
   DappBaseComponent,
   netWorkById,
+  Web3Actions,
 } from 'angular-web3';
 import { providers } from 'ethers';
 import { MinimalContract} from 'src/assets/contracts/interfaces/MinimalContract';
@@ -67,7 +68,7 @@ export class MinimalContractComponent extends DappBaseComponent implements After
 
   override async hookContractConnected(): Promise<void> {
     this.minimalContract = this.dapp.defaultContract! ;
-   
+    this.store.dispatch(Web3Actions.chainBusy({ status: false }));
 
     this.asyncStuff()
   }
