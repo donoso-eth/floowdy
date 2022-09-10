@@ -45,12 +45,12 @@ const config: HardhatUserConfig = {
   defaultNetwork,
 
   networks: {
-    // hardhat: {
-    //   forking: {
-    //     url: `https://polygon-mumbai.g.alchemy.com/v2/${ALCHEMY_ID_MUMBAI}`,
-    //     blockNumber: 25953748,
-    //   },
-    // },
+    hardhat: {
+      forking: {
+        url: `https://goerli.infura.io/v3/1e43f3d31eea4244bf25ed4c13bfde0e`,
+        blockNumber: 7566385,
+      },
+    },
     localhost: {
       url: 'http://localhost:8545',
       chainId: 31337,
@@ -90,13 +90,14 @@ const config: HardhatUserConfig = {
     ropsten: {
       url: `https://ropsten.infura.io/v3/${INFURA_ID}`, // <---- YOUR INFURA ID! (or it won't work)
       // `https://speedy-nodes-nyc.moralis.io/${MORALIS_ID}/eth/ropsten`
+      gasPrice: 1000000000,
           accounts:
         process.env['DEPLOYER_KEY'] !== undefined
           ? [process.env['DEPLOYER_KEY']]
           : [],
     },
     goerli: {
-      url: `https://goerli.infura.io/v3/${INFURA_ID}`, // <---- YOUR INFURA ID! (or it won't work)
+      url: `https://goerli.infura.io/v3/1e43f3d31eea4244bf25ed4c13bfde0e`, // <---- YOUR INFURA ID! (or it won't work)
       // `https://speedy-nodes-nyc.moralis.io/${MORALIS_ID}/eth/goerli`
           accounts:
         process.env['DEPLOYER_KEY'] !== undefined

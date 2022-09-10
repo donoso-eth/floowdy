@@ -1,4 +1,11 @@
 export const abi_ERC20 = [
+  {
+    inputs: [{ internalType: 'uint256', name: 'value', type: 'uint256' }],
+    name: 'mint',
+    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
     {
       anonymous: false,
       inputs: [

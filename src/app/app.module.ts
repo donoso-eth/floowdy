@@ -3,7 +3,6 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { MinimalContractModule } from './0-minimal-contract/minimal-contract.module';
 import { DappInjectorModule } from './dapp-injector/dapp-injector.module';
 import { StoreModule } from '@ngrx/store';
 import { we3ReducerFunction } from 'angular-web3';
@@ -17,6 +16,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
+import { GlobalService } from './shared/services/global.service';
 
 @NgModule({
   declarations: [
@@ -32,7 +32,6 @@ import { ButtonModule } from 'primeng/button';
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    MinimalContractModule,
     DappInjectorModule.forRoot({wallet:'local', defaultNetwork:'localhost'}),
     StoreModule.forRoot({web3: we3ReducerFunction}),
     DropdownModule,
@@ -40,7 +39,7 @@ import { ButtonModule } from 'primeng/button';
     ToastModule,
     ButtonModule
   ],
-  providers: [MessageService],
+  providers: [MessageService,GlobalService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

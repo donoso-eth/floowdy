@@ -13,8 +13,8 @@ import { Web3Actions, web3Selectors } from './store';
 import { JsonRpcProvider, Web3Provider } from '@ethersproject/providers';
 import { Web3ModalComponent } from './web3-modal/web3-modal.component';
 import { Subject, takeUntil } from 'rxjs';
-import { MinimalContract} from 'src/assets/contracts/interfaces/MinimalContract';
-import MinimalContractMetadata from 'src/assets/contracts/minimal_contract_metadata.json';
+import { Flowdy} from 'src/assets/contracts/interfaces/Flowdy';
+import FlowdyMetadata from 'src/assets/contracts/flowdy_metadata.json';
 import { AngularContract } from './classes';
 
 
@@ -26,7 +26,7 @@ export class DappInjector implements OnDestroy {
   private destroyHooks: Subject<void> = new Subject();
 
   ///// ---------  DAPP STATE INITIALIZATION
-  DAPP_STATE:IDAPP_STATE<MinimalContract> = {
+  DAPP_STATE:IDAPP_STATE<Flowdy> = {
      defaultProvider: null,
     connectedNetwork: null,
 
@@ -201,8 +201,8 @@ async localWallet(index:number) {
   ///// ---------  Contract Initialization
   private async contractInitialization() {
 
-    const contract = new AngularContract<MinimalContract>({
-      metadata:  MinimalContractMetadata,
+    const contract = new AngularContract<Flowdy>({
+      metadata:  FlowdyMetadata,
       provider: this.DAPP_STATE.defaultProvider!,
       signer: this.DAPP_STATE.signer!,
     });
