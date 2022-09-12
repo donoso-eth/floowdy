@@ -23,6 +23,7 @@
         ></div>
 
         <div style="margin-top: 20px" class="grid">
+          <!-- //// Mint area -->
           <div class="col-12 lg:col-4 xl:col-4">
             <div
               style="background-color: var(--surface-ground)"
@@ -83,6 +84,12 @@
               </div>
             </div>
           </div>
+
+          <!-- //// Wrap-Unwrap -->
+          <div class="col-12 lg:col-4 xl:col-4">
+            <user-balance (refreshEvent)="refreshBalance()" *ngIf="poolToken !== undefined" [poolToken]="poolToken"></user-balance>
+          </div>
+
         </div>
       </div>
     </div>

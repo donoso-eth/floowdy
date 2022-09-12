@@ -23,24 +23,45 @@ if (existsSync('./typechain-types')) {
   });
 }
 
-
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
 
 const mainnetGwei = 21;
 
-
-const defaultNetwork = 'localhost';
+let defaultNetwork = 'goerli';
+defaultNetwork = 'localhost';
 
 const config: HardhatUserConfig = {
   solidity: {
-    version: '0.8.4',
-    settings: {
-      optimizer: {
-        enabled: true,
-        runs: 1000,
+    compilers: [
+      {
+        version: '0.8.14',
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 1000,
+          },
+        },
       },
-    },
+      {
+        version: '0.8.10',
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 1000,
+          },
+        },
+      },
+      {
+        version: '0.8.0',
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 1000,
+          },
+        },
+      },
+    ],
   },
   defaultNetwork,
 
@@ -82,7 +103,7 @@ const config: HardhatUserConfig = {
       //`https://speedy-nodes-nyc.moralis.io/${MORALIS_ID}/eth/mainnet`
 
       gasPrice: mainnetGwei * 1000000000,
-          accounts:
+      accounts:
         process.env['DEPLOYER_KEY'] !== undefined
           ? [process.env['DEPLOYER_KEY']]
           : [],
@@ -91,7 +112,7 @@ const config: HardhatUserConfig = {
       url: `https://ropsten.infura.io/v3/${INFURA_ID}`, // <---- YOUR INFURA ID! (or it won't work)
       // `https://speedy-nodes-nyc.moralis.io/${MORALIS_ID}/eth/ropsten`
       gasPrice: 1000000000,
-          accounts:
+      accounts:
         process.env['DEPLOYER_KEY'] !== undefined
           ? [process.env['DEPLOYER_KEY']]
           : [],
@@ -99,7 +120,7 @@ const config: HardhatUserConfig = {
     goerli: {
       url: `https://goerli.infura.io/v3/1e43f3d31eea4244bf25ed4c13bfde0e`, // <---- YOUR INFURA ID! (or it won't work)
       // `https://speedy-nodes-nyc.moralis.io/${MORALIS_ID}/eth/goerli`
-          accounts:
+      accounts:
         process.env['DEPLOYER_KEY'] !== undefined
           ? [process.env['DEPLOYER_KEY']]
           : [],
@@ -107,7 +128,7 @@ const config: HardhatUserConfig = {
     xdai: {
       url: 'https://rpc.xdaichain.com/',
       gasPrice: 1000000000,
-          accounts:
+      accounts:
         process.env['DEPLOYER_KEY'] !== undefined
           ? [process.env['DEPLOYER_KEY']]
           : [],
@@ -116,7 +137,7 @@ const config: HardhatUserConfig = {
       url: 'https://speedy-nodes-nyc.moralis.io/XXXXXXXXXXXXXXXXXXXx/polygon/mainnet', // <---- YOUR MORALIS ID! (not limited to infura)
       //https://polygon-rpc.com
       gasPrice: 1000000000,
-          accounts:
+      accounts:
         process.env['DEPLOYER_KEY'] !== undefined
           ? [process.env['DEPLOYER_KEY']]
           : [],
@@ -125,7 +146,7 @@ const config: HardhatUserConfig = {
       url: `https://speedy-nodes-nyc.moralis.io/${MORALIS_ID}/polygon/mumbai`, // <---- YOUR MORALIS ID! (not limited to infura)
       // `https://polygon-mumbai.g.alchemy.com/v2/${ALCHEMY_ID_MUMBAI}`
       gasPrice: 1000000000,
-          accounts:
+      accounts:
         process.env['DEPLOYER_KEY'] !== undefined
           ? [process.env['DEPLOYER_KEY']]
           : [],
@@ -134,7 +155,7 @@ const config: HardhatUserConfig = {
     matic: {
       url: 'https://rpc-mainnet.maticvigil.com/',
       gasPrice: 1000000000,
-          accounts:
+      accounts:
         process.env['DEPLOYER_KEY'] !== undefined
           ? [process.env['DEPLOYER_KEY']]
           : [],

@@ -11,6 +11,9 @@ import config from "../hardhat.config";
 import { join } from "path";
 import { createHardhatAndFundPrivKeysFiles } from "../helpers/localAccounts";
 import * as hre from 'hardhat';
+import { abi_erc20mint } from "../helpers/abis/ERC20Mint";
+import { initEnv, waitForTx } from "../helpers/utils";
+import { Flowdy__factory } from "../typechain-types";
 
 
 interface ICONTRACT_DEPLOY {
@@ -25,28 +28,53 @@ const processDir = process.cwd()
 const contract_path = join(processDir,contract_path_relative)
 ensureDir(contract_path)
 
+
+
+
+let networks_config = JSON.parse(readFileSync( join(processDir,'networks.config.json'),'utf-8')) as 
+{ [key:string]:{ ops:string, host:string, token:string, superToken:string, aavePool:string, aToken:string}}
+
+
 async function main() {
 
-let network = hardhatArguments.network;
-if (network == undefined) {
-  network = config.defaultNetwork;
-}
+  const [deployer] = await initEnv(hre);
+
+  let network = hardhatArguments.network;
+  if (network == undefined) {
+    network = config.defaultNetwork as string; 
+  }
 
   const contract_config = JSON.parse(readFileSync( join(processDir,'contract.config.json'),'utf-8')) as {[key:string]: ICONTRACT_DEPLOY}
   
-  const deployContracts=["flowdy"]
- 
-  // Hardhat always runs the compile task when running scripts with its command
-  // line interface.
-  //
-  // If this script is run directly using `node` you may want to call compile
-  // manually to make sure everything is compiled
-  // await hre.run('compile');
 
+   
+
+  let network_params = networks_config[network];
+
+if (network == "localhost") {
+  network_params = networks_config["goerli"];
+}
+
+if (network_params == undefined) {
+  throw new Error("NETWORK UNDEFINED");
   
-  for (const toDeployName of deployContracts) {
-    const toDeployContract = contract_config[toDeployName];
-    if (toDeployContract == undefined) {
+}
+
+
+
+  //// DEPLOY POOLFACTORY
+
+  const flowdy = await new Flowdy__factory(deployer).deploy(
+    network_params.host,
+    network_params.superToken,
+    network_params.token,
+    network_params.aavePool,
+    network_params.aToken
+    )
+
+  let toDeployContract = contract_config['flowdy'];
+  
+  if (toDeployContract == undefined) {
       console.error('Your contract is not yet configured');
       console.error(
         'Please add the configuration to /hardhat/contract.config.json'
@@ -58,11 +86,6 @@ if (network == undefined) {
       `./artifacts/contracts/${toDeployContract.artifactsPath}`
     );
     const Metadata = JSON.parse(readFileSync(artifactsPath, 'utf-8'));
-    const Contract = await ethers.getContractFactory(toDeployContract.name);
-    const contract = await Contract.deploy.apply(
-      Contract,
-      toDeployContract.ctor
-    );
 
    
     //const signer:Signer = await hre.ethers.getSigners()
@@ -72,14 +95,14 @@ if (network == undefined) {
       JSON.stringify({
         abi: Metadata.abi,
         name: toDeployContract.name,
-        address: contract.address,
+        address: flowdy.address,
         network: network,
       })
     );
 
     console.log(
       toDeployContract.name + ' Contract Deployed to:',
-      contract.address
+      flowdy.address
     );
 
     ///// copy Interfaces and create Metadata address/abi to assets folder
@@ -87,7 +110,22 @@ if (network == undefined) {
       `./typechain-types/${toDeployContract.name}.ts`,
       join(contract_path, 'interfaces', `${toDeployContract.name}.ts`)
     );
-  }
+
+    let erc20 = new ethers.Contract(
+      '0xA2025B15a1757311bfD68cb14eaeFCc237AF5b43',abi_erc20mint,
+      deployer
+    );
+
+    let balance = await erc20.balanceOf(flowdy.address)
+    console.log(balance)
+    let amount = "100000000";
+    await waitForTx(erc20["mint(address,uint256)"]( flowdy.address,amount ))
+ 
+    balance = await erc20.balanceOf(flowdy.address)
+    console.log(balance)
+
+
+  
 
   ///// create the local accounts file
   if (

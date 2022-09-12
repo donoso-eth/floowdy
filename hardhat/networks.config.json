@@ -1,0 +1,21 @@
+{
+    "goerli":{
+        "ops":"0xc1C6805B857Bef1f412519C4A842522431aFed39",
+        "host":"0x22ff293e14F1EC3A09B137e9e06084AFd63adDF9",
+        "superToken":"0xbCE2198f789f3AC1Af76D3835BEe8A61830aAd34",
+        "token":"0xA2025B15a1757311bfD68cb14eaeFCc237AF5b43",
+        "aavePool":"0x368EedF3f56ad10b9bC57eed4Dac65B26Bb667f6",
+        "aToken":"0x1Ee669290939f8a8864497Af3BC83728715265FF"
+
+    },
+
+    "mumbai":{
+        "ops":"0xB3f5503f93d5Ef84b06993a1975B9D21B962892F",
+        "host":"0xEB796bdb90fFA0f28255275e16936D25d3418603",
+        "superToken":"",
+        "token":"",
+        "aavePool":"",
+        "aToken":""
+
+    }
+}
