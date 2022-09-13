@@ -58,13 +58,16 @@ export class GlobalService {
 
     let result = await Promise.all( [balance, superbalance])
 
-    console.log(result[1])
+
+    let poolbalance = await this.supertoken?.balanceOf(this.dapp.defaultContract?.address!);
+    console.log(poolbalance?.toString());
+
     
-    console.log(result[1].availableBalance)
+    // console.log(result[1].availableBalance)
 
-    console.log(result[1].availableBalance.div(10**6));
+    // console.log(result[1].availableBalance.div(10**6));
 
-    console.log(await this.supertoken?.decimals())
+    // console.log(await this.supertoken?.decimals())
 
     this.poolToken.superTokenBalance = (+utils.formatEther(result[1].availableBalance)).toFixed(4);
     this.poolToken.tokenBalance = (((result[0]).div(10**6).toString()))
@@ -99,12 +102,14 @@ export class GlobalService {
 
   //  console.log(balance.toString());
      let amount =(1000 * 10**6)
+     let amountSuper =(1000 * 10**18)
      await doSignerTransaction( (this.erc20 as Contract)["mint(uint256)"](amount ))
      await doSignerTransaction((this.erc20 as Contract).approve(this.supertoken?.address, constants.MaxUint256)) 
 
-     await doSignerTransaction( (this.supertoken as ISuperToken).upgrade(amount))
+    const value = utils.parseEther("1000").toString();
+     await doSignerTransaction( (this.supertoken as ISuperToken).upgrade(value))
     
-   
+
 
     // console.log(this.dapp.defaultContract?.address)
 

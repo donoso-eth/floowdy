@@ -13,7 +13,7 @@ import { createHardhatAndFundPrivKeysFiles } from "../helpers/localAccounts";
 import * as hre from 'hardhat';
 import { abi_erc20mint } from "../helpers/abis/ERC20Mint";
 import { initEnv, waitForTx } from "../helpers/utils";
-import { Flowdy__factory } from "../typechain-types";
+import { Events__factory, Flowdy__factory } from "../typechain-types";
 
 
 interface ICONTRACT_DEPLOY {
@@ -29,6 +29,7 @@ const contract_path = join(processDir,contract_path_relative)
 ensureDir(contract_path)
 
 
+const eventAbi:any[] = Events__factory.abi;
 
 
 let networks_config = JSON.parse(readFileSync( join(processDir,'networks.config.json'),'utf-8')) as 
@@ -94,7 +95,7 @@ if (network_params == undefined) {
     writeFileSync(
       `${contract_path}/${toDeployContract.jsonName}_metadata.json`,
       JSON.stringify({
-        abi: Metadata.abi,
+        abi: Metadata.abi.concat(eventAbi),
         name: toDeployContract.name,
         address: flowdy.address,
         network: network,

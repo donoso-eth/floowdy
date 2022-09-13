@@ -28,7 +28,7 @@ export class UserBalanceComponent implements OnChanges {
 
   @Input() poolToken!: IPOOL_TOKEN;
   @Output() refreshEvent = new EventEmitter();
-
+  @Output() public mintEvent = new EventEmitter();
   showTransfer() {
     this.showTransferState = true;
   }

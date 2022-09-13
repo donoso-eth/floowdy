@@ -3,6 +3,8 @@ pragma solidity ^0.8.14;
 
 import "hardhat/console.sol";
 
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 import "@openzeppelin/contracts/token/ERC777/ERC777.sol";
@@ -27,7 +29,9 @@ import {Events} from "./libraries/Events.sol";
 
 
 contract Flowdy is SuperAppBase, OpsReady, IERC777Recipient {
-  // ... rest of your contract ...
+  using SafeMath for uint256;
+  
+  
   uint256 MAX_INT;
 
   ISuperfluid public host; // host
@@ -41,6 +45,9 @@ contract Flowdy is SuperAppBase, OpsReady, IERC777Recipient {
 
   using CFAv1Library for CFAv1Library.InitData;
   CFAv1Library.InitData internal _cfaLib;
+
+  mapping(address=> DataTypes.Member) public members;
+  uint256 totalMembers;
 
   constructor(
     ISuperfluid _host,
@@ -101,30 +108,6 @@ contract Flowdy is SuperAppBase, OpsReady, IERC777Recipient {
     emit Events.ContractInit(true);
   }
 
-  function deposit() public {
-    pool.supply(address(token), 10000000, address(this), 0);
-  }
-
-  function depositx() public {
-    console.log(25);
-
-    IPoolAddressesProvider provider = IPoolAddressesProvider(
-      address(0xc4dCB5126a3AfEd129BC3668Ea19285A9f56D15D)
-    );
-
-    address pool = provider.getPool();
-    console.log(33, pool);
-    // mainnet address, for other addresses: https://docs.aave.com/developers/developing-on-aave/deployed-contract-instances
-    //lendingPool = IPool(address(0x368EedF3f56ad10b9bC57eed4Dac65B26Bb667f6));
-
-    // Input variables
-
-    uint256 amount = 1000 * 1e18;
-    uint16 referral = 0;
-    //console.log(address(lendingPool));
-    // IERC20(usdcAddress).approve(address(0x368EedF3f56ad10b9bC57eed4Dac65B26Bb667f6), amount);
-    // lendingPool.deposit(daiAddress, amount, referral);
-  }
 
   /**
    * @notice ERC277 call back allowing deposit tokens via .send()
@@ -144,8 +127,71 @@ contract Flowdy is SuperAppBase, OpsReady, IERC777Recipient {
 
     console.log("tokens_reveived");
 
-    //_deposit(from, from, amount);
+    console.log(amount);
+    _deposit(from, amount);
   }
+
+  // ============= ============= Members ============= ============= //
+  // #region Members
+
+  function  _getMember(address _member) internal returns(DataTypes.Member storage member) {
+    member = members[_member];
+    if(member.id == 0) {
+       totalMembers++;
+       member.id = totalMembers;
+       member.member = _member;
+    }
+    emit Events.MemberCreated(member.id, member.member, member.timestamp);
+
+  }
+
+  function _deposit(address _member, uint256 amount) internal {
+
+    _poolRebalance();
+   
+    DataTypes.Member storage member = _getMember(_member);
+
+    member.deposit += amount;
+
+    if (member.flow > 0) {
+      member.deposit+= uint96(member.flow)*(block.timestamp - member.timestamp);
+    }
+
+    member.timestamp = block.timestamp; 
+    emit Events.MemberDeposit(member.id, member.timestamp, member.deposit);
+
+
+  } 
+
+  // #endregion
+
+  // ============= ============= Pool ============= ============= //
+  // #region Pool
+
+    function _poolRebalance() public {
+
+    }
+
+    function _calculateYield() public {
+
+    }
+
+  // #endregion Pool
+
+
+  // ============= ============= Aave ============= ============= //
+    function aaveSupply() public {
+    uint256 poolSuperTokenBalance = (superToken.balanceOf(address(this))).div(10**12);
+
+    superToken.downgrade(poolSuperTokenBalance);
+
+
+    uint256 poolTokenBalance = token.balanceOf(address(this));
+    pool.supply(address(token), poolTokenBalance, address(this), 0);
+  }
+
+
+  // #endregion Aave
 
   // ============= ============= Super App Calbacks ============= ============= //
   // #region Super App Calbacks

@@ -18,6 +18,7 @@ import { ToastModule } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
 import { GlobalService } from './shared/services/global.service';
 import { SuperFluidServiceModule } from './dapp-injector/services/super-fluid/super-fluid-service.module';
+import { ERC777Service } from './shared/services/erc777.service';
 
 @NgModule({
   declarations: [
@@ -41,7 +42,7 @@ import { SuperFluidServiceModule } from './dapp-injector/services/super-fluid/su
     ButtonModule,
     SuperFluidServiceModule
   ],
-  providers: [MessageService,GlobalService],
+  providers: [MessageService,GlobalService,ERC777Service],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

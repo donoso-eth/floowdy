@@ -22,6 +22,7 @@ export const doSignerTransaction = async (
     return notification_message;
   } catch (e: any) {
     notification_message.payload = e;
+    console.log(e)
     let message =
       e.data && e.data.message
         ? e.data.message

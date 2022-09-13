@@ -23,71 +23,11 @@
         ></div>
 
         <div style="margin-top: 20px" class="grid">
-          <!-- //// Mint area -->
-          <div class="col-12 lg:col-4 xl:col-4">
-            <div
-              style="background-color: var(--surface-ground)"
-              class="card mb-0"
-            >
-              <div class="grid p-fluid justify-content-center">
-                <div class="col-12 flex align-items-center">
-                  <div
-                    [style.background]="
-                      balanceSupertoken > 0
-                        ? 'var(--green-500)'
-                        : 'var(--orange-500)'
-                    "
-                    style="
-                      width: 25px;
-                      height: 25px;
-                      border-radius: 13px;
-                      background: lightgreen;
-                    "
-                  ></div>
-                  <span class="block text-500 font-medium ml-2"> Balance</span>
-                  <!-- #region REALTIME  ////  -->
-                </div>
-                <div class="col-6 text-center">
-                  <div class="flex justify-content-between flex-column mb-3">
-                    <div class="text-900 font-medium text-lg">
-                      Realtime <br />
-                      <span> {{ balanceSupertoken }}</span>
-                    </div>
-                  </div>
-                </div>
 
-                <!-- #endregion REALTIME ////  -->
-
-                <!-- #region FLOW  ////  -->
-                <div class="col-6 text-center">
-                  <div class="flex justify-content-between flex-column mb-3">
-                    <div class="text-900 font-medium text-lg">
-                      Flow <br />
-                      <span> {{ balanceSupertoken }} month</span>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- #endregion FLOW  ////  -->
-
-                <div class="col-12 flex justify-content-around">
-                  <button
-                    pButton
-                    pRipple
-                    style="position: relative; width: fit-content"
-                    (click)="mint()"
-                    type="button"
-                    label="Acquire Tokens"
-                    class="p-button-rounded mr-2 mb-2"
-                  ></button>
-                </div>
-              </div>
-            </div>
-          </div>
 
           <!-- //// Wrap-Unwrap -->
           <div class="col-12 lg:col-4 xl:col-4">
-            <user-balance (refreshEvent)="refreshBalance()" *ngIf="poolToken !== undefined" [poolToken]="poolToken"></user-balance>
+            <user-balance (refreshEvent)="refreshBalance()" (mintEvent)="mint()" *ngIf="poolToken !== undefined" [poolToken]="poolToken"></user-balance>
           </div>
 
           <div class="col-12 lg:col-4 xl:col-4">
@@ -131,6 +71,47 @@
               </div>
             </div>
           </div>
+
+
+                    <!-- //// Mint area -->
+                    <div class="col-12 lg:col-4 xl:col-4">
+                      <div
+                        style="background-color: var(--surface-ground)"
+                        class="card mb-0"
+                      >
+                        <div class="grid p-fluid justify-content-center">
+                          <div class="col-12 flex align-items-center">
+                       
+                            <span class="block text-500 font-medium ml-2"> Deposit</span>
+                            <!-- #region REALTIME  ////  -->
+                          </div>
+                          <div class="col-12 text-center">
+                            <div class="flex justify-content-between flex-column mb-2">
+                              <div class="text-900 font-medium text-lg">
+                                <p-inputNumber
+                                [formControl]="depositAmountCtrl"
+                                placeholder="Amount"
+                                mode="decimal"
+                                [showButtons]="true"
+                                [min]="0"
+                              >
+                              </p-inputNumber>
+                              </div>
+                            </div>
+                          </div>
+          
+                          <!-- #endregion REALTIME ////  -->
+          
+                
+                          <div class="col-12 flex justify-content-around">
+                         <button  pButton pRipple style="width: fit-content"
+                       
+                          (click)="deposit()" type="button" label="Deposit" class="p-button-rounded mr-2 mb-2"></button>
+                          </div>
+                 
+                        </div>
+                      </div>
+                    </div>
 
         </div>
       </div>

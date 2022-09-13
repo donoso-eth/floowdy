@@ -20,6 +20,9 @@ import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 export interface FlowdyInterface extends utils.Interface {
   functions: {
     "ETH()": FunctionFragment;
+    "_calculateYield()": FunctionFragment;
+    "_poolRebalance()": FunctionFragment;
+    "aaveSupply()": FunctionFragment;
     "afterAgreementCreated(address,address,bytes32,bytes,bytes,bytes)": FunctionFragment;
     "afterAgreementTerminated(address,address,bytes32,bytes,bytes,bytes)": FunctionFragment;
     "afterAgreementUpdated(address,address,bytes32,bytes,bytes,bytes)": FunctionFragment;
@@ -27,17 +30,28 @@ export interface FlowdyInterface extends utils.Interface {
     "beforeAgreementTerminated(address,address,bytes32,bytes,bytes)": FunctionFragment;
     "beforeAgreementUpdated(address,address,bytes32,bytes,bytes)": FunctionFragment;
     "cfa()": FunctionFragment;
-    "deposit()": FunctionFragment;
-    "depositx()": FunctionFragment;
     "gelato()": FunctionFragment;
     "host()": FunctionFragment;
     "initialize(address)": FunctionFragment;
+    "members(address)": FunctionFragment;
     "ops()": FunctionFragment;
     "parseLoanData(bytes)": FunctionFragment;
     "tokensReceived(address,address,address,uint256,bytes,bytes)": FunctionFragment;
   };
 
   encodeFunctionData(functionFragment: "ETH", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "_calculateYield",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_poolRebalance",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "aaveSupply",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "afterAgreementCreated",
     values: [string, string, BytesLike, BytesLike, BytesLike, BytesLike]
@@ -63,11 +77,10 @@ export interface FlowdyInterface extends utils.Interface {
     values: [string, string, BytesLike, BytesLike, BytesLike]
   ): string;
   encodeFunctionData(functionFragment: "cfa", values?: undefined): string;
-  encodeFunctionData(functionFragment: "deposit", values?: undefined): string;
-  encodeFunctionData(functionFragment: "depositx", values?: undefined): string;
   encodeFunctionData(functionFragment: "gelato", values?: undefined): string;
   encodeFunctionData(functionFragment: "host", values?: undefined): string;
   encodeFunctionData(functionFragment: "initialize", values: [string]): string;
+  encodeFunctionData(functionFragment: "members", values: [string]): string;
   encodeFunctionData(functionFragment: "ops", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "parseLoanData",
@@ -79,6 +92,15 @@ export interface FlowdyInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(functionFragment: "ETH", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "_calculateYield",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_poolRebalance",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "aaveSupply", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "afterAgreementCreated",
     data: BytesLike
@@ -104,11 +126,10 @@ export interface FlowdyInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "cfa", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "depositx", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "gelato", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "host", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "members", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "ops", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "parseLoanData",
@@ -158,6 +179,18 @@ export interface Flowdy extends BaseContract {
 
   functions: {
     ETH(overrides?: CallOverrides): Promise<[string]>;
+
+    _calculateYield(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    _poolRebalance(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    aaveSupply(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     afterAgreementCreated(
       _superToken: string,
@@ -218,14 +251,6 @@ export interface Flowdy extends BaseContract {
 
     cfa(overrides?: CallOverrides): Promise<[string]>;
 
-    deposit(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    depositx(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     gelato(overrides?: CallOverrides): Promise<[string]>;
 
     host(overrides?: CallOverrides): Promise<[string]>;
@@ -234,6 +259,29 @@ export interface Flowdy extends BaseContract {
       _ops: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    members(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<
+      [
+        BigNumber,
+        string,
+        BigNumber,
+        string,
+        BigNumber,
+        BigNumber,
+        BigNumber
+      ] & {
+        id: BigNumber;
+        member: string;
+        flow: BigNumber;
+        flowGelatoId: string;
+        flowduration: BigNumber;
+        deposit: BigNumber;
+        timestamp: BigNumber;
+      }
+    >;
 
     ops(overrides?: CallOverrides): Promise<[string]>;
 
@@ -254,6 +302,18 @@ export interface Flowdy extends BaseContract {
   };
 
   ETH(overrides?: CallOverrides): Promise<string>;
+
+  _calculateYield(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  _poolRebalance(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  aaveSupply(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   afterAgreementCreated(
     _superToken: string,
@@ -314,14 +374,6 @@ export interface Flowdy extends BaseContract {
 
   cfa(overrides?: CallOverrides): Promise<string>;
 
-  deposit(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  depositx(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   gelato(overrides?: CallOverrides): Promise<string>;
 
   host(overrides?: CallOverrides): Promise<string>;
@@ -330,6 +382,21 @@ export interface Flowdy extends BaseContract {
     _ops: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
+
+  members(
+    arg0: string,
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, string, BigNumber, string, BigNumber, BigNumber, BigNumber] & {
+      id: BigNumber;
+      member: string;
+      flow: BigNumber;
+      flowGelatoId: string;
+      flowduration: BigNumber;
+      deposit: BigNumber;
+      timestamp: BigNumber;
+    }
+  >;
 
   ops(overrides?: CallOverrides): Promise<string>;
 
@@ -347,6 +414,12 @@ export interface Flowdy extends BaseContract {
 
   callStatic: {
     ETH(overrides?: CallOverrides): Promise<string>;
+
+    _calculateYield(overrides?: CallOverrides): Promise<void>;
+
+    _poolRebalance(overrides?: CallOverrides): Promise<void>;
+
+    aaveSupply(overrides?: CallOverrides): Promise<void>;
 
     afterAgreementCreated(
       _superToken: string,
@@ -407,15 +480,34 @@ export interface Flowdy extends BaseContract {
 
     cfa(overrides?: CallOverrides): Promise<string>;
 
-    deposit(overrides?: CallOverrides): Promise<void>;
-
-    depositx(overrides?: CallOverrides): Promise<void>;
-
     gelato(overrides?: CallOverrides): Promise<string>;
 
     host(overrides?: CallOverrides): Promise<string>;
 
     initialize(_ops: string, overrides?: CallOverrides): Promise<void>;
+
+    members(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<
+      [
+        BigNumber,
+        string,
+        BigNumber,
+        string,
+        BigNumber,
+        BigNumber,
+        BigNumber
+      ] & {
+        id: BigNumber;
+        member: string;
+        flow: BigNumber;
+        flowGelatoId: string;
+        flowduration: BigNumber;
+        deposit: BigNumber;
+        timestamp: BigNumber;
+      }
+    >;
 
     ops(overrides?: CallOverrides): Promise<string>;
 
@@ -442,6 +534,18 @@ export interface Flowdy extends BaseContract {
 
   estimateGas: {
     ETH(overrides?: CallOverrides): Promise<BigNumber>;
+
+    _calculateYield(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    _poolRebalance(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    aaveSupply(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     afterAgreementCreated(
       _superToken: string,
@@ -502,14 +606,6 @@ export interface Flowdy extends BaseContract {
 
     cfa(overrides?: CallOverrides): Promise<BigNumber>;
 
-    deposit(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    depositx(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     gelato(overrides?: CallOverrides): Promise<BigNumber>;
 
     host(overrides?: CallOverrides): Promise<BigNumber>;
@@ -518,6 +614,8 @@ export interface Flowdy extends BaseContract {
       _ops: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    members(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     ops(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -539,6 +637,18 @@ export interface Flowdy extends BaseContract {
 
   populateTransaction: {
     ETH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    _calculateYield(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    _poolRebalance(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    aaveSupply(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     afterAgreementCreated(
       _superToken: string,
@@ -599,14 +709,6 @@ export interface Flowdy extends BaseContract {
 
     cfa(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    deposit(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    depositx(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     gelato(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     host(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -614,6 +716,11 @@ export interface Flowdy extends BaseContract {
     initialize(
       _ops: string,
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    members(
+      arg0: string,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     ops(overrides?: CallOverrides): Promise<PopulatedTransaction>;

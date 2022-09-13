@@ -13,10 +13,25 @@ import {ISuperToken} from "@superfluid-finance/ethereum-contracts/contracts/inte
 library DataTypes {
 
 
-  struct User {
+  struct Member {
+    uint256 id;
+    address member;
+    int96 flow;
+    bytes32 flowGelatoId;
+    uint256 flowduration;
+    uint256 deposit;
+    uint256 timestamp;
+  }
 
-    address id;
 
+  struct Pool {
+    uint256 id;
+    uint256 timestamp;
+    uint256 totalFlow;
+    uint256 totalDeposit;
+    uint256 totalYield;
+    uint256 depositIndex;
+    uint256 flowIndex;
   }
 
 }

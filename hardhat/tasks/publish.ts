@@ -33,11 +33,13 @@ task('publish', 'publish subgraph')
 
   
 
-  let network = hre.network;
+  let network = hre.network.name;
+  console.log(network)
   if (network == undefined) {
-    network = config.defaultNetwork;
+    network= config.defaultNetwork as string;
   }
 
+  console.log(network)
   const contract_config = JSON.parse(
     readFileSync(join(processDir, 'contract.config.json'), 'utf-8')
   ) as { [key: string]: ICONTRACT_DEPLOY };
@@ -67,6 +69,8 @@ task('publish', 'publish subgraph')
         'utf-8'
       )
     );
+
+        console.log(metadata.abi)
 
     const doc = load(
       readFileSync(join(subgraphPath, 'subgraph.yaml'), 'utf8')
@@ -125,9 +129,9 @@ task('publish', 'publish subgraph')
      
       const newAbiEntry = {
         name: toDeployContract.name,
-        path: `./abis/${toDeployContract.jsonName}.json`,
+        file: `./abis/${toDeployContract.jsonName}.json`,
       };
-      if(abis.filter((fil:any)=> fil.path == newAbiEntry.path).length == 0){
+      if(abis.filter((fil:any)=> fil.path == newAbiEntry.file).length == 0){
         abis.push(newAbiEntry);
       }
       

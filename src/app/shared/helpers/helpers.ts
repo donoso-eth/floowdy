@@ -1,4 +1,5 @@
 import { Contract, Signer, utils } from "ethers";
+import { abi_ERC777 } from "../components/user-balance/abis/erc777";
 import { abi_ERC20 } from "./abis/erc20";
 import { abi_supertoken } from "./abis/superToken";
 
@@ -26,5 +27,10 @@ export const displayAdress= (address: string): string => {
   
   export const createSupertokenInstance = (ERC: string, signer: Signer): Contract => {
     return new Contract(ERC, abi_supertoken , signer);
+  };
+  
+
+  export const createERC777Instance = (ERC: string, signer: Signer): Contract => {
+    return new Contract(ERC, abi_ERC777, signer);
   };
   

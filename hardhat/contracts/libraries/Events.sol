@@ -15,4 +15,9 @@ library Events {
   event ContractInit(bool init);
 
 
-}
+ event MemberCreated(uint256 id, address member, uint256 timestamp);
+
+ event MemberDeposit(uint256 id,  uint256 timestamp, uint256 deposit);
+
+
+  }

@@ -28,6 +28,116 @@ export class Initialized__Params {
   }
 }
 
+export class ContractInit extends ethereum.Event {
+  get params(): ContractInit__Params {
+    return new ContractInit__Params(this);
+  }
+}
+
+export class ContractInit__Params {
+  _event: ContractInit;
+
+  constructor(event: ContractInit) {
+    this._event = event;
+  }
+
+  get init(): boolean {
+    return this._event.parameters[0].value.toBoolean();
+  }
+}
+
+export class MemberCreated extends ethereum.Event {
+  get params(): MemberCreated__Params {
+    return new MemberCreated__Params(this);
+  }
+}
+
+export class MemberCreated__Params {
+  _event: MemberCreated;
+
+  constructor(event: MemberCreated) {
+    this._event = event;
+  }
+
+  get id(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get member(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+
+  get timestamp(): BigInt {
+    return this._event.parameters[2].value.toBigInt();
+  }
+}
+
+export class MemberDeposit extends ethereum.Event {
+  get params(): MemberDeposit__Params {
+    return new MemberDeposit__Params(this);
+  }
+}
+
+export class MemberDeposit__Params {
+  _event: MemberDeposit;
+
+  constructor(event: MemberDeposit) {
+    this._event = event;
+  }
+
+  get id(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get timestamp(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
+  }
+
+  get deposit(): BigInt {
+    return this._event.parameters[2].value.toBigInt();
+  }
+}
+
+export class Flowdy__membersResult {
+  value0: BigInt;
+  value1: Address;
+  value2: BigInt;
+  value3: Bytes;
+  value4: BigInt;
+  value5: BigInt;
+  value6: BigInt;
+
+  constructor(
+    value0: BigInt,
+    value1: Address,
+    value2: BigInt,
+    value3: Bytes,
+    value4: BigInt,
+    value5: BigInt,
+    value6: BigInt
+  ) {
+    this.value0 = value0;
+    this.value1 = value1;
+    this.value2 = value2;
+    this.value3 = value3;
+    this.value4 = value4;
+    this.value5 = value5;
+    this.value6 = value6;
+  }
+
+  toMap(): TypedMap<string, ethereum.Value> {
+    let map = new TypedMap<string, ethereum.Value>();
+    map.set("value0", ethereum.Value.fromUnsignedBigInt(this.value0));
+    map.set("value1", ethereum.Value.fromAddress(this.value1));
+    map.set("value2", ethereum.Value.fromSignedBigInt(this.value2));
+    map.set("value3", ethereum.Value.fromFixedBytes(this.value3));
+    map.set("value4", ethereum.Value.fromUnsignedBigInt(this.value4));
+    map.set("value5", ethereum.Value.fromUnsignedBigInt(this.value5));
+    map.set("value6", ethereum.Value.fromUnsignedBigInt(this.value6));
+    return map;
+  }
+}
+
 export class Flowdy extends ethereum.SmartContract {
   static bind(address: Address): Flowdy {
     return new Flowdy("Flowdy", address);
@@ -387,6 +497,47 @@ export class Flowdy extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
+  members(param0: Address): Flowdy__membersResult {
+    let result = super.call(
+      "members",
+      "members(address):(uint256,address,int96,bytes32,uint256,uint256,uint256)",
+      [ethereum.Value.fromAddress(param0)]
+    );
+
+    return new Flowdy__membersResult(
+      result[0].toBigInt(),
+      result[1].toAddress(),
+      result[2].toBigInt(),
+      result[3].toBytes(),
+      result[4].toBigInt(),
+      result[5].toBigInt(),
+      result[6].toBigInt()
+    );
+  }
+
+  try_members(param0: Address): ethereum.CallResult<Flowdy__membersResult> {
+    let result = super.tryCall(
+      "members",
+      "members(address):(uint256,address,int96,bytes32,uint256,uint256,uint256)",
+      [ethereum.Value.fromAddress(param0)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(
+      new Flowdy__membersResult(
+        value[0].toBigInt(),
+        value[1].toAddress(),
+        value[2].toBigInt(),
+        value[3].toBytes(),
+        value[4].toBigInt(),
+        value[5].toBigInt(),
+        value[6].toBigInt()
+      )
+    );
+  }
+
   ops(): Address {
     let result = super.call("ops", "ops():(address)", []);
 
@@ -470,6 +621,84 @@ export class ConstructorCall__Outputs {
   _call: ConstructorCall;
 
   constructor(call: ConstructorCall) {
+    this._call = call;
+  }
+}
+
+export class _calculateYieldCall extends ethereum.Call {
+  get inputs(): _calculateYieldCall__Inputs {
+    return new _calculateYieldCall__Inputs(this);
+  }
+
+  get outputs(): _calculateYieldCall__Outputs {
+    return new _calculateYieldCall__Outputs(this);
+  }
+}
+
+export class _calculateYieldCall__Inputs {
+  _call: _calculateYieldCall;
+
+  constructor(call: _calculateYieldCall) {
+    this._call = call;
+  }
+}
+
+export class _calculateYieldCall__Outputs {
+  _call: _calculateYieldCall;
+
+  constructor(call: _calculateYieldCall) {
+    this._call = call;
+  }
+}
+
+export class _poolRebalanceCall extends ethereum.Call {
+  get inputs(): _poolRebalanceCall__Inputs {
+    return new _poolRebalanceCall__Inputs(this);
+  }
+
+  get outputs(): _poolRebalanceCall__Outputs {
+    return new _poolRebalanceCall__Outputs(this);
+  }
+}
+
+export class _poolRebalanceCall__Inputs {
+  _call: _poolRebalanceCall;
+
+  constructor(call: _poolRebalanceCall) {
+    this._call = call;
+  }
+}
+
+export class _poolRebalanceCall__Outputs {
+  _call: _poolRebalanceCall;
+
+  constructor(call: _poolRebalanceCall) {
+    this._call = call;
+  }
+}
+
+export class AaveSupplyCall extends ethereum.Call {
+  get inputs(): AaveSupplyCall__Inputs {
+    return new AaveSupplyCall__Inputs(this);
+  }
+
+  get outputs(): AaveSupplyCall__Outputs {
+    return new AaveSupplyCall__Outputs(this);
+  }
+}
+
+export class AaveSupplyCall__Inputs {
+  _call: AaveSupplyCall;
+
+  constructor(call: AaveSupplyCall) {
+    this._call = call;
+  }
+}
+
+export class AaveSupplyCall__Outputs {
+  _call: AaveSupplyCall;
+
+  constructor(call: AaveSupplyCall) {
     this._call = call;
   }
 }
@@ -633,58 +862,6 @@ export class AfterAgreementUpdatedCall__Outputs {
 
   get newCtx(): Bytes {
     return this._call.outputValues[0].value.toBytes();
-  }
-}
-
-export class DepositCall extends ethereum.Call {
-  get inputs(): DepositCall__Inputs {
-    return new DepositCall__Inputs(this);
-  }
-
-  get outputs(): DepositCall__Outputs {
-    return new DepositCall__Outputs(this);
-  }
-}
-
-export class DepositCall__Inputs {
-  _call: DepositCall;
-
-  constructor(call: DepositCall) {
-    this._call = call;
-  }
-}
-
-export class DepositCall__Outputs {
-  _call: DepositCall;
-
-  constructor(call: DepositCall) {
-    this._call = call;
-  }
-}
-
-export class DepositxCall extends ethereum.Call {
-  get inputs(): DepositxCall__Inputs {
-    return new DepositxCall__Inputs(this);
-  }
-
-  get outputs(): DepositxCall__Outputs {
-    return new DepositxCall__Outputs(this);
-  }
-}
-
-export class DepositxCall__Inputs {
-  _call: DepositxCall;
-
-  constructor(call: DepositxCall) {
-    this._call = call;
-  }
-}
-
-export class DepositxCall__Outputs {
-  _call: DepositxCall;
-
-  constructor(call: DepositxCall) {
-    this._call = call;
   }
 }
 

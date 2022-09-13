@@ -6,6 +6,8 @@
 /out-tsc
 /bazel-out
 
+/add-ons/graph-node/data
+
 # Node
 /node_modules
 npm-debug.log

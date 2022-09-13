@@ -12,29 +12,34 @@ import {
   BigDecimal
 } from "@graphprotocol/graph-ts";
 
-export class Gravatar extends Entity {
+export class Member extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
 
-    this.set("accepted", Value.fromBoolean(false));
+    this.set("member", Value.fromString(""));
+    this.set("timestamp", Value.fromBigInt(BigInt.zero()));
+    this.set("deposit", Value.fromBigInt(BigInt.zero()));
+    this.set("flow", Value.fromBigInt(BigInt.zero()));
+    this.set("flowGelatoId", Value.fromString(""));
+    this.set("flowduration", Value.fromBigInt(BigInt.zero()));
   }
 
   save(): void {
     let id = this.get("id");
-    assert(id != null, "Cannot save Gravatar entity without an ID");
+    assert(id != null, "Cannot save Member entity without an ID");
     if (id) {
       assert(
         id.kind == ValueKind.STRING,
-        "Cannot save Gravatar entity with non-string ID. " +
+        "Cannot save Member entity with non-string ID. " +
           'Considering using .toHex() to convert the "id" to a string.'
       );
-      store.set("Gravatar", id.toString(), this);
+      store.set("Member", id.toString(), this);
     }
   }
 
-  static load(id: string): Gravatar | null {
-    return changetype<Gravatar | null>(store.get("Gravatar", id));
+  static load(id: string): Member | null {
+    return changetype<Member | null>(store.get("Member", id));
   }
 
   get id(): string {
@@ -46,63 +51,57 @@ export class Gravatar extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get owner(): Bytes | null {
-    let value = this.get("owner");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toBytes();
-    }
+  get member(): string {
+    let value = this.get("member");
+    return value!.toString();
   }
 
-  set owner(value: Bytes | null) {
-    if (!value) {
-      this.unset("owner");
-    } else {
-      this.set("owner", Value.fromBytes(<Bytes>value));
-    }
+  set member(value: string) {
+    this.set("member", Value.fromString(value));
   }
 
-  get displayName(): string | null {
-    let value = this.get("displayName");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toString();
-    }
+  get timestamp(): BigInt {
+    let value = this.get("timestamp");
+    return value!.toBigInt();
   }
 
-  set displayName(value: string | null) {
-    if (!value) {
-      this.unset("displayName");
-    } else {
-      this.set("displayName", Value.fromString(<string>value));
-    }
+  set timestamp(value: BigInt) {
+    this.set("timestamp", Value.fromBigInt(value));
   }
 
-  get imageUrl(): string | null {
-    let value = this.get("imageUrl");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toString();
-    }
+  get deposit(): BigInt {
+    let value = this.get("deposit");
+    return value!.toBigInt();
   }
 
-  set imageUrl(value: string | null) {
-    if (!value) {
-      this.unset("imageUrl");
-    } else {
-      this.set("imageUrl", Value.fromString(<string>value));
-    }
+  set deposit(value: BigInt) {
+    this.set("deposit", Value.fromBigInt(value));
   }
 
-  get accepted(): boolean {
-    let value = this.get("accepted");
-    return value!.toBoolean();
+  get flow(): BigInt {
+    let value = this.get("flow");
+    return value!.toBigInt();
   }
 
-  set accepted(value: boolean) {
-    this.set("accepted", Value.fromBoolean(value));
+  set flow(value: BigInt) {
+    this.set("flow", Value.fromBigInt(value));
+  }
+
+  get flowGelatoId(): string {
+    let value = this.get("flowGelatoId");
+    return value!.toString();
+  }
+
+  set flowGelatoId(value: string) {
+    this.set("flowGelatoId", Value.fromString(value));
+  }
+
+  get flowduration(): BigInt {
+    let value = this.get("flowduration");
+    return value!.toBigInt();
+  }
+
+  set flowduration(value: BigInt) {
+    this.set("flowduration", Value.fromBigInt(value));
   }
 }

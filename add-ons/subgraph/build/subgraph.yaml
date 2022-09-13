@@ -19,6 +19,8 @@ dataSources:
         - name: Flowdy
           file: Flowdy\abis\flowdy.json
       eventHandlers:
-        - event: Initialized(uint8)
-          handler: handleInitialized
+        - event: MemberCreated(uint256,address,uint256)
+          handler: handleMemberCreated
+        - event: MemberDeposit(uint256,uint256,uint256)
+          handler: handleMemberDeposit
       file: Flowdy\Flowdy.wasm
