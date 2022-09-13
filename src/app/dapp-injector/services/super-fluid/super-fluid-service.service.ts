@@ -8,12 +8,15 @@ import {
 } from '@superfluid-finance/sdk-core';
 import Operation from '@superfluid-finance/sdk-core/dist/module/Operation';
 import { ethers, Signer, utils } from 'ethers';
+import { settings } from '../../constants';
 import { DappInjector } from '../../dapp-injector.service';
+
+
 
 @Injectable({
   providedIn: 'root',
 })
-export class SuperFluidServiceService {
+export class SuperFluidService {
   sf!: Framework;
   flow!: ConstantFlowAgreementV1;
   operations: Array<Operation> = [];
@@ -22,15 +25,19 @@ export class SuperFluidServiceService {
   async getContracts() {}
 
   async initializeFramework() {
+
+    console.log(this.dapp.DAPP_STATE.connectedNetwork);
     this.sf = await Framework.create({
-      networkName: this.dapp.DAPP_STATE.connectedNetwork!,
+      networkName: settings[this.dapp.dappConfig.defaultNetwork!].sfNetwork,
       provider: this.dapp.DAPP_STATE.defaultProvider!,
+      customSubgraphQueriesEndpoint:
+        settings[this.dapp.dappConfig.defaultNetwork].subgraph,
+      resolverAddress: settings[this.dapp.dappConfig.defaultNetwork].resolver,
     });
 
     this.flow = this.sf.cfaV1;
 
-    console.log(this.sf.settings);
-    //675833120
+
   }
 
 
@@ -43,6 +50,8 @@ export class SuperFluidServiceService {
     data: string;
   }) {
     this.operations = [];
+    console.log(streamConfig)
+
     await this.createStream(streamConfig);
     const result = await this.operations[0].exec(this.dapp.DAPP_STATE.signer!);
     const result2 = await result.wait();
@@ -54,6 +63,10 @@ export class SuperFluidServiceService {
     superToken:string;
     data: string;
   }) {
+    if (this.sf == undefined){
+      await this.initializeFramework()
+    }
+
     const createFlowOperation = this.flow.createFlow({
       flowRate: streamConfig.flowRate,
       receiver: streamConfig.receiver,

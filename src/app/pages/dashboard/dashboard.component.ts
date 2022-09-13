@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { DappBaseComponent, DappInjector, Web3Actions } from 'angular-web3';
 import { MessageService } from 'primeng/api';
@@ -17,12 +19,26 @@ export class DashboardComponent extends DappBaseComponent  implements OnInit {
 
   balanceSupertoken = 0;
   poolToken?: IPOOL_TOKEN;
-  constructor(
-    store: Store,
-    dapp: DappInjector,
-   public global: GlobalService, public msg:MessageService
-  ) { super(dapp,store)}
+  twoDec!: string;
+  fourDec!: string;
+  
 
+
+
+  constructor(
+    store: Store, 
+    dapp: DappInjector,   public router:Router,
+    public formBuilder: FormBuilder,
+   public global: GlobalService, public msg:MessageService
+  ) { 
+    super(dapp,store);
+    
+ 
+  }
+
+  showStartFlow(){
+    this.router.navigateByUrl('start-flow')
+  }
 
  async wrapp(){
 
@@ -43,8 +59,10 @@ export class DashboardComponent extends DappBaseComponent  implements OnInit {
  
  async refreshBalance() {
     
-  this.poolToken = await this.global.getPoolToken()
- 
+  this.poolToken = await this.global.getPoolToken();
+  let formated = this.global.prepareNumbers(+this.poolToken.superTokenBalance!)
+  this.twoDec = formated.twoDec; 
+  this.fourDec = formated.fourDec; 
   //this.getRewardDetails(this.toUpdateReward!.id)
 
 }

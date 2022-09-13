@@ -14,7 +14,7 @@ export class GlobalService {
   erc20?: ethers.Contract;
   supertoken?:ISuperToken
 
-  poolToken:IPOOL_TOKEN = {
+  public poolToken:IPOOL_TOKEN = {
     name:"USDC",
     superTokenName:"USDCx",
     id:1,
@@ -58,7 +58,7 @@ export class GlobalService {
 
     let result = await Promise.all( [balance, superbalance])
 
-    console.log(result);
+    console.log(result[1])
     
     console.log(result[1].availableBalance)
 
@@ -73,7 +73,17 @@ export class GlobalService {
 
   }
 
+  prepareNumbers(balance: number) {
+    
 
+    const niceTwo = (balance / 10 ** 18).toFixed(2);
+    let twoDec = (niceTwo)
+    
+    const niceFour = (balance / 10 ** 18).toFixed(6);
+
+    let fourDec = niceFour.substring(niceFour.length - 4, niceFour.length);
+    return {twoDec, fourDec}
+  }
 
 
   async mint(){

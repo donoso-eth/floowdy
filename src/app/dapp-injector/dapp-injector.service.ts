@@ -214,7 +214,7 @@ async localWallet(index:number) {
     const b = this.DAPP_STATE.defaultContract;
     const providerNetwork = await this.DAPP_STATE.defaultProvider!.getNetwork();
 
-    const networkString = netWorkById(providerNetwork.chainId)?.name as string;
+    const networkString = netWorkById(providerNetwork.chainId == 31337 ? 1337 : providerNetwork.chainId)?.name as string;
  
     this.DAPP_STATE.connectedNetwork = networkString;
     this.store.dispatch(Web3Actions.setSignerNetwork({ network: networkString }));

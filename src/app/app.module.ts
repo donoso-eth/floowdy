@@ -17,6 +17,7 @@ import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
 import { GlobalService } from './shared/services/global.service';
+import { SuperFluidServiceModule } from './dapp-injector/services/super-fluid/super-fluid-service.module';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,8 @@ import { GlobalService } from './shared/services/global.service';
     DropdownModule,
     ProgressSpinnerModule,
     ToastModule,
-    ButtonModule
+    ButtonModule,
+    SuperFluidServiceModule
   ],
   providers: [MessageService,GlobalService],
   bootstrap: [AppComponent]

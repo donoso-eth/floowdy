@@ -33,6 +33,7 @@ export interface FlowdyInterface extends utils.Interface {
     "host()": FunctionFragment;
     "initialize(address)": FunctionFragment;
     "ops()": FunctionFragment;
+    "parseLoanData(bytes)": FunctionFragment;
     "tokensReceived(address,address,address,uint256,bytes,bytes)": FunctionFragment;
   };
 
@@ -68,6 +69,10 @@ export interface FlowdyInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "host", values?: undefined): string;
   encodeFunctionData(functionFragment: "initialize", values: [string]): string;
   encodeFunctionData(functionFragment: "ops", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "parseLoanData",
+    values: [BytesLike]
+  ): string;
   encodeFunctionData(
     functionFragment: "tokensReceived",
     values: [string, string, string, BigNumberish, BytesLike, BytesLike]
@@ -105,6 +110,10 @@ export interface FlowdyInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "host", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "ops", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "parseLoanData",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "tokensReceived",
     data: BytesLike
@@ -151,12 +160,12 @@ export interface Flowdy extends BaseContract {
     ETH(overrides?: CallOverrides): Promise<[string]>;
 
     afterAgreementCreated(
-      arg0: string,
-      arg1: string,
+      _superToken: string,
+      _agreementClass: string,
       arg2: BytesLike,
-      arg3: BytesLike,
+      _agreementData: BytesLike,
       arg4: BytesLike,
-      arg5: BytesLike,
+      _ctx: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -164,19 +173,19 @@ export interface Flowdy extends BaseContract {
       arg0: string,
       arg1: string,
       arg2: BytesLike,
-      arg3: BytesLike,
+      _agreementData: BytesLike,
       arg4: BytesLike,
-      arg5: BytesLike,
+      _ctx: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     afterAgreementUpdated(
-      arg0: string,
-      arg1: string,
+      _superToken: string,
+      _agreementClass: string,
       arg2: BytesLike,
-      arg3: BytesLike,
+      _agreementData: BytesLike,
       arg4: BytesLike,
-      arg5: BytesLike,
+      _ctx: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -228,6 +237,11 @@ export interface Flowdy extends BaseContract {
 
     ops(overrides?: CallOverrides): Promise<[string]>;
 
+    parseLoanData(
+      data: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { duration: BigNumber }>;
+
     tokensReceived(
       operator: string,
       from: string,
@@ -242,12 +256,12 @@ export interface Flowdy extends BaseContract {
   ETH(overrides?: CallOverrides): Promise<string>;
 
   afterAgreementCreated(
-    arg0: string,
-    arg1: string,
+    _superToken: string,
+    _agreementClass: string,
     arg2: BytesLike,
-    arg3: BytesLike,
+    _agreementData: BytesLike,
     arg4: BytesLike,
-    arg5: BytesLike,
+    _ctx: BytesLike,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -255,19 +269,19 @@ export interface Flowdy extends BaseContract {
     arg0: string,
     arg1: string,
     arg2: BytesLike,
-    arg3: BytesLike,
+    _agreementData: BytesLike,
     arg4: BytesLike,
-    arg5: BytesLike,
+    _ctx: BytesLike,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   afterAgreementUpdated(
-    arg0: string,
-    arg1: string,
+    _superToken: string,
+    _agreementClass: string,
     arg2: BytesLike,
-    arg3: BytesLike,
+    _agreementData: BytesLike,
     arg4: BytesLike,
-    arg5: BytesLike,
+    _ctx: BytesLike,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -319,6 +333,8 @@ export interface Flowdy extends BaseContract {
 
   ops(overrides?: CallOverrides): Promise<string>;
 
+  parseLoanData(data: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
+
   tokensReceived(
     operator: string,
     from: string,
@@ -333,12 +349,12 @@ export interface Flowdy extends BaseContract {
     ETH(overrides?: CallOverrides): Promise<string>;
 
     afterAgreementCreated(
-      arg0: string,
-      arg1: string,
+      _superToken: string,
+      _agreementClass: string,
       arg2: BytesLike,
-      arg3: BytesLike,
+      _agreementData: BytesLike,
       arg4: BytesLike,
-      arg5: BytesLike,
+      _ctx: BytesLike,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -346,19 +362,19 @@ export interface Flowdy extends BaseContract {
       arg0: string,
       arg1: string,
       arg2: BytesLike,
-      arg3: BytesLike,
+      _agreementData: BytesLike,
       arg4: BytesLike,
-      arg5: BytesLike,
+      _ctx: BytesLike,
       overrides?: CallOverrides
     ): Promise<string>;
 
     afterAgreementUpdated(
-      arg0: string,
-      arg1: string,
+      _superToken: string,
+      _agreementClass: string,
       arg2: BytesLike,
-      arg3: BytesLike,
+      _agreementData: BytesLike,
       arg4: BytesLike,
-      arg5: BytesLike,
+      _ctx: BytesLike,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -403,6 +419,11 @@ export interface Flowdy extends BaseContract {
 
     ops(overrides?: CallOverrides): Promise<string>;
 
+    parseLoanData(
+      data: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     tokensReceived(
       operator: string,
       from: string,
@@ -423,12 +444,12 @@ export interface Flowdy extends BaseContract {
     ETH(overrides?: CallOverrides): Promise<BigNumber>;
 
     afterAgreementCreated(
-      arg0: string,
-      arg1: string,
+      _superToken: string,
+      _agreementClass: string,
       arg2: BytesLike,
-      arg3: BytesLike,
+      _agreementData: BytesLike,
       arg4: BytesLike,
-      arg5: BytesLike,
+      _ctx: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -436,19 +457,19 @@ export interface Flowdy extends BaseContract {
       arg0: string,
       arg1: string,
       arg2: BytesLike,
-      arg3: BytesLike,
+      _agreementData: BytesLike,
       arg4: BytesLike,
-      arg5: BytesLike,
+      _ctx: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     afterAgreementUpdated(
-      arg0: string,
-      arg1: string,
+      _superToken: string,
+      _agreementClass: string,
       arg2: BytesLike,
-      arg3: BytesLike,
+      _agreementData: BytesLike,
       arg4: BytesLike,
-      arg5: BytesLike,
+      _ctx: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -500,6 +521,11 @@ export interface Flowdy extends BaseContract {
 
     ops(overrides?: CallOverrides): Promise<BigNumber>;
 
+    parseLoanData(
+      data: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     tokensReceived(
       operator: string,
       from: string,
@@ -515,12 +541,12 @@ export interface Flowdy extends BaseContract {
     ETH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     afterAgreementCreated(
-      arg0: string,
-      arg1: string,
+      _superToken: string,
+      _agreementClass: string,
       arg2: BytesLike,
-      arg3: BytesLike,
+      _agreementData: BytesLike,
       arg4: BytesLike,
-      arg5: BytesLike,
+      _ctx: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -528,19 +554,19 @@ export interface Flowdy extends BaseContract {
       arg0: string,
       arg1: string,
       arg2: BytesLike,
-      arg3: BytesLike,
+      _agreementData: BytesLike,
       arg4: BytesLike,
-      arg5: BytesLike,
+      _ctx: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     afterAgreementUpdated(
-      arg0: string,
-      arg1: string,
+      _superToken: string,
+      _agreementClass: string,
       arg2: BytesLike,
-      arg3: BytesLike,
+      _agreementData: BytesLike,
       arg4: BytesLike,
-      arg5: BytesLike,
+      _ctx: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -591,6 +617,11 @@ export interface Flowdy extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     ops(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    parseLoanData(
+      data: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     tokensReceived(
       operator: string,

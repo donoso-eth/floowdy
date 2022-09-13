@@ -69,7 +69,8 @@ if (network_params == undefined) {
     network_params.superToken,
     network_params.token,
     network_params.aavePool,
-    network_params.aToken
+    network_params.aToken,
+    network_params.ops
     )
 
   let toDeployContract = contract_config['flowdy'];

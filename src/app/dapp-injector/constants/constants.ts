@@ -30,6 +30,27 @@ export const noNetwork:INETWORK =   {
   rpcUrl:'noop'
 }
 
+export const settings = {
+  localhost: {
+    host: '0x22ff293e14F1EC3A09B137e9e06084AFd63adDF9',
+    supertoken: '0xbCE2198f789f3AC1Af76D3835BEe8A61830aAd34',
+    token: '0xA2025B15a1757311bfD68cb14eaeFCc237AF5b43',
+    resolver: '0x3710AB3fDE2B61736B8BB0CE845D6c61F667a78E',
+    sfNetwork: 'local',
+    subgraph:
+      'https://thegraph.com/hosted-service/subgraph/superfluid-finance/protocol-v1-goerli',
+  },
+  goerli: {
+    host: '0x22ff293e14F1EC3A09B137e9e06084AFd63adDF9',
+    supertoken: '0xbCE2198f789f3AC1Af76D3835BEe8A61830aAd34',
+    token: '0xA2025B15a1757311bfD68cb14eaeFCc237AF5b43',
+    resolver: '0x3710AB3fDE2B61736B8BB0CE845D6c61F667a78E',
+    sfNetwork: 'goerli',
+    subgraph:
+      'https://thegraph.com/hosted-service/subgraph/superfluid-finance/protocol-v1-goerli',
+  },
+};
+
 export const NETWORKS:{[key:string]: INETWORK} = {
   localhost: {
     name: "localhost",
@@ -106,6 +127,7 @@ export const NETWORKS:{[key:string]: INETWORK} = {
     faucet: "https://faucet.polygon.technology/",
     blockExplorer: "https://mumbai.polygonscan.com/",
   },
+  
   // localArbitrum: {
   //   name: "localArbitrum",
   //   color: "#50a0ea",
