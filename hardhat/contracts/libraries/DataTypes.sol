@@ -21,6 +21,7 @@ library DataTypes {
     uint256 flowduration;
     uint256 deposit;
     uint256 timestamp;
+    uint256 yieldAccrued;
   }
 
 
@@ -32,6 +33,18 @@ library DataTypes {
     uint256 totalYield;
     uint256 depositIndex;
     uint256 flowIndex;
+    uint256 totalDelegated;
+  }
+
+
+  struct Credit {
+    uint256 id;
+    address requester;
+    uint256 initTimestamp;
+    uint256 denyPeriodFinishh;
+    bool accepted;
+    uint256 amount;
+    uint256 rate;
   }
 
 }

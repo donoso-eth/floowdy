@@ -9,3 +9,17 @@ type Member @entity {
 
 
 }
+
+type Pool @entity {
+  id: ID!
+  timestamp: BigInt!
+  totalDeposit:BigInt!
+  totalFlow:BigInt!
+  totalYield:BigInt!
+  totalDelegated: BigInt!
+  depositIndex:BigInt!
+  flowIndex:BigInt!
+  nrMembers: BigInt!
+  
+}
+ 

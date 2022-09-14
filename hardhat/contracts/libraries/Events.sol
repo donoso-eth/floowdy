@@ -11,13 +11,11 @@ import {DataTypes} from "./DataTypes.sol";
  */
 library Events {
     
-  //// CONTRACT Initizlyzed
-  event ContractInit(bool init);
 
 
- event MemberCreated(uint256 id, address member, uint256 timestamp);
+ event MemberAction(DataTypes.Member);
 
- event MemberDeposit(uint256 id,  uint256 timestamp, uint256 deposit);
 
+ event PoolUpdated(uint256 id);
 
   }
