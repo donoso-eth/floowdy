@@ -11,7 +11,7 @@ const contract_config = JSON.parse(
 ) as { [key: string]: any };
 
 task('verify-contract', 'verify').setAction(async ({}, hre) => {
-  let deployContract = 'flowdy';
+  let deployContract = 'floowdy';
   let toDeployContract = contract_config[deployContract];
   const linkApp = JSON.parse(
     readFileSync(

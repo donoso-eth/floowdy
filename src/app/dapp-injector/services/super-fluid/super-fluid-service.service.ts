@@ -87,6 +87,10 @@ export class SuperFluidService {
     receiver: string;
     data: string;
   }) {
+    if (this.sf == undefined){
+      await this.initializeFramework()
+    }
+
     const createFlowOperation = this.sf.cfaV1.deleteFlow({
       sender: this.dapp.signerAddress!,
       receiver: streamConfig.receiver,
@@ -117,6 +121,10 @@ export class SuperFluidService {
 
   //// VIEW READ FUNCITONS
   async getFlow(options:{sender:string, receiver:string,superToken:string}) {
+    if (this.sf == undefined){
+      await this.initializeFramework()
+    }
+
   const result = await this.flow.getFlow({
     superToken: options.superToken,
     sender: options.sender,

@@ -28,7 +28,7 @@ if (existsSync('./typechain-types')) {
 
 const mainnetGwei = 21;
 
-let defaultNetwork = 'localhost';
+let defaultNetwork = 'goerli';
 //defaultNetwork = 'localhost';
 
 const config: HardhatUserConfig = {

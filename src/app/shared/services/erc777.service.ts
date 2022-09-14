@@ -8,7 +8,7 @@ import {
   createSupertokenInstance,
 } from '../helpers/helpers';
 import { ISuperToken } from 'src/assets/contracts/interfaces/ISuperToken';
-import { Flowdy } from 'src/assets/contracts/interfaces/Flowdy';
+import { Floowdy } from 'src/assets/contracts/interfaces/Floowdy';
 import { IPOOL_TOKEN } from '../models/models';
 import { GlobalService } from './global.service';
 import { IERC777 } from 'src/assets/contracts/interfaces/IERC777';

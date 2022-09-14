@@ -44,7 +44,7 @@ task('publish', 'publish subgraph')
     readFileSync(join(processDir, 'contract.config.json'), 'utf-8')
   ) as { [key: string]: ICONTRACT_DEPLOY };
 
-  const deployContracts = ['flowdy'];
+  const deployContracts = ['floowdy'];
 
   // Hardhat always runs the compile task when running scripts with its command
   // line interface.
@@ -70,7 +70,6 @@ task('publish', 'publish subgraph')
       )
     );
 
-        console.log(metadata.abi)
 
     const doc = load(
       readFileSync(join(subgraphPath, 'subgraph.yaml'), 'utf8')
@@ -101,7 +100,7 @@ task('publish', 'publish subgraph')
       }
       let yamlEvents = contractMapping.eventHandlers
 
-      console.log(yamlEvents);
+   
 
       for (const contractEvent of events) {
         const inputsStringRaw = contractEvent.inputs
@@ -116,7 +115,7 @@ task('publish', 'publish subgraph')
           handler: `handle${contractEvent.name}`,
         });
       }
-      console.log(yamlEvents);
+    
       contractMapping.eventHandlers = yamlEvents;
 
 

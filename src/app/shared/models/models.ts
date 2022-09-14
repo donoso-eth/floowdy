@@ -9,3 +9,11 @@ export interface IPOOL_TOKEN {
     superToken: string;
     superTokenBalance?:string 
   };
+
+
+  export interface IPOOL_STATE {
+    inFlow: number,
+    deposit: number,
+    yieldAccrued: number,
+    timestamp:number
+  }

@@ -1,4 +1,4 @@
-import { MemberCreated, MemberDeposit} from '../generated/Flowdy/Flowdy'
+import { MemberCreated, MemberDeposit} from '../generated/Floowdy/Floowdy'
 import {Member  } from '../generated/schema';
 
 

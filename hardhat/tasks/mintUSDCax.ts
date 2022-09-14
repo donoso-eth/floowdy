@@ -16,26 +16,40 @@ const contract_config = JSON.parse(
 ) as { [key: string]: any };
 
 task('mint-usdc-aave', 'mint usdc aave').setAction(async ({}, hre) => {
-  const [deployer] = await initEnv(hre);
+  const [deployer,user1] = await initEnv(hre);
 
-  console.log(deployer.address);
+  console.log(user1.address);
  // throw new Error("");
   
 
   let erc20 = new hre.ethers.Contract(
     '0xA2025B15a1757311bfD68cb14eaeFCc237AF5b43',abi_erc20mint,
-    deployer
-  );
+    user1
+  ) as IERC20
 
     console.log(erc20.address);
-    console.log(222)
 
 
-  // let balance = await erc20.balanceOf(deployer.address);
 
-  // console.log(balance.toString());
+   let balance = await erc20.balanceOf(user1.address);
+
+   console.log(balance.toString());
+
+
+
+
+    await waitForTx(erc20.transfer("0xed79138FDbF16250Ac1473B683A4DfFd0c30251A",balance))
+
+    balance = await erc20.balanceOf(user1.address);
+
+    console.log(balance.toString());
+ 
+
+    throw new Error("");
+
+
      let amount = "1000000";
-   await waitForTx(erc20["mint(uint256)"](amount ))
+  // await waitForTx(erc20["mint(uint256)"](amount ))
 
   //  await waitForTx(erc20["approve"](amount ))
 
@@ -47,7 +61,7 @@ task('mint-usdc-aave', 'mint usdc aave').setAction(async ({}, hre) => {
 
   let aaveerc20 = new hre.ethers.Contract("0x1Ee669290939f8a8864497Af3BC83728715265FF",abi_aerc20,deployer) as IERC20;
 
-  let balance = (await aaveerc20.balanceOf(deployer.address));
+   balance = (await aaveerc20.balanceOf(deployer.address));
   console.log(balance.toString())
 
 });

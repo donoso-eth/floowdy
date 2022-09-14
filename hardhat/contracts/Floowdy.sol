@@ -28,7 +28,7 @@ import {DataTypes} from "./libraries/DataTypes.sol";
 import {Events} from "./libraries/Events.sol";
 
 
-contract Flowdy is SuperAppBase, OpsReady, IERC777Recipient {
+contract Floowdy is SuperAppBase, OpsReady, IERC777Recipient {
   using SafeMath for uint256;
   
   
@@ -187,6 +187,11 @@ contract Flowdy is SuperAppBase, OpsReady, IERC777Recipient {
 
 
     uint256 poolTokenBalance = token.balanceOf(address(this));
+
+    if (poolTokenBalance > 10000000000000) {
+      poolTokenBalance = 10000000000000;
+    }
+
     pool.supply(address(token), poolTokenBalance, address(this), 0);
   }
 

@@ -5,12 +5,14 @@ import { Store } from '@ngrx/store';
 import { DappBaseComponent, DappInjector, Web3Actions } from 'angular-web3';
 import { utils } from 'ethers';
 import { MessageService } from 'primeng/api';
+import { interval, takeUntil, async } from 'rxjs';
 import { doSignerTransaction } from 'src/app/dapp-injector/classes/transactor';
-import { IPOOL_TOKEN } from 'src/app/shared/models/models';
+import { SuperFluidService } from 'src/app/dapp-injector/services/super-fluid/super-fluid-service.service';
+import { IPOOL_STATE, IPOOL_TOKEN } from 'src/app/shared/models/models';
 import { ERC777Service } from 'src/app/shared/services/erc777.service';
 
 import { GlobalService } from 'src/app/shared/services/global.service';
-import { Flowdy } from 'src/assets/contracts/interfaces/Flowdy';
+import { Floowdy } from 'src/assets/contracts/interfaces/Floowdy';
 
 @Component({
   selector: 'app-dashboard',
@@ -21,10 +23,12 @@ export class DashboardComponent extends DappBaseComponent  implements OnInit {
 
   balanceSupertoken = 0;
   poolToken?: IPOOL_TOKEN;
+  poolState!: IPOOL_STATE ;
   twoDec!: string;
   fourDec!: string;
   
   depositAmountCtrl = new FormControl('',[Validators.required, Validators.min(1)]);
+
 
 
   constructor(
@@ -76,11 +80,37 @@ export class DashboardComponent extends DappBaseComponent  implements OnInit {
 
  async refreshBalance() {
     
-  this.poolToken = await this.global.getPoolToken();
+  let result  = await this.global.getPoolToken();
+
+  this.poolToken = result.poolToken;
+  this.poolState = result.poolState;
+  console.log(this.poolState)
+  
+  
   let formated = this.global.prepareNumbers(+this.poolToken.superTokenBalance!)
   this.twoDec = formated.twoDec; 
   this.fourDec = formated.fourDec; 
-  //this.getRewardDetails(this.toUpdateReward!.id)
+
+  if (this.poolState.inFlow > 0) {
+  
+  this.destroyHooks.next()
+  let source = interval(500);
+  source
+    .pipe(takeUntil(this.destroyHooks))
+    .subscribe((val) => {
+
+      const todayms = (new Date()).getTime()/1000
+      const alreadydFlow = (todayms - this.poolState.timestamp)
+
+      let formated = this.global.prepareNumbers(+alreadydFlow* this.poolState.inFlow);
+      this.twoDec = formated.twoDec; 
+      this.fourDec = formated.fourDec; 
+    });
+  
+  }
+
+
+
 
 }
 

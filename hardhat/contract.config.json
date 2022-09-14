@@ -1,8 +1,8 @@
 {
-  "flowdy": {
-    "name": "Flowdy",
-    "artifactsPath": "Flowdy.sol/Flowdy.json",
-    "jsonName": "flowdy",
+  "floowdy": {
+    "name": "Floowdy",
+    "artifactsPath": "Floowdy.sol/Floowdy.json",
+    "jsonName": "floowdy",
     "ctor": []
   }
 }

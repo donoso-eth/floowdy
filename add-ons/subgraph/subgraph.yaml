@@ -3,12 +3,12 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum/contract
-    name: Flowdy
-    network: localhost
+    name: Floowdy
+    network: goerli
     source:
-      address: '0xdBbEe441bbb5fF3023A879Eb17501d1753B2531B'
-      abi: Flowdy
-      startBlock: 7566385
+      address: '0xc2C7c624D02CB0Bea3532Ef7204361FdD2d65Ca3'
+      abi: Floowdy
+      startBlock: 7588383
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -16,8 +16,8 @@ dataSources:
       entities:
         - Gravatar
       abis:
-        - name: Flowdy
-          file: ./abis/flowdy.json
+        - name: Floowdy
+          file: ./abis/floowdy.json
       eventHandlers:
         - event: MemberCreated(uint256,address,uint256)
           handler: handleMemberCreated

@@ -3,7 +3,7 @@ import { ethers } from "hardhat";
 
 describe("Minimal Contract", function () {
   it("Should return the new greeting once it's changed", async function () {
-    const MimimlaContract = await ethers.getContractFactory("Flowdy");
+    const MimimlaContract = await ethers.getContractFactory("Floowdy");
     const mimimlaContract = await MimimlaContract.deploy();
     await mimimlaContract.deployed();
 

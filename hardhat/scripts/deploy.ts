@@ -13,7 +13,7 @@ import { createHardhatAndFundPrivKeysFiles } from "../helpers/localAccounts";
 import * as hre from 'hardhat';
 import { abi_erc20mint } from "../helpers/abis/ERC20Mint";
 import { initEnv, waitForTx } from "../helpers/utils";
-import { Events__factory, Flowdy__factory } from "../typechain-types";
+import { Events__factory, Floowdy__factory } from "../typechain-types";
 
 
 interface ICONTRACT_DEPLOY {
@@ -65,7 +65,7 @@ if (network_params == undefined) {
 
   //// DEPLOY POOLFACTORY
 
-  const flowdy = await new Flowdy__factory(deployer).deploy(
+  const floowdy = await new Floowdy__factory(deployer).deploy(
     network_params.host,
     network_params.superToken,
     network_params.token,
@@ -74,7 +74,7 @@ if (network_params == undefined) {
     network_params.ops
     )
 
-  let toDeployContract = contract_config['flowdy'];
+  let toDeployContract = contract_config['floowdy'];
   
   if (toDeployContract == undefined) {
       console.error('Your contract is not yet configured');
@@ -97,14 +97,14 @@ if (network_params == undefined) {
       JSON.stringify({
         abi: Metadata.abi.concat(eventAbi),
         name: toDeployContract.name,
-        address: flowdy.address,
+        address: floowdy.address,
         network: network,
       })
     );
 
     console.log(
       toDeployContract.name + ' Contract Deployed to:',
-      flowdy.address
+      floowdy.address
     );
 
     ///// copy Interfaces and create Metadata address/abi to assets folder
@@ -118,12 +118,12 @@ if (network_params == undefined) {
       deployer
     );
 
-    let balance = await erc20.balanceOf(flowdy.address)
+    let balance = await erc20.balanceOf(floowdy.address)
     console.log(balance)
     let amount = "100000000";
-    await waitForTx(erc20["mint(address,uint256)"]( flowdy.address,amount ))
+    await waitForTx(erc20["mint(address,uint256)"]( floowdy.address,amount ))
  
-    balance = await erc20.balanceOf(flowdy.address)
+    balance = await erc20.balanceOf(floowdy.address)
     console.log(balance)
 
 

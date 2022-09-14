@@ -6,18 +6,18 @@ import { BaseContract, Signer, utils } from "ethers";
 import { Listener, Provider } from "@ethersproject/providers";
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
-export interface FlowdyInterface extends utils.Interface {
+export interface FloowdyInterface extends utils.Interface {
   functions: {};
 
   events: {};
 }
 
-export interface Flowdy extends BaseContract {
+export interface Floowdy extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: FlowdyInterface;
+  interface: FloowdyInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
