@@ -6,7 +6,7 @@ import { INETWORK, NETWORK_TYPE } from "../constants";
 
 export interface IDAPP_CONFIG {
   defaultNetwork: 'goerli' | 'localhost',
-  wallet: 'wallet' | 'privKey' | 'local',
+  wallet: string,
 }
 
 export interface IDAPP_STATE<T extends Contract> {

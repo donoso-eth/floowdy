@@ -271,6 +271,7 @@ export interface Floowdy extends BaseContract {
         string,
         BigNumber,
         BigNumber,
+        BigNumber,
         BigNumber
       ] & {
         id: BigNumber;
@@ -280,6 +281,7 @@ export interface Floowdy extends BaseContract {
         flowduration: BigNumber;
         deposit: BigNumber;
         timestamp: BigNumber;
+        yieldAccrued: BigNumber;
       }
     >;
 
@@ -387,7 +389,16 @@ export interface Floowdy extends BaseContract {
     arg0: string,
     overrides?: CallOverrides
   ): Promise<
-    [BigNumber, string, BigNumber, string, BigNumber, BigNumber, BigNumber] & {
+    [
+      BigNumber,
+      string,
+      BigNumber,
+      string,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber
+    ] & {
       id: BigNumber;
       member: string;
       flow: BigNumber;
@@ -395,6 +406,7 @@ export interface Floowdy extends BaseContract {
       flowduration: BigNumber;
       deposit: BigNumber;
       timestamp: BigNumber;
+      yieldAccrued: BigNumber;
     }
   >;
 
@@ -497,6 +509,7 @@ export interface Floowdy extends BaseContract {
         string,
         BigNumber,
         BigNumber,
+        BigNumber,
         BigNumber
       ] & {
         id: BigNumber;
@@ -506,6 +519,7 @@ export interface Floowdy extends BaseContract {
         flowduration: BigNumber;
         deposit: BigNumber;
         timestamp: BigNumber;
+        yieldAccrued: BigNumber;
       }
     >;
 

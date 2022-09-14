@@ -39,6 +39,8 @@ export const settings = {
     sfNetwork: 'local',
     subgraph:
       'https://thegraph.com/hosted-service/subgraph/superfluid-finance/protocol-v1-goerli',
+      graphUri:"http://localhost:8000/subgraphs/name/donoso-eth/floowdystream-polis",
+      wallet:'local'
   },
   goerli: {
     host: '0x22ff293e14F1EC3A09B137e9e06084AFd63adDF9',
@@ -48,6 +50,8 @@ export const settings = {
     sfNetwork: 'goerli',
     subgraph:
       'https://thegraph.com/hosted-service/subgraph/superfluid-finance/protocol-v1-goerli',
+      graphUri:"http://localhost:8000/subgraphs/name/donoso-eth/floowdy",
+      wallet:'wallet'
   },
 };
 

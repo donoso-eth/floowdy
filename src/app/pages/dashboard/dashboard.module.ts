@@ -10,7 +10,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
-
+import { TabViewModule } from 'primeng/tabview';
 
 @NgModule({
   declarations: [
@@ -27,7 +27,8 @@ import { InputTextModule } from 'primeng/inputtext';
     InputTextModule,
     DropdownModule,
     DialogModule,
-    InputNumberModule
+    InputNumberModule,
+    TabViewModule
   ]
 })
 export class DashboardModule { }

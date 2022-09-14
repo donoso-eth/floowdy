@@ -1,5 +1,5 @@
 //SPDX-License-Identifier: Unlicense
-pragma solidity ^0.8.14;
+pragma solidity >=0.4.22 <0.9.0;
 
 import "hardhat/console.sol";
 
@@ -105,7 +105,7 @@ contract Floowdy is SuperAppBase, OpsReady, IERC777Recipient {
       address(this)
     );
 
-    emit Events.ContractInit(true);
+  
   }
 
 
@@ -141,8 +141,7 @@ contract Floowdy is SuperAppBase, OpsReady, IERC777Recipient {
        member.id = totalMembers;
        member.member = _member;
     }
-    emit Events.MemberCreated(member.id, member.member, member.timestamp);
-
+   
   }
 
   function _deposit(address _member, uint256 amount) internal {
@@ -158,7 +157,7 @@ contract Floowdy is SuperAppBase, OpsReady, IERC777Recipient {
     }
 
     member.timestamp = block.timestamp; 
-    emit Events.MemberDeposit(member.id, member.timestamp, member.deposit);
+    emit Events.MemberAction(member);
 
 
   } 

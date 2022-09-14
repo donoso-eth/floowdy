@@ -7,6 +7,7 @@ import { utils } from 'ethers';
 import { MessageService } from 'primeng/api';
 import { interval, takeUntil, async } from 'rxjs';
 import { doSignerTransaction } from 'src/app/dapp-injector/classes/transactor';
+import { GraphQlService } from 'src/app/dapp-injector/services/graph-ql/graph-ql.service';
 import { SuperFluidService } from 'src/app/dapp-injector/services/super-fluid/super-fluid-service.service';
 import { IPOOL_STATE, IPOOL_TOKEN } from 'src/app/shared/models/models';
 import { ERC777Service } from 'src/app/shared/services/erc777.service';
@@ -36,6 +37,7 @@ export class DashboardComponent extends DappBaseComponent  implements OnInit {
     dapp: DappInjector,   public router:Router,
     public formBuilder: FormBuilder,
    public global: GlobalService, 
+   private graphqlService: GraphQlService,
    public erc777: ERC777Service,
    public msg:MessageService
   ) { 
@@ -121,6 +123,12 @@ export class DashboardComponent extends DappBaseComponent  implements OnInit {
 
   override async  hookContractConnected(): Promise<void> {
     this.refreshBalance()
+    const val =  await this.graphqlService
+    .getProfilesRequest()
+    console.log(val)
+      if (!!val && !!val.data) {
+        console.log(val.data)
+      }
   }
 
 }
