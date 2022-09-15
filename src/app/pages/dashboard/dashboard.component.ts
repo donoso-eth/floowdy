@@ -120,15 +120,13 @@ export class DashboardComponent extends DappBaseComponent  implements OnInit {
   
   }
 
+  requestCredit() {
+    this.router.navigateByUrl('request-credit')
+  }
 
   override async  hookContractConnected(): Promise<void> {
     this.refreshBalance()
-    const val =  await this.graphqlService
-    .getProfilesRequest()
-    console.log(val)
-      if (!!val && !!val.data) {
-        console.log(val.data)
-      }
+   
   }
 
 }

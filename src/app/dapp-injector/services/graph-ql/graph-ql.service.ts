@@ -69,7 +69,7 @@ export class GraphQlService {
   async getProfilesRequest():Promise<any> {
     try {
     //  const variables:ProfilesRequest =  { ownedBy: this.dapp.signerAddress! }; 
-      const variables = { address: "0xD28E808647D596F33Dcc3436E193A9566fc7aC07" };
+      const variables = { address: "0x7A84b3CaAC4C00AFA0886cb2238dbb9788376581" };
       const profiles = await  firstValueFrom(this.apollo.use('lens')
       .query<any>({
         query: gql(GET_PROFILES),

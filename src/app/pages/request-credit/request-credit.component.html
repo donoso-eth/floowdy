@@ -1,0 +1,33 @@
+<div class="grid justify-content-center">
+  <div class="col-8">
+    <div
+      style="position: relative; border-color: transparent"
+      class="card text-center"
+    >
+      <h5>Let's build together the Trust</h5>
+
+      <div style="margin-top: 20px" class="grid">
+        <div class="col-12 lg:col-6 xl:col-">
+        <div *ngIf="lensLoading">
+            <h6>Checking Your Lens Profile</h6>
+            <p-progressSpinner></p-progressSpinner>
+        </div>
+
+        <div *ngIf="lensLoading == false && lensProfile == false">
+            <h6>OOPS Profile not found</h6>
+            <span>You can </span>
+        </div>
+
+        <div *ngIf="lensLoading == false && lensProfile == true">
+            <h6>Great!!</h6>
+            <div class="grid">
+              <lens-profile class="col-6"></lens-profile>
+            </div>
+        </div>
+
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</div>

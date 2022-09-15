@@ -14,6 +14,7 @@
 
       <div class="col-12">
         <div
+          *ngIf="false"
           style="
             height: 150px;
             position: relative;
@@ -120,13 +121,30 @@
 
       <div class="col-12">
         <p-tabView orientation="center">
-          <p-tabPanel header="Trades" class="line-height-3 m-0">
-
-            </p-tabPanel>
-            <p-tabPanel header="Trades" class="line-height-3 m-0">
-
-            </p-tabPanel>
-            </p-tabView>
+          <p-tabPanel
+            header="Credits Requested"
+            class="line-height-3 m-0 text-center"
+          >
+            <button
+              pButton
+              pRipple
+              style="
+                position: relative;
+                width: fit-content;
+                border-color: var(--orange-400);
+                background-color: var(--yellow-200);
+              "
+              (click)="requestCredit()"
+              type="button"
+              label="Request Credit Delegation"
+              class="p-button-rounded mr-2 mb-2"
+            ></button>
+       
+          </p-tabPanel>
+          <p-tabPanel header="Credits Delegated" class="line-height-3 m-0">
+          </p-tabPanel>
+        </p-tabView>
+      </div>
     </div>
   </div>
 </div>

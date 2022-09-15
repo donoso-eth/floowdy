@@ -11,6 +11,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
 import { TabViewModule } from 'primeng/tabview';
+import { LensProfileModule } from 'src/app/shared/components/lens-profile/lens-profile.module';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { TabViewModule } from 'primeng/tabview';
     DropdownModule,
     DialogModule,
     InputNumberModule,
-    TabViewModule
+    TabViewModule,
+    LensProfileModule
   ]
 })
 export class DashboardModule { }
