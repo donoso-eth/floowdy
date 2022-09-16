@@ -18,9 +18,10 @@ library DataTypes {
     address member;
     int96 flow;
     bytes32 flowGelatoId;
-    uint256 flowduration;
+    uint256 flowDuration;
     uint256 deposit;
     uint256 timestamp;
+    uint256 initTimestamp;
     uint256 yieldAccrued;
   }
 
@@ -28,8 +29,9 @@ library DataTypes {
   struct Pool {
     uint256 id;
     uint256 timestamp;
-    uint256 totalFlow;
+    int96 totalFlow;
     uint256 totalDeposit;
+    uint256 totalDepositFlow;
     uint256 totalYield;
     uint256 depositIndex;
     uint256 flowIndex;
