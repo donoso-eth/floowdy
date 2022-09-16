@@ -223,12 +223,14 @@ contract Floowdy is SuperAppBase, OpsReady, IERC777Recipient {
     (, int96 inFlowRate, , ) = cfa.getFlow(superToken, sender, address(this));
     ISuperfluid.Context memory decodedContext = host.decodeCtx(_ctx);
 
+    _updateDeposit(sender,inFlowRate);
+    
     if (decodedContext.userData.length > 0) {
-     // DataTypes.Supplier storage supplier = suppliersByAddress[sender];
+  
       uint256 duration = parseLoanData(host.decodeCtx(_ctx).userData);
       console.log(180, duration);
-      // supplier.inStream.cancelTaskId = creareStopStreamTimedTask(sender, duration);
-    }
+      
+    } 
 
     return newCtx;
   }

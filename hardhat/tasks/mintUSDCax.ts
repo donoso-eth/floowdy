@@ -23,9 +23,9 @@ task('mint-usdc-aave', 'mint usdc aave').setAction(async ({}, hre) => {
   
 
   let erc20 = new hre.ethers.Contract(
-    '0xA2025B15a1757311bfD68cb14eaeFCc237AF5b43',abi_erc20mint,
+    '0x9aa7fEc87CA69695Dd1f879567CcF49F3ba417E2',abi_erc20mint,
     user1
-  ) as IERC20
+  );
 
     console.log(erc20.address);
 
@@ -38,30 +38,22 @@ task('mint-usdc-aave', 'mint usdc aave').setAction(async ({}, hre) => {
 
 
 
-    await waitForTx(erc20.transfer("0xed79138FDbF16250Ac1473B683A4DfFd0c30251A",balance))
-
-    balance = await erc20.balanceOf(user1.address);
-
-    console.log(balance.toString());
- 
-
-    throw new Error("");
 
 
-     let amount = "1000000";
-  // await waitForTx(erc20["mint(uint256)"](amount ))
+     let amount = "1000000000000";
+   await waitForTx(erc20["mint(uint256)"](amount))
 
   //  await waitForTx(erc20["approve"](amount ))
 
-   let pool = new hre.ethers.Contract("0x368EedF3f56ad10b9bC57eed4Dac65B26Bb667f6",abi_pool, deployer) as IPool
+//    let pool = new hre.ethers.Contract("0x368EedF3f56ad10b9bC57eed4Dac65B26Bb667f6",abi_pool, deployer) as IPool
    
- await waitForTx(erc20["approve"]("0x368EedF3f56ad10b9bC57eed4Dac65B26Bb667f6",amount ))
-  await waitForTx(pool.supply('0xA2025B15a1757311bfD68cb14eaeFCc237AF5b43',amount,deployer.address,0,{gasLimit:1000000}))
+//  await waitForTx(erc20["approve"]("0x368EedF3f56ad10b9bC57eed4Dac65B26Bb667f6",amount ))
+//   await waitForTx(pool.supply('0xA2025B15a1757311bfD68cb14eaeFCc237AF5b43',amount,deployer.address,0,{gasLimit:1000000}))
   
 
-  let aaveerc20 = new hre.ethers.Contract("0x1Ee669290939f8a8864497Af3BC83728715265FF",abi_aerc20,deployer) as IERC20;
+//   let aaveerc20 = new hre.ethers.Contract("0x1Ee669290939f8a8864497Af3BC83728715265FF",abi_aerc20,deployer) as IERC20;
 
-   balance = (await aaveerc20.balanceOf(deployer.address));
-  console.log(balance.toString())
+//    balance = (await aaveerc20.balanceOf(deployer.address));
+//   console.log(balance.toString())
 
 });
