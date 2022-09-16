@@ -17,3 +17,8 @@ export interface IPOOL_TOKEN {
     yieldAccrued: number,
     timestamp:number
   }
+
+
+  export interface ILENS_PROFILE {
+    
+  }

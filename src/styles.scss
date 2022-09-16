@@ -10,6 +10,10 @@
 @import "assets/sass/layout/_layout";
 @import "assets/sass/overrides/_overrides";
 
+:root {
+    font-size:12px;
+}
+
 .card {
     border: 0.5px solid #add8e65e;
 }
@@ -21,4 +25,12 @@
  .p-toast{
     margin-top: 5.70em;
     z-index:99999;
+}
+.p-tabview-nav {
+
+    justify-content: center;
+}
+
+a {
+    color: var(--gray-700)
 }

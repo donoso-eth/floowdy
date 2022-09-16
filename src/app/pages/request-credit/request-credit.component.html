@@ -1,0 +1,58 @@
+<div class="grid justify-content-center">
+  <div class="col-12">
+    <div
+      style="position: relative; border-color: transparent"
+      class="text-center"
+    >
+      <div class="card">
+        <div class="flex align-items-center justify-content-between mb-0">
+            <h5>Let's build together the Trust</h5>
+    
+        </div>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+            dolore magna aliqua.
+            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+            consequat.
+            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est
+            laborum.</p>
+    </div>
+      <div style="margin-top: 20px" class="grid">
+
+        <div class="card">
+        <div class="col-12 lg:col-6 xl:col-6">
+        <div *ngIf="lensLoading">
+            <h6>Checking Your Lens Profile</h6>
+            <p-progressSpinner></p-progressSpinner>
+        </div>
+
+        <div *ngIf="lensLoading == false && lensProfile == false">
+            <h6>OOPS Profile not found</h6>
+            <span>You can </span>
+        </div>
+
+        <div *ngIf="lensLoading == false && lensProfile == true">
+            <h6>Great!!</h6>
+            <div class="grid">
+              <lens-profile class="col-6"></lens-profile>
+            </div>
+        </div>
+
+        </div>
+        <p-divider layout="vertical">
+          <b>AND</b>
+      </p-divider>
+      <div class="col-12 lg:col-6 xl:col-6">
+        <div >
+            <h6>Checking Your Profiel</h6>
+            <p-progressSpinner></p-progressSpinner>
+        </div>
+
+
+        </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</div>
