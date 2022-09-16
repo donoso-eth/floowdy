@@ -28,7 +28,7 @@ if (existsSync('./typechain-types')) {
 
 const mainnetGwei = 21;
 
-let defaultNetwork = 'goerli';
+let defaultNetwork = 'mumbai';
 // defaultNetwork = 'localhost';
 
 const config: HardhatUserConfig = {
@@ -170,7 +170,8 @@ const config: HardhatUserConfig = {
     currency: 'USD',
   },
   etherscan: {
-    apiKey: process.env['ETHERSCAN_API_KEY'],
+      apiKey: process.env['MUMBAI_API_KEY'],
+     //apiKey: process.env['ETHERSCAN_API_KEY'],
   },
 };
 

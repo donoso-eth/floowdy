@@ -8,7 +8,7 @@
         "aToken":"0x1Ee669290939f8a8864497Af3BC83728715265FF",
         "aStableDebtToken":"0xF04958AeA8b7F24Db19772f84d7c2aC801D9Cf8b",
         "epnsComm":"0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa",
-        "epnsChanel":"0xBd1D48c63C82F86c71cBBe25Ea84a8C31B003eCb"
+        "epnsChanel":"0x464B916c32e9aB72CFA5E94a4aB768797b46A1dD"
     },
 
     "mumbai":{
@@ -20,6 +20,6 @@
         "aToken":"0xCdc2854e97798AfDC74BC420BD5060e022D14607",
         "aStableDebtToken":"0x01dBEdcb2437c79341cfeC4Cae765C53BE0E6EF7",
         "epnsComm":"0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa",
-        "epnsChanel":"0xBd1D48c63C82F86c71cBBe25Ea84a8C31B003eCb"
+        "epnsChanel":"0x464B916c32e9aB72CFA5E94a4aB768797b46A1dD"
     }
 }

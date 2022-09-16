@@ -2,6 +2,7 @@ import { readFileSync } from 'fs-extra';
 import { task } from 'hardhat/config';
 import { initEnv } from '../helpers/utils';
 import { join } from 'path';
+import { FloowdyInitStruct } from '../typechain-types/Floowdy';
 
 const contract_path_relative = '../src/assets/contracts/';
 const processDir = process.cwd();
@@ -21,27 +22,31 @@ task('verify-contract', 'verify').setAction(async ({}, hre) => {
   );
 
   let networks_config = JSON.parse(readFileSync( join(processDir,'networks.config.json'),'utf-8')) as 
-  { [key:string]:{ ops:string, host:string, token:string, superToken:string, aavePool:string, aToken:string}}
-  
-  
+  { [key:string]:{ ops:string, host:string, token:string, superToken:string, aavePool:string, aToken:string,
+    aStableDebtToken:string,
+    epnsComm:string,
+    epnsChanel:string}}
 
 //  '0xB3f5503f93d5Ef84b06993a1975B9D21B962892F' ops address
 
-      let   network_params = networks_config["goerli"];
+      let   network_params = networks_config["mumbai"];
 
   const [deployer] = await initEnv(hre);
-
+  let floodyInit:FloowdyInitStruct = {
+    host:network_params.host,
+    superToken:network_params.superToken,
+    token:network_params.token,
+    pool:network_params.aavePool,
+    aToken:network_params.aToken,
+    ops:network_params.ops,
+    epnsComm:network_params.epnsComm,
+    epnsChannel:network_params.epnsChanel
+  }
   console.log(deployer.address);
   console.log(linkApp.address);
   await hre.run('verify:verify', {
     address: linkApp.address,
     constructorArguments: [
-      network_params.host,
-      network_params.superToken,
-      network_params.token,
-      network_params.aavePool,
-      network_params.aToken,
-      network_params.ops
-     ],
+floodyInit  ],
   });
 });
