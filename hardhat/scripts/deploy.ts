@@ -14,6 +14,7 @@ import * as hre from 'hardhat';
 import { abi_erc20mint } from "../helpers/abis/ERC20Mint";
 import { initEnv, waitForTx } from "../helpers/utils";
 import { Events__factory, Floowdy__factory } from "../typechain-types";
+import { FloowdyInitStruct } from "hardhat/typechain-types/Floowdy";
 
 
 interface ICONTRACT_DEPLOY {
@@ -33,7 +34,10 @@ const eventAbi:any[] = Events__factory.abi;
 
 
 let networks_config = JSON.parse(readFileSync( join(processDir,'networks.config.json'),'utf-8')) as 
-{ [key:string]:{ ops:string, host:string, token:string, superToken:string, aavePool:string, aToken:string}}
+{ [key:string]:{ ops:string, host:string, token:string, superToken:string, aavePool:string, aToken:string,
+  aStableDebtToken:string,
+  epnsComm:string,
+  epnsChanel:string}}
 
 
 async function main() {
@@ -61,18 +65,24 @@ if (network_params == undefined) {
   
 }
 
+  let floodyInit:FloowdyInitStruct = {
+    host:network_params.host,
+    superToken:network_params.superToken,
+    token:network_params.token,
+    pool:network_params.aavePool,
+    aToken:network_params.aToken,
+    ops:network_params.ops,
+    epnsComm:network_params.epnsComm,
+    epnsChannel:network_params.epnsChanel
+  }
+
+console.log(floodyInit);
+
 
 
   //// DEPLOY POOLFACTORY
 
-  const floowdy = await new Floowdy__factory(deployer).deploy(
-    network_params.host,
-    network_params.superToken,
-    network_params.token,
-    network_params.aavePool,
-    network_params.aToken,
-    network_params.ops
-    )
+  const floowdy = await new Floowdy__factory(deployer).deploy(floodyInit)
 
   let toDeployContract = contract_config['floowdy'];
   

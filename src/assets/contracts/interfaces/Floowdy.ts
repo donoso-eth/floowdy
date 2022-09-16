@@ -13,9 +13,40 @@ import {
   Signer,
   utils,
 } from "ethers";
-import { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
+import { FunctionFragment, Result } from "@ethersproject/abi";
 import { Listener, Provider } from "@ethersproject/providers";
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
+
+export type FloowdyInitStruct = {
+  host: string;
+  superToken: string;
+  token: string;
+  pool: string;
+  aToken: string;
+  ops: string;
+  epnsComm: string;
+  epnsChannel: string;
+};
+
+export type FloowdyInitStructOutput = [
+  string,
+  string,
+  string,
+  string,
+  string,
+  string,
+  string,
+  string
+] & {
+  host: string;
+  superToken: string;
+  token: string;
+  pool: string;
+  aToken: string;
+  ops: string;
+  epnsComm: string;
+  epnsChannel: string;
+};
 
 export interface FloowdyInterface extends utils.Interface {
   functions: {
@@ -29,14 +60,23 @@ export interface FloowdyInterface extends utils.Interface {
     "beforeAgreementCreated(address,address,bytes32,bytes,bytes)": FunctionFragment;
     "beforeAgreementTerminated(address,address,bytes32,bytes,bytes)": FunctionFragment;
     "beforeAgreementUpdated(address,address,bytes32,bytes,bytes)": FunctionFragment;
+    "cancelTask(bytes32)": FunctionFragment;
     "cfa()": FunctionFragment;
+    "checkStopStream(address)": FunctionFragment;
     "gelato()": FunctionFragment;
     "host()": FunctionFragment;
-    "initialize(address)": FunctionFragment;
+    "memberAdressById(uint256)": FunctionFragment;
     "members(address)": FunctionFragment;
     "ops()": FunctionFragment;
     "parseLoanData(bytes)": FunctionFragment;
+    "poolByTimestamp(uint256)": FunctionFragment;
+    "poolId()": FunctionFragment;
+    "poolTimestamp()": FunctionFragment;
+    "sendNotif()": FunctionFragment;
+    "stopStreamExec(address)": FunctionFragment;
     "tokensReceived(address,address,address,uint256,bytes,bytes)": FunctionFragment;
+    "totalYieldEarnedMember(address)": FunctionFragment;
+    "withdraw()": FunctionFragment;
   };
 
   encodeFunctionData(functionFragment: "ETH", values?: undefined): string;
@@ -76,10 +116,21 @@ export interface FloowdyInterface extends utils.Interface {
     functionFragment: "beforeAgreementUpdated",
     values: [string, string, BytesLike, BytesLike, BytesLike]
   ): string;
+  encodeFunctionData(
+    functionFragment: "cancelTask",
+    values: [BytesLike]
+  ): string;
   encodeFunctionData(functionFragment: "cfa", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "checkStopStream",
+    values: [string]
+  ): string;
   encodeFunctionData(functionFragment: "gelato", values?: undefined): string;
   encodeFunctionData(functionFragment: "host", values?: undefined): string;
-  encodeFunctionData(functionFragment: "initialize", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "memberAdressById",
+    values: [BigNumberish]
+  ): string;
   encodeFunctionData(functionFragment: "members", values: [string]): string;
   encodeFunctionData(functionFragment: "ops", values?: undefined): string;
   encodeFunctionData(
@@ -87,9 +138,28 @@ export interface FloowdyInterface extends utils.Interface {
     values: [BytesLike]
   ): string;
   encodeFunctionData(
+    functionFragment: "poolByTimestamp",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(functionFragment: "poolId", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "poolTimestamp",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "sendNotif", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "stopStreamExec",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "tokensReceived",
     values: [string, string, string, BigNumberish, BytesLike, BytesLike]
   ): string;
+  encodeFunctionData(
+    functionFragment: "totalYieldEarnedMember",
+    values: [string]
+  ): string;
+  encodeFunctionData(functionFragment: "withdraw", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "ETH", data: BytesLike): Result;
   decodeFunctionResult(
@@ -125,10 +195,18 @@ export interface FloowdyInterface extends utils.Interface {
     functionFragment: "beforeAgreementUpdated",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "cancelTask", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "cfa", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "checkStopStream",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "gelato", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "host", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "memberAdressById",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "members", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "ops", data: BytesLike): Result;
   decodeFunctionResult(
@@ -136,20 +214,31 @@ export interface FloowdyInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "poolByTimestamp",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "poolId", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "poolTimestamp",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "sendNotif", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "stopStreamExec",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "tokensReceived",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "totalYieldEarnedMember",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
 
-  events: {
-    "Initialized(uint8)": EventFragment;
-  };
-
-  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
+  events: {};
 }
-
-export type InitializedEvent = TypedEvent<[number], { version: number }>;
-
-export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 
 export interface Floowdy extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -249,16 +338,26 @@ export interface Floowdy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
+    cancelTask(
+      _taskId: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     cfa(overrides?: CallOverrides): Promise<[string]>;
+
+    checkStopStream(
+      _receiver: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean, string] & { canExec: boolean; execPayload: string }>;
 
     gelato(overrides?: CallOverrides): Promise<[string]>;
 
     host(overrides?: CallOverrides): Promise<[string]>;
 
-    initialize(
-      _ops: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    memberAdressById(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
     members(
       arg0: string,
@@ -272,15 +371,17 @@ export interface Floowdy extends BaseContract {
         BigNumber,
         BigNumber,
         BigNumber,
+        BigNumber,
         BigNumber
       ] & {
         id: BigNumber;
         member: string;
         flow: BigNumber;
         flowGelatoId: string;
-        flowduration: BigNumber;
+        flowDuration: BigNumber;
         deposit: BigNumber;
         timestamp: BigNumber;
+        initTimestamp: BigNumber;
         yieldAccrued: BigNumber;
       }
     >;
@@ -292,6 +393,46 @@ export interface Floowdy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { duration: BigNumber }>;
 
+    poolByTimestamp(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber
+      ] & {
+        id: BigNumber;
+        timestamp: BigNumber;
+        totalFlow: BigNumber;
+        totalDeposit: BigNumber;
+        totalDepositFlow: BigNumber;
+        totalYield: BigNumber;
+        depositIndex: BigNumber;
+        flowIndex: BigNumber;
+        totalDelegated: BigNumber;
+      }
+    >;
+
+    poolId(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    poolTimestamp(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    sendNotif(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    stopStreamExec(
+      _receiver: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     tokensReceived(
       operator: string,
       from: string,
@@ -299,6 +440,15 @@ export interface Floowdy extends BaseContract {
       amount: BigNumberish,
       userData: BytesLike,
       operatorData: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    totalYieldEarnedMember(
+      _member: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { yieldMember: BigNumber }>;
+
+    withdraw(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
@@ -374,16 +524,26 @@ export interface Floowdy extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
+  cancelTask(
+    _taskId: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   cfa(overrides?: CallOverrides): Promise<string>;
+
+  checkStopStream(
+    _receiver: string,
+    overrides?: CallOverrides
+  ): Promise<[boolean, string] & { canExec: boolean; execPayload: string }>;
 
   gelato(overrides?: CallOverrides): Promise<string>;
 
   host(overrides?: CallOverrides): Promise<string>;
 
-  initialize(
-    _ops: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  memberAdressById(
+    arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   members(
     arg0: string,
@@ -397,15 +557,17 @@ export interface Floowdy extends BaseContract {
       BigNumber,
       BigNumber,
       BigNumber,
+      BigNumber,
       BigNumber
     ] & {
       id: BigNumber;
       member: string;
       flow: BigNumber;
       flowGelatoId: string;
-      flowduration: BigNumber;
+      flowDuration: BigNumber;
       deposit: BigNumber;
       timestamp: BigNumber;
+      initTimestamp: BigNumber;
       yieldAccrued: BigNumber;
     }
   >;
@@ -414,6 +576,46 @@ export interface Floowdy extends BaseContract {
 
   parseLoanData(data: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
 
+  poolByTimestamp(
+    arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<
+    [
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber
+    ] & {
+      id: BigNumber;
+      timestamp: BigNumber;
+      totalFlow: BigNumber;
+      totalDeposit: BigNumber;
+      totalDepositFlow: BigNumber;
+      totalYield: BigNumber;
+      depositIndex: BigNumber;
+      flowIndex: BigNumber;
+      totalDelegated: BigNumber;
+    }
+  >;
+
+  poolId(overrides?: CallOverrides): Promise<BigNumber>;
+
+  poolTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
+
+  sendNotif(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  stopStreamExec(
+    _receiver: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   tokensReceived(
     operator: string,
     from: string,
@@ -421,6 +623,15 @@ export interface Floowdy extends BaseContract {
     amount: BigNumberish,
     userData: BytesLike,
     operatorData: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  totalYieldEarnedMember(
+    _member: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  withdraw(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -490,13 +701,23 @@ export interface Floowdy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
+    cancelTask(_taskId: BytesLike, overrides?: CallOverrides): Promise<void>;
+
     cfa(overrides?: CallOverrides): Promise<string>;
+
+    checkStopStream(
+      _receiver: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean, string] & { canExec: boolean; execPayload: string }>;
 
     gelato(overrides?: CallOverrides): Promise<string>;
 
     host(overrides?: CallOverrides): Promise<string>;
 
-    initialize(_ops: string, overrides?: CallOverrides): Promise<void>;
+    memberAdressById(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     members(
       arg0: string,
@@ -510,15 +731,17 @@ export interface Floowdy extends BaseContract {
         BigNumber,
         BigNumber,
         BigNumber,
+        BigNumber,
         BigNumber
       ] & {
         id: BigNumber;
         member: string;
         flow: BigNumber;
         flowGelatoId: string;
-        flowduration: BigNumber;
+        flowDuration: BigNumber;
         deposit: BigNumber;
         timestamp: BigNumber;
+        initTimestamp: BigNumber;
         yieldAccrued: BigNumber;
       }
     >;
@@ -530,6 +753,41 @@ export interface Floowdy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    poolByTimestamp(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber
+      ] & {
+        id: BigNumber;
+        timestamp: BigNumber;
+        totalFlow: BigNumber;
+        totalDeposit: BigNumber;
+        totalDepositFlow: BigNumber;
+        totalYield: BigNumber;
+        depositIndex: BigNumber;
+        flowIndex: BigNumber;
+        totalDelegated: BigNumber;
+      }
+    >;
+
+    poolId(overrides?: CallOverrides): Promise<BigNumber>;
+
+    poolTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
+
+    sendNotif(overrides?: CallOverrides): Promise<void>;
+
+    stopStreamExec(_receiver: string, overrides?: CallOverrides): Promise<void>;
+
     tokensReceived(
       operator: string,
       from: string,
@@ -539,12 +797,16 @@ export interface Floowdy extends BaseContract {
       operatorData: BytesLike,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    totalYieldEarnedMember(
+      _member: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    withdraw(overrides?: CallOverrides): Promise<boolean>;
   };
 
-  filters: {
-    "Initialized(uint8)"(version?: null): InitializedEventFilter;
-    Initialized(version?: null): InitializedEventFilter;
-  };
+  filters: {};
 
   estimateGas: {
     ETH(overrides?: CallOverrides): Promise<BigNumber>;
@@ -618,15 +880,25 @@ export interface Floowdy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    cancelTask(
+      _taskId: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     cfa(overrides?: CallOverrides): Promise<BigNumber>;
+
+    checkStopStream(
+      _receiver: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     gelato(overrides?: CallOverrides): Promise<BigNumber>;
 
     host(overrides?: CallOverrides): Promise<BigNumber>;
 
-    initialize(
-      _ops: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+    memberAdressById(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     members(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
@@ -638,6 +910,24 @@ export interface Floowdy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    poolByTimestamp(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    poolId(overrides?: CallOverrides): Promise<BigNumber>;
+
+    poolTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
+
+    sendNotif(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    stopStreamExec(
+      _receiver: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     tokensReceived(
       operator: string,
       from: string,
@@ -645,6 +935,15 @@ export interface Floowdy extends BaseContract {
       amount: BigNumberish,
       userData: BytesLike,
       operatorData: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    totalYieldEarnedMember(
+      _member: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    withdraw(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
@@ -721,15 +1020,25 @@ export interface Floowdy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    cancelTask(
+      _taskId: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     cfa(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    checkStopStream(
+      _receiver: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     gelato(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     host(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    initialize(
-      _ops: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+    memberAdressById(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     members(
@@ -744,6 +1053,24 @@ export interface Floowdy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    poolByTimestamp(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    poolId(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    poolTimestamp(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    sendNotif(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    stopStreamExec(
+      _receiver: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     tokensReceived(
       operator: string,
       from: string,
@@ -751,6 +1078,15 @@ export interface Floowdy extends BaseContract {
       amount: BigNumberish,
       userData: BytesLike,
       operatorData: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    totalYieldEarnedMember(
+      _member: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    withdraw(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

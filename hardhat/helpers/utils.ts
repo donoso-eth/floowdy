@@ -22,9 +22,9 @@ export async function initEnv(hre: HardhatRuntimeEnvironment): Promise<any[]> {
     const deployer_wallet = new Wallet(privKeyDEPLOYER);
     const deployer = await deployer_wallet.connect(deployer_provider);
 
-    const privKeyUSER = process.env['USER1_KEY'] as BytesLike;
-    const user_wallet = new Wallet(privKeyUSER);
-    const user1 = await user_wallet.connect(deployer_provider);
+    // const privKeyUSER = process.env['USER1_KEY'] as BytesLike;
+    // const user_wallet = new Wallet(privKeyUSER);
+    // const user1 = await user_wallet.connect(deployer_provider);
 
     // const privKeyUS,ER2 = process.env['USER2_KEY'] as BytesLike;
     // const user2_wallet = new Wallet(privKeyUSER2);
@@ -39,7 +39,7 @@ export async function initEnv(hre: HardhatRuntimeEnvironment): Promise<any[]> {
     // const user4 = await user4_wallet.connect(deployer_provider);
 
   
-    return [deployer, user1];
+    return [deployer];
   }
 }
 
@@ -109,4 +109,8 @@ export async function mineBlocks(hre:HardhatRuntimeEnvironment, nrOfBlocks:numbe
       params: [],
     });
   }
+}
+
+export async function setNextBlockTimestamp(hre: HardhatRuntimeEnvironment,timestamp: number): Promise<void> {
+  await hre.ethers.provider.send('evm_setNextBlockTimestamp', [timestamp]);
 }

@@ -25,6 +25,8 @@ import {CFAv1Library} from "@superfluid-finance/ethereum-contracts/contracts/app
 import {OpsReady} from "./gelato/OpsReady.sol";
 import {IOps} from "./gelato/IOps.sol";
 
+import { IPUSHCommInterface} from "./epns/IPUSHCommInterface.sol";
+
 import {DataTypes} from "./libraries/DataTypes.sol";
 import {Events} from "./libraries/Events.sol";
 
@@ -50,31 +52,29 @@ contract Floowdy is SuperAppBase, IERC777Recipient {
 
     uint256 totalMembers;
     mapping(uint256 => DataTypes.Pool) public poolByTimestamp;
-    uint256 poolId;
-    uint256 poolTimestamp;
+    uint256 public poolId;
+    uint256 public poolTimestamp;
 
     address public ops;
     address payable public gelato;
     address public constant ETH = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 
-    constructor(
-        ISuperfluid _host,
-        ISuperToken _superToken,
-        IERC20 _token,
-        IPool _pool,
-        IERC20 _aToken,
-        address _ops
-    ) {
-        require(address(_host) != address(0), "host is zero address");
+    address epnsComm;
+    address epnsChannel;
+
+    constructor( DataTypes.Floowdy_Init memory floowdy_init) {
+        require(address(floowdy_init.host) != address(0), "host is zero address");
         require(
-            address(_superToken) != address(0),
+            address(floowdy_init.superToken) != address(0),
             "acceptedToken is zero address"
         );
-        host = _host;
-        superToken = _superToken;
-        token = _token;
-        pool = _pool;
-        aToken = _aToken;
+        host = floowdy_init.host;
+        superToken = floowdy_init.superToken;
+        token = floowdy_init.token;
+        pool = floowdy_init.pool;
+        aToken = floowdy_init.aToken;
+        epnsComm = floowdy_init.epnsComm;
+        epnsChannel = floowdy_init.epnsChannel;
 
         cfa = IConstantFlowAgreementV1(
             address(
@@ -96,7 +96,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient {
         token.approve(address(pool), MAX_INT);
 
         //// tokens receie implementation
-        ops = _ops;
+        ops = floowdy_init.ops;
         gelato = IOps(ops).gelato();
 
         //// tokens receie implementation
@@ -642,4 +642,33 @@ contract Floowdy is SuperAppBase, IERC777Recipient {
     }
 
     // #endregion Gelato functions
+
+
+
+    // ============= =============  EPNS  ============= ============= //
+    // #region  EPNS
+
+      function sendNotif() public {
+
+      IPUSHCommInterface(epnsComm).sendNotification(
+          epnsChannel, // from channel - recommended to set channel via dApp and put it's value -> then once contract is deployed, go back and add the contract address as delegate for your channel
+          address(this), // to recipient, put address(this) in case you want Broadcast or Subset. For Targetted put the address to which you want to send
+          bytes(
+              string(
+                  // We are passing identity here: https://docs.epns.io/developers/developer-guides/sending-notifications/advanced/notification-payload-types/identity/payload-identity-implementations
+                  abi.encodePacked(
+                      "0", // this is notification identity: https://docs.epns.io/developers/developer-guides/sending-notifications/advanced/notification-payload-types/identity/payload-identity-implementations
+                      "+", // segregator
+                      "3", // this is payload type: https://docs.epns.io/developers/developer-guides/sending-notifications/advanced/notification-payload-types/payload (1, 3 or 4) = (Broadcast, targetted or subset)
+                      "+", // segregator
+                      "Title", // this is notificaiton title
+                      "+", // segregator
+                      "Body" // notification body
+                  )
+              )
+          )
+      );
+      }
+
+     // endregion EPNS 
 }

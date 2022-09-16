@@ -3,7 +3,9 @@ pragma solidity ^0.8.0;
 
 
 import {ISuperToken} from "@superfluid-finance/ethereum-contracts/contracts/interfaces/superfluid/ISuperToken.sol";
-
+import {ISuperfluid, ISuperToken} from "@superfluid-finance/ethereum-contracts/contracts/interfaces/superfluid/ISuperfluid.sol";
+import {SafeERC20, IERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import {IPool} from "../aave/IPool.sol";
 /**
  * @title DataTypes
  * @author donoso_eth
@@ -12,7 +14,20 @@ import {ISuperToken} from "@superfluid-finance/ethereum-contracts/contracts/inte
  */
 library DataTypes {
 
+  struct Floowdy_Init {
 
+        ISuperfluid host;
+        ISuperToken superToken;
+        IERC20 token;
+        IPool pool;
+        IERC20 aToken;
+        address ops;
+        address epnsComm;
+        address epnsChannel;
+  }
+  
+  
+  
   struct Member {
     uint256 id;
     address member;
