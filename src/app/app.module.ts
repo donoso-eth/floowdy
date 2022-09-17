@@ -22,7 +22,7 @@ import { ERC777Service } from './shared/services/erc777.service';
 import { GraphQlModule } from './dapp-injector/services/graph-ql/graph-ql.module';
 import { HttpClientModule } from '@angular/common/http';
 
-const network = 'localhost';
+const network = 'goerli';
 
 @NgModule({
   declarations: [

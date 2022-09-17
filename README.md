@@ -4,6 +4,8 @@ This project is developed in the frame of the Eth Online 2022.
 
 Floowdy aims to help web3 being more robust and secure.
 
+Webb app deployed under [https://floowdy.web.app](https://floowdy.web.app)
+
 ## Pool
 
 The pool consists of two subpools (deposit and streams) accept deposits or streams of Superfluid Supertoken and will after a threshold is met recursively unwrap the tokens and supply to the aave protocol.
