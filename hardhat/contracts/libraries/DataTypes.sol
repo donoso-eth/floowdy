@@ -34,6 +34,7 @@ library DataTypes {
     uint256 timestamp;
     uint256 initTimestamp;
     uint256 yieldAccrued;
+    uint256 amountLocked;
   }
 
   struct Pool {
@@ -50,6 +51,7 @@ library DataTypes {
 
 
   enum CreditStatus {
+    NONE,
     PENDING,
     APPROVED,
     REJECTED
@@ -66,5 +68,6 @@ library DataTypes {
     uint256 delegators;
     mapping (address=> bool) delegatorsStatus;
     uint256 delegatorsAmount;
+    bytes32 gelatoTaskId;
   }
 }

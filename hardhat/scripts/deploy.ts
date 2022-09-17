@@ -15,6 +15,7 @@ import { abi_erc20mint } from "../helpers/abis/ERC20Mint";
 import { initEnv, waitForTx } from "../helpers/utils";
 import { Events__factory, Floowdy__factory } from "../typechain-types";
 import { FloowdyInitStruct } from "hardhat/typechain-types/Floowdy";
+import { INETWORK_CONFIG } from "hardhat/helpers/models";
 
 
 interface ICONTRACT_DEPLOY {
@@ -33,11 +34,7 @@ ensureDir(contract_path)
 const eventAbi:any[] = Events__factory.abi;
 
 
-let networks_config = JSON.parse(readFileSync( join(processDir,'networks.config.json'),'utf-8')) as 
-{ [key:string]:{ ops:string, host:string, token:string, superToken:string, aavePool:string, aToken:string,
-  aStableDebtToken:string,
-  epnsComm:string,
-  epnsChanel:string}}
+let networks_config = JSON.parse(readFileSync( join(processDir,'networks.config.json'),'utf-8')) as INETWORK_CONFIG
 
 
 async function main() {
@@ -123,18 +120,18 @@ console.log(floodyInit);
       join(contract_path, 'interfaces', `${toDeployContract.name}.ts`)
     );
 
-    let erc20 = new ethers.Contract(
-      '0xA2025B15a1757311bfD68cb14eaeFCc237AF5b43',abi_erc20mint,
-      deployer
-    );
+    // let erc20 = new ethers.Contract(
+    //   '0xA2025B15a1757311bfD68cb14eaeFCc237AF5b43',abi_erc20mint,
+    //   deployer
+    // );
 
-    let balance = await erc20.balanceOf(floowdy.address)
-    console.log(balance)
-    let amount = "100000000";
-    await waitForTx(erc20["mint(address,uint256)"]( floowdy.address,amount ))
+    // let balance = await erc20.balanceOf(floowdy.address)
+    // console.log(balance)
+    // let amount = "100000000";
+    // await waitForTx(erc20["mint(address,uint256)"]( floowdy.address,amount ))
  
-    balance = await erc20.balanceOf(floowdy.address)
-    console.log(balance)
+    // balance = await erc20.balanceOf(floowdy.address)
+    // console.log(balance)
 
 
   

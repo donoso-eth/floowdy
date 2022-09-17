@@ -156,9 +156,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
     _memberUpdate(_member);
 
     // poolByTimestamp[block.timestamp].totalShares = poolByTimestamp[block.timestamp].totalShares + inDeposit - outDeposit;
-    poolByTimestamp[block.timestamp].totalDeposit =
-      poolByTimestamp[block.timestamp].totalDeposit -
-      amount;
+    poolByTimestamp[block.timestamp].totalDeposit += amount;
 
     DataTypes.Member storage member = _getMember(_member);
 
@@ -438,7 +436,9 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
 
   function requestCredit(uint256 amount) external onlyMember onlyOneCredit {
     uint256 maxAmount = getMaxAmount();
-    require(amount <= maxAmount, "NOT_ENOUGH_COLLATERAL");
+    console.log(maxAmount);
+    console.log(amount*100);
+    require(amount  <= maxAmount, "NOT_ENOUGH_COLLATERAL");
 
     uint256 delegatorsAmount = amount.div(5);
     totalCredits++;
@@ -485,15 +485,17 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
 
   function getMaxAmount() public view returns (uint256 maxAmount) {
     uint256 balance = _getMemberBalance(msg.sender);
-    maxAmount = (1 + (100 - MAX_ALLOWANCE).div(100)).mul(balance);
+    console.log(balance);
+    maxAmount = (100 + (100 - MAX_ALLOWANCE)).mul(balance);
   }
 
   modifier onlyOneCredit() {
     uint256 id = creditIdByAddresse[msg.sender];
     DataTypes.Credit storage credit = creditsById[id];
+    console.log(492, uint256(credit.status));
     require(
       credit.status != DataTypes.CreditStatus.PENDING,
-      "ALREADY_CREDIT_REQIEST"
+      "ALREADY_CREDIT_REQUEST"
     );
     _;
   }
@@ -534,11 +536,13 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
 
     uint256 duration = 0;
     bytes32 taskId = bytes32(0);
+    console.log(decodedContext.userData.length);
     if (decodedContext.userData.length > 0) {
       duration = parseLoanData(host.decodeCtx(_ctx).userData);
       taskId = createStopStreamTask(sender, duration);
     }
     _updateFlow(sender, inFlowRate, taskId, duration);
+    console.log('juanito');
     return newCtx;
   }
 
@@ -686,37 +690,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
     }
   }
 
- // #endregionTask1 push erc20 to aave
-
-  modifier onlyOps() {
-    require(msg.sender == ops, "OpsReady: onlyOps");
-    _;
-  }
-
-  function cancelTask(bytes32 _taskId) public {
-    IOps(ops).cancelTask(_taskId);
-  }
-
-  function withdraw() external returns (bool) {
-    (bool result, ) = payable(msg.sender).call{value: address(this).balance}(
-      ""
-    );
-    return result;
-  }
-
-  receive() external payable {}
-
-  function _transfer(uint256 _amount, address _paymentToken) internal {
-    if (_paymentToken == ETH) {
-      (bool success, ) = gelato.call{value: _amount}("");
-      require(success, "_transfer: ETH transfer failed");
-    } else {
-      SafeERC20.safeTransfer(IERC20(_paymentToken), gelato, _amount);
-    }
-  }
-
-  // #endregion Gelato functions
-
+  // #endregionTask1 push erc20 to aave
 
   // #region Task N close creditVoting
 
@@ -725,19 +699,19 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
     returns (bytes32 taskId)
   {
     taskId = IOps(ops).createTimedTask(
-      uint128(block.timestamp +_dennyPeriod)),
+      uint128(block.timestamp + _dennyPeriod),
       600,
       address(this),
-      this.stopStreamExec.selector,
+      this.stopCreditPeriodExec.selector,
       address(this),
-      abi.encodeWithSelector(this.checkStopStream.selector, _member),
+      abi.encodeWithSelector(this.checkCreditPeriod.selector, _creditId),
       ETH,
       false
     );
   }
 
   // called by Gelato Execs
-  function checkStopStream(address _receiver)
+  function checkCreditPeriod(uint256 _creditId)
     external
     pure
     returns (bool canExec, bytes memory execPayload)
@@ -745,8 +719,8 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
     canExec = true;
 
     execPayload = abi.encodeWithSelector(
-      this.stopStreamExec.selector,
-      address(_receiver)
+      this.stopCreditPeriodExec.selector,
+      _creditId
     );
   }
 
@@ -754,7 +728,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
   function stopCreditPeriodExec(uint256 creditId) external onlyOps {
     //// check if
 
-
+    DataTypes.Credit storage credit = creditsById[creditId];
 
     //// every task will be payed with a transfer, therefore receive(), we have to fund the contract
     uint256 fee;
@@ -764,19 +738,22 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
 
     _transfer(fee, feeToken);
 
-    (, int96 inFlowRate, , ) = cfa.getFlow(
-      superToken,
-      _receiver,
-      address(this)
-    );
-
-    if (inFlowRate > 0) {
-      _cfaLib.deleteFlow(_receiver, address(this), superToken);
-      _updateFlow(_receiver, 0, 0, 0);
+    if (
+      credit.status == DataTypes.CreditStatus.PENDING && credit.delegators == 5
+    ) {
+      credit.status = DataTypes.CreditStatus.APPROVED;
+      // NOtify approve
+      //do the dance
+    } else {
+      credit.status = DataTypes.CreditStatus.REJECTED;
+      // notify Rejected
+      // clean
     }
+
+    cancelTask(credit.gelatoTaskId);
   }
 
- // #endregion Task N close creditVoting
+  // #endregion Task N close creditVoting
 
   modifier onlyOps() {
     require(msg.sender == ops, "OpsReady: onlyOps");
@@ -806,7 +783,6 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
   }
 
   // #endregion Gelato functions
-
 
   // ============= =============  EPNS  ============= ============= //
   // #region  EPNS

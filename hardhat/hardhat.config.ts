@@ -28,8 +28,8 @@ if (existsSync('./typechain-types')) {
 
 const mainnetGwei = 21;
 
-let defaultNetwork = 'mumbai';
-// defaultNetwork = 'localhost';
+let defaultNetwork = 'goerli';
+defaultNetwork = 'localhost';
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -69,7 +69,7 @@ const config: HardhatUserConfig = {
     hardhat: {
       forking: {
         url: `https://goerli.infura.io/v3/1e43f3d31eea4244bf25ed4c13bfde0e`,
-        blockNumber: 7566385,
+      blockNumber: 7608752,
       },
     },
     localhost: {
@@ -170,8 +170,9 @@ const config: HardhatUserConfig = {
     currency: 'USD',
   },
   etherscan: {
-      apiKey: process.env['MUMBAI_API_KEY'],
-     //apiKey: process.env['ETHERSCAN_API_KEY'],
+     
+    //apiKey: process.env['MUMBAI_API_KEY'],
+     apiKey: process.env['ETHERSCAN_API_KEY'],
   },
 };
 

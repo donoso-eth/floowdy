@@ -13,7 +13,7 @@ import {
   Signer,
   utils,
 } from "ethers";
-import { FunctionFragment, Result } from "@ethersproject/abi";
+import { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
 import { Listener, Provider } from "@ethersproject/providers";
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
@@ -62,20 +62,36 @@ export interface FloowdyInterface extends utils.Interface {
     "beforeAgreementUpdated(address,address,bytes32,bytes,bytes)": FunctionFragment;
     "cancelTask(bytes32)": FunctionFragment;
     "cfa()": FunctionFragment;
+    "checkCreditPeriod(uint256)": FunctionFragment;
     "checkStopStream(address)": FunctionFragment;
+    "creditCheckIn(uint256)": FunctionFragment;
+    "creditCheckOut(uint256)": FunctionFragment;
+    "creditIdByAddresse(address)": FunctionFragment;
+    "creditsById(uint256)": FunctionFragment;
     "gelato()": FunctionFragment;
+    "getMaxAmount()": FunctionFragment;
     "host()": FunctionFragment;
     "memberAdressById(uint256)": FunctionFragment;
     "members(address)": FunctionFragment;
     "ops()": FunctionFragment;
+    "owner()": FunctionFragment;
     "parseLoanData(bytes)": FunctionFragment;
     "poolByTimestamp(uint256)": FunctionFragment;
     "poolId()": FunctionFragment;
     "poolTimestamp()": FunctionFragment;
+    "rejectCredit(uint256)": FunctionFragment;
+    "renounceOwnership()": FunctionFragment;
+    "requestCredit(uint256)": FunctionFragment;
     "sendNotif()": FunctionFragment;
+    "setCreditFee(uint256)": FunctionFragment;
+    "setMaxAllowance(uint256)": FunctionFragment;
+    "setVotingPeriod(uint256)": FunctionFragment;
+    "stopCreditPeriodExec(uint256)": FunctionFragment;
     "stopStreamExec(address)": FunctionFragment;
     "tokensReceived(address,address,address,uint256,bytes,bytes)": FunctionFragment;
+    "totalCredits()": FunctionFragment;
     "totalYieldEarnedMember(address)": FunctionFragment;
+    "transferOwnership(address)": FunctionFragment;
     "withdraw()": FunctionFragment;
   };
 
@@ -122,10 +138,34 @@ export interface FloowdyInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "cfa", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "checkCreditPeriod",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "checkStopStream",
     values: [string]
   ): string;
+  encodeFunctionData(
+    functionFragment: "creditCheckIn",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "creditCheckOut",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "creditIdByAddresse",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "creditsById",
+    values: [BigNumberish]
+  ): string;
   encodeFunctionData(functionFragment: "gelato", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "getMaxAmount",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "host", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "memberAdressById",
@@ -133,6 +173,7 @@ export interface FloowdyInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "members", values: [string]): string;
   encodeFunctionData(functionFragment: "ops", values?: undefined): string;
+  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "parseLoanData",
     values: [BytesLike]
@@ -146,7 +187,35 @@ export interface FloowdyInterface extends utils.Interface {
     functionFragment: "poolTimestamp",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "rejectCredit",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "renounceOwnership",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "requestCredit",
+    values: [BigNumberish]
+  ): string;
   encodeFunctionData(functionFragment: "sendNotif", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "setCreditFee",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setMaxAllowance",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setVotingPeriod",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "stopCreditPeriodExec",
+    values: [BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "stopStreamExec",
     values: [string]
@@ -156,7 +225,15 @@ export interface FloowdyInterface extends utils.Interface {
     values: [string, string, string, BigNumberish, BytesLike, BytesLike]
   ): string;
   encodeFunctionData(
+    functionFragment: "totalCredits",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "totalYieldEarnedMember",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "transferOwnership",
     values: [string]
   ): string;
   encodeFunctionData(functionFragment: "withdraw", values?: undefined): string;
@@ -198,10 +275,34 @@ export interface FloowdyInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "cancelTask", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "cfa", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "checkCreditPeriod",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "checkStopStream",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "creditCheckIn",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "creditCheckOut",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "creditIdByAddresse",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "creditsById",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "gelato", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getMaxAmount",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "host", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "memberAdressById",
@@ -209,6 +310,7 @@ export interface FloowdyInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "members", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "ops", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "parseLoanData",
     data: BytesLike
@@ -222,7 +324,35 @@ export interface FloowdyInterface extends utils.Interface {
     functionFragment: "poolTimestamp",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "rejectCredit",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "renounceOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "requestCredit",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "sendNotif", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setCreditFee",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setMaxAllowance",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setVotingPeriod",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "stopCreditPeriodExec",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "stopStreamExec",
     data: BytesLike
@@ -232,13 +362,33 @@ export interface FloowdyInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "totalCredits",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "totalYieldEarnedMember",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
 
-  events: {};
+  events: {
+    "OwnershipTransferred(address,address)": EventFragment;
+  };
+
+  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
 }
+
+export type OwnershipTransferredEvent = TypedEvent<
+  [string, string],
+  { previousOwner: string; newOwner: string }
+>;
+
+export type OwnershipTransferredEventFilter =
+  TypedEventFilter<OwnershipTransferredEvent>;
 
 export interface Floowdy extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -345,12 +495,65 @@ export interface Floowdy extends BaseContract {
 
     cfa(overrides?: CallOverrides): Promise<[string]>;
 
+    checkCreditPeriod(
+      _creditId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[boolean, string] & { canExec: boolean; execPayload: string }>;
+
     checkStopStream(
       _receiver: string,
       overrides?: CallOverrides
     ): Promise<[boolean, string] & { canExec: boolean; execPayload: string }>;
 
+    creditCheckIn(
+      creditId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    creditCheckOut(
+      creditId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    creditIdByAddresse(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    creditsById(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [
+        BigNumber,
+        string,
+        BigNumber,
+        BigNumber,
+        number,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        string
+      ] & {
+        id: BigNumber;
+        requester: string;
+        initTimestamp: BigNumber;
+        denyPeriodTimestamp: BigNumber;
+        status: number;
+        amount: BigNumber;
+        rate: BigNumber;
+        delegators: BigNumber;
+        delegatorsAmount: BigNumber;
+        gelatoTaskId: string;
+      }
+    >;
+
     gelato(overrides?: CallOverrides): Promise<[string]>;
+
+    getMaxAmount(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { maxAmount: BigNumber }>;
 
     host(overrides?: CallOverrides): Promise<[string]>;
 
@@ -372,6 +575,7 @@ export interface Floowdy extends BaseContract {
         BigNumber,
         BigNumber,
         BigNumber,
+        BigNumber,
         BigNumber
       ] & {
         id: BigNumber;
@@ -383,10 +587,13 @@ export interface Floowdy extends BaseContract {
         timestamp: BigNumber;
         initTimestamp: BigNumber;
         yieldAccrued: BigNumber;
+        amountLocked: BigNumber;
       }
     >;
 
     ops(overrides?: CallOverrides): Promise<[string]>;
+
+    owner(overrides?: CallOverrides): Promise<[string]>;
 
     parseLoanData(
       data: BytesLike,
@@ -424,7 +631,41 @@ export interface Floowdy extends BaseContract {
 
     poolTimestamp(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    rejectCredit(
+      creditId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    renounceOwnership(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    requestCredit(
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     sendNotif(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setCreditFee(
+      _CREDIT_FEE: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setMaxAllowance(
+      _MAX_ALLOWANCE: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setVotingPeriod(
+      _VOTING_PERIOD: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    stopCreditPeriodExec(
+      creditId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -443,10 +684,17 @@ export interface Floowdy extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    totalCredits(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     totalYieldEarnedMember(
       _member: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { yieldMember: BigNumber }>;
+
+    transferOwnership(
+      newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     withdraw(
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -531,12 +779,63 @@ export interface Floowdy extends BaseContract {
 
   cfa(overrides?: CallOverrides): Promise<string>;
 
+  checkCreditPeriod(
+    _creditId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<[boolean, string] & { canExec: boolean; execPayload: string }>;
+
   checkStopStream(
     _receiver: string,
     overrides?: CallOverrides
   ): Promise<[boolean, string] & { canExec: boolean; execPayload: string }>;
 
+  creditCheckIn(
+    creditId: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  creditCheckOut(
+    creditId: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  creditIdByAddresse(
+    arg0: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  creditsById(
+    arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<
+    [
+      BigNumber,
+      string,
+      BigNumber,
+      BigNumber,
+      number,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      string
+    ] & {
+      id: BigNumber;
+      requester: string;
+      initTimestamp: BigNumber;
+      denyPeriodTimestamp: BigNumber;
+      status: number;
+      amount: BigNumber;
+      rate: BigNumber;
+      delegators: BigNumber;
+      delegatorsAmount: BigNumber;
+      gelatoTaskId: string;
+    }
+  >;
+
   gelato(overrides?: CallOverrides): Promise<string>;
+
+  getMaxAmount(overrides?: CallOverrides): Promise<BigNumber>;
 
   host(overrides?: CallOverrides): Promise<string>;
 
@@ -558,6 +857,7 @@ export interface Floowdy extends BaseContract {
       BigNumber,
       BigNumber,
       BigNumber,
+      BigNumber,
       BigNumber
     ] & {
       id: BigNumber;
@@ -569,10 +869,13 @@ export interface Floowdy extends BaseContract {
       timestamp: BigNumber;
       initTimestamp: BigNumber;
       yieldAccrued: BigNumber;
+      amountLocked: BigNumber;
     }
   >;
 
   ops(overrides?: CallOverrides): Promise<string>;
+
+  owner(overrides?: CallOverrides): Promise<string>;
 
   parseLoanData(data: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -607,7 +910,41 @@ export interface Floowdy extends BaseContract {
 
   poolTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
 
+  rejectCredit(
+    creditId: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  renounceOwnership(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  requestCredit(
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   sendNotif(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setCreditFee(
+    _CREDIT_FEE: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setMaxAllowance(
+    _MAX_ALLOWANCE: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setVotingPeriod(
+    _VOTING_PERIOD: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  stopCreditPeriodExec(
+    creditId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -626,10 +963,17 @@ export interface Floowdy extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  totalCredits(overrides?: CallOverrides): Promise<BigNumber>;
+
   totalYieldEarnedMember(
     _member: string,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  transferOwnership(
+    newOwner: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   withdraw(
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -705,12 +1049,63 @@ export interface Floowdy extends BaseContract {
 
     cfa(overrides?: CallOverrides): Promise<string>;
 
+    checkCreditPeriod(
+      _creditId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[boolean, string] & { canExec: boolean; execPayload: string }>;
+
     checkStopStream(
       _receiver: string,
       overrides?: CallOverrides
     ): Promise<[boolean, string] & { canExec: boolean; execPayload: string }>;
 
+    creditCheckIn(
+      creditId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    creditCheckOut(
+      creditId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    creditIdByAddresse(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    creditsById(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [
+        BigNumber,
+        string,
+        BigNumber,
+        BigNumber,
+        number,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        string
+      ] & {
+        id: BigNumber;
+        requester: string;
+        initTimestamp: BigNumber;
+        denyPeriodTimestamp: BigNumber;
+        status: number;
+        amount: BigNumber;
+        rate: BigNumber;
+        delegators: BigNumber;
+        delegatorsAmount: BigNumber;
+        gelatoTaskId: string;
+      }
+    >;
+
     gelato(overrides?: CallOverrides): Promise<string>;
+
+    getMaxAmount(overrides?: CallOverrides): Promise<BigNumber>;
 
     host(overrides?: CallOverrides): Promise<string>;
 
@@ -732,6 +1127,7 @@ export interface Floowdy extends BaseContract {
         BigNumber,
         BigNumber,
         BigNumber,
+        BigNumber,
         BigNumber
       ] & {
         id: BigNumber;
@@ -743,10 +1139,13 @@ export interface Floowdy extends BaseContract {
         timestamp: BigNumber;
         initTimestamp: BigNumber;
         yieldAccrued: BigNumber;
+        amountLocked: BigNumber;
       }
     >;
 
     ops(overrides?: CallOverrides): Promise<string>;
+
+    owner(overrides?: CallOverrides): Promise<string>;
 
     parseLoanData(
       data: BytesLike,
@@ -784,7 +1183,39 @@ export interface Floowdy extends BaseContract {
 
     poolTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
 
+    rejectCredit(
+      creditId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    renounceOwnership(overrides?: CallOverrides): Promise<void>;
+
+    requestCredit(
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     sendNotif(overrides?: CallOverrides): Promise<void>;
+
+    setCreditFee(
+      _CREDIT_FEE: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setMaxAllowance(
+      _MAX_ALLOWANCE: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setVotingPeriod(
+      _VOTING_PERIOD: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    stopCreditPeriodExec(
+      creditId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     stopStreamExec(_receiver: string, overrides?: CallOverrides): Promise<void>;
 
@@ -798,15 +1229,31 @@ export interface Floowdy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    totalCredits(overrides?: CallOverrides): Promise<BigNumber>;
+
     totalYieldEarnedMember(
       _member: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    transferOwnership(
+      newOwner: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     withdraw(overrides?: CallOverrides): Promise<boolean>;
   };
 
-  filters: {};
+  filters: {
+    "OwnershipTransferred(address,address)"(
+      previousOwner?: string | null,
+      newOwner?: string | null
+    ): OwnershipTransferredEventFilter;
+    OwnershipTransferred(
+      previousOwner?: string | null,
+      newOwner?: string | null
+    ): OwnershipTransferredEventFilter;
+  };
 
   estimateGas: {
     ETH(overrides?: CallOverrides): Promise<BigNumber>;
@@ -887,12 +1334,39 @@ export interface Floowdy extends BaseContract {
 
     cfa(overrides?: CallOverrides): Promise<BigNumber>;
 
+    checkCreditPeriod(
+      _creditId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     checkStopStream(
       _receiver: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    creditCheckIn(
+      creditId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    creditCheckOut(
+      creditId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    creditIdByAddresse(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    creditsById(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     gelato(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getMaxAmount(overrides?: CallOverrides): Promise<BigNumber>;
 
     host(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -904,6 +1378,8 @@ export interface Floowdy extends BaseContract {
     members(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     ops(overrides?: CallOverrides): Promise<BigNumber>;
+
+    owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     parseLoanData(
       data: BytesLike,
@@ -919,7 +1395,41 @@ export interface Floowdy extends BaseContract {
 
     poolTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
 
+    rejectCredit(
+      creditId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    renounceOwnership(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    requestCredit(
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     sendNotif(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setCreditFee(
+      _CREDIT_FEE: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setMaxAllowance(
+      _MAX_ALLOWANCE: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setVotingPeriod(
+      _VOTING_PERIOD: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    stopCreditPeriodExec(
+      creditId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -938,9 +1448,16 @@ export interface Floowdy extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    totalCredits(overrides?: CallOverrides): Promise<BigNumber>;
+
     totalYieldEarnedMember(
       _member: string,
       overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    transferOwnership(
+      newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     withdraw(
@@ -1027,12 +1544,39 @@ export interface Floowdy extends BaseContract {
 
     cfa(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    checkCreditPeriod(
+      _creditId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     checkStopStream(
       _receiver: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    creditCheckIn(
+      creditId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    creditCheckOut(
+      creditId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    creditIdByAddresse(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    creditsById(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     gelato(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getMaxAmount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     host(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1048,6 +1592,8 @@ export interface Floowdy extends BaseContract {
 
     ops(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     parseLoanData(
       data: BytesLike,
       overrides?: CallOverrides
@@ -1062,7 +1608,41 @@ export interface Floowdy extends BaseContract {
 
     poolTimestamp(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    rejectCredit(
+      creditId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    renounceOwnership(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    requestCredit(
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     sendNotif(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setCreditFee(
+      _CREDIT_FEE: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setMaxAllowance(
+      _MAX_ALLOWANCE: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setVotingPeriod(
+      _VOTING_PERIOD: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    stopCreditPeriodExec(
+      creditId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1081,9 +1661,16 @@ export interface Floowdy extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    totalCredits(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     totalYieldEarnedMember(
       _member: string,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    transferOwnership(
+      newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     withdraw(

@@ -3,6 +3,7 @@ import { task } from 'hardhat/config';
 import { initEnv } from '../helpers/utils';
 import { join } from 'path';
 import { FloowdyInitStruct } from '../typechain-types/Floowdy';
+import { INETWORK_CONFIG } from 'hardhat/helpers/models';
 
 const contract_path_relative = '../src/assets/contracts/';
 const processDir = process.cwd();
@@ -21,15 +22,11 @@ task('verify-contract', 'verify').setAction(async ({}, hre) => {
     )
   );
 
-  let networks_config = JSON.parse(readFileSync( join(processDir,'networks.config.json'),'utf-8')) as 
-  { [key:string]:{ ops:string, host:string, token:string, superToken:string, aavePool:string, aToken:string,
-    aStableDebtToken:string,
-    epnsComm:string,
-    epnsChanel:string}}
+  let networks_config = JSON.parse(readFileSync( join(processDir,'networks.config.json'),'utf-8')) as INETWORK_CONFIG;
 
 //  '0xB3f5503f93d5Ef84b06993a1975B9D21B962892F' ops address
 
-      let   network_params = networks_config["mumbai"];
+      let   network_params = networks_config["goerli"];
 
   const [deployer] = await initEnv(hre);
   let floodyInit:FloowdyInitStruct = {

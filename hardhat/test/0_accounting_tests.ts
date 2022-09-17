@@ -41,6 +41,7 @@ import { ethers } from 'hardhat';
 import { readFileSync } from 'fs-extra';
 import { join } from 'path';
 import { FloowdyInitStruct } from '../typechain-types/Floowdy';
+import { INETWORK_CONFIG } from '../helpers/models';
 
 
 let floowdy: Floowdy;
@@ -89,12 +90,10 @@ let resolverHash;
 
 let taskId;
 const processDir = process.cwd()
-let networks_config = JSON.parse(readFileSync( join(processDir,'networks.config.json'),'utf-8')) as 
-{ [key:string]:{ ops:string, host:string, token:string, superToken:string, aavePool:string, aToken:string}}
-
+let networks_config = JSON.parse(readFileSync( join(processDir,'networks.config.json'),'utf-8')) as INETWORK_CONFIG
 let network_params = networks_config["goerli"];
 
-describe('Accounting test2', function () {
+describe('Accounting test', function () {
   beforeEach(async () => {
     await hre.network.provider.request({
       method: 'hardhat_reset',
@@ -116,7 +115,9 @@ describe('Accounting test2', function () {
        token: network_params.token,
        pool:network_params.aavePool,
       aToken:network_params.aToken,
-      ops:network_params.ops
+      ops:network_params.ops,
+      epnsChannel: network_params.epnsChanel,
+      epnsComm: network_params.epnsComm
        };
 
 
