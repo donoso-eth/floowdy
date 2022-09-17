@@ -1,6 +1,7 @@
 {
     "goerli":{
         "ops":"0xc1C6805B857Bef1f412519C4A842522431aFed39",
+        "opsExec":"0x683913B3A32ada4F8100458A3E1675425BdAa7DF",
         "host":"0x22ff293e14F1EC3A09B137e9e06084AFd63adDF9",
         "superToken":"0xbCE2198f789f3AC1Af76D3835BEe8A61830aAd34",
         "sfResolver":"0x3710AB3fDE2B61736B8BB0CE845D6c61F667a78E",
@@ -14,6 +15,7 @@
 
     "mumbai":{
         "ops":"0xB3f5503f93d5Ef84b06993a1975B9D21B962892F",
+        "opsExec":"0x25aD59adbe00C2d80c86d01e2E05e1294DA84823",
         "host":"0xEB796bdb90fFA0f28255275e16936D25d3418603",
         "superToken":"0xedda0316ab5D48150eeD0914C4b6032E9D9c357C",
         "sfResolver":"0x8C54C83FbDe3C59e59dd6E324531FB93d4F504d3",

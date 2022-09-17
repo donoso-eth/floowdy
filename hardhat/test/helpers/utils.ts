@@ -1,11 +1,14 @@
-import { BigNumber, Contract, logger, utils } from 'ethers';
+import { BigNumber, constants, Contract, logger, utils } from 'ethers';
 import { BaseProvider, TransactionReceipt } from '@ethersproject/providers';
 import { hexlify, keccak256, RLP, toUtf8Bytes } from 'ethers/lib/utils';
 import { Network } from 'hardhat/types';
 import { ethers, network } from 'hardhat';
 import { expect } from 'chai';
-import { ERC20, ERC777, Floowdy, IOps, ISuperfluidToken,} from '../../typechain-types';
+import { ERC20, ERC777, Floowdy, IOps, ISuperfluidToken, ISuperToken,} from '../../typechain-types';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
+import { CreditStructOutput, MemberStructOutput } from 'hardhat/typechain-types/Events';
+import { waitForTx } from '../../helpers/utils';
+
 
 export interface IPERIOD {
   timestamp: BigNumber;
@@ -68,356 +71,356 @@ export interface IUSER_RESULT {
 
 export interface IUSERTEST {address:string, name: string,expected: IUSER_RESULT}
 
-export const testPeriod = async (
-    t0:BigNumber,
-    tx:number,
-    expected:IPERIOD_RESULT,    
-     contracts: {
-      poolAddress: string,
-       superTokenContract: ISuperfluidToken, 
-       superTokenPool:Floowdy,
-       tokenContract: ERC777,
-       ops?:IOps
-      },
-      users:Array<IUSERTEST>,
+// export const testPeriod = async (
+//     t0:BigNumber,
+//     tx:number,
+//     expected:IPERIOD_RESULT,    
+//      contracts: {
+//       poolAddress: string,
+//        superTokenContract: ISuperfluidToken, 
+//        floowdy:Floowdy,
+//        tokenContract: ERC777,
+//        ops?:IOps
+//       },
+//       users:Array<IUSERTEST>,
       
-      ) => {
+//       ) => {
  
-  // #region POOL      
+//   // #region POOL      
 
-  let poolTotalBalance = await contracts.superTokenContract.realtimeBalanceOfNow(contracts.poolAddress);
+//   let poolTotalBalance = await contracts.superTokenContract.realtimeBalanceOfNow(contracts.poolAddress);
 
-  let result: IPERIOD = await getPeriod(contracts.superTokenPool);
+//   let result: IPERIOD = await getPeriod(contracts.floowdy);
   
-  if (poolTotalBalance.availableBalance != undefined) {
-    try {
-      expect(poolTotalBalance.availableBalance).to.equal(expected.poolTotalBalance);
-      console.log('\x1b[32m%s\x1b[0m', '    ✔', `\x1b[30m#Pool Assets Balance: ${poolTotalBalance.availableBalance.toString()}`);
-    } catch (error) {
-      console.log('\x1b[31m%s\x1b[0m', '    x #Pool Balance:', `\x1b[30m ${poolTotalBalance.availableBalance.toString()}, expected:${expected.poolTotalBalance!.toString()}`);
-    }
-  }
+//   if (poolTotalBalance.availableBalance != undefined) {
+//     try {
+//       expect(poolTotalBalance.availableBalance).to.equal(expected.poolTotalBalance);
+//       console.log('\x1b[32m%s\x1b[0m', '    ✔', `\x1b[30m#Pool Assets Balance: ${poolTotalBalance.availableBalance.toString()}`);
+//     } catch (error) {
+//       console.log('\x1b[31m%s\x1b[0m', '    x #Pool Balance:', `\x1b[30m ${poolTotalBalance.availableBalance.toString()}, expected:${expected.poolTotalBalance!.toString()}`);
+//     }
+//   }
 
   
-  if (expected.totalShares != undefined) {
-    try {
-      expect(result.totalShares).to.equal(expected.totalShares);
-      console.log('\x1b[32m%s\x1b[0m', '    ✔', `\x1b[30m#Pool Shares Balance: ${result.totalShares.toString()}`);
-    } catch (error) {
-      console.log('\x1b[31m%s\x1b[0m', '    x #Pool Shares:', `\x1b[30m ${result.totalShares.toString()}, expected:${expected.totalShares!.toString()}`);
-    }
-  }
+//   if (expected.totalShares != undefined) {
+//     try {
+//       expect(result.totalShares).to.equal(expected.totalShares);
+//       console.log('\x1b[32m%s\x1b[0m', '    ✔', `\x1b[30m#Pool Shares Balance: ${result.totalShares.toString()}`);
+//     } catch (error) {
+//       console.log('\x1b[31m%s\x1b[0m', '    x #Pool Shares:', `\x1b[30m ${result.totalShares.toString()}, expected:${expected.totalShares!.toString()}`);
+//     }
+//   }
 
 
-  if (expected.deposit != undefined) {
-    try {
-      expect(result.deposit).to.equal(expected.deposit);
-      console.log('\x1b[32m%s\x1b[0m', '    ✔', `\x1b[30m#Deposit: ${result.deposit.toString()}`);
-    } catch (error) {
-      console.log('\x1b[31m%s\x1b[0m', '    x #Deposit:', `\x1b[30m ${result.deposit.toString()}, expected:${expected.deposit!.toString()}`);
-    }
-  }
+//   if (expected.deposit != undefined) {
+//     try {
+//       expect(result.deposit).to.equal(expected.deposit);
+//       console.log('\x1b[32m%s\x1b[0m', '    ✔', `\x1b[30m#Deposit: ${result.deposit.toString()}`);
+//     } catch (error) {
+//       console.log('\x1b[31m%s\x1b[0m', '    x #Deposit:', `\x1b[30m ${result.deposit.toString()}, expected:${expected.deposit!.toString()}`);
+//     }
+//   }
 
-  if (expected.depositFromOutFlowRate != undefined) {
-    try {
-      expect(result.depositFromOutFlowRate).to.equal(expected.depositFromOutFlowRate);
-      console.log('\x1b[32m%s\x1b[0m', '    ✔', `\x1b[30m#Deposit from Outflow Rate: ${result.depositFromOutFlowRate.toString()}`);
-    } catch (error) {
-      console.log(
-        '\x1b[31m%s\x1b[0m',
-        '    x #Deposit from Outflow Rate:',
-        `\x1b[30m ${result.depositFromOutFlowRate.toString()}, expected:${expected.depositFromOutFlowRate!.toString()}`
-      );
-    }
-  }
+//   if (expected.depositFromOutFlowRate != undefined) {
+//     try {
+//       expect(result.depositFromOutFlowRate).to.equal(expected.depositFromOutFlowRate);
+//       console.log('\x1b[32m%s\x1b[0m', '    ✔', `\x1b[30m#Deposit from Outflow Rate: ${result.depositFromOutFlowRate.toString()}`);
+//     } catch (error) {
+//       console.log(
+//         '\x1b[31m%s\x1b[0m',
+//         '    x #Deposit from Outflow Rate:',
+//         `\x1b[30m ${result.depositFromOutFlowRate.toString()}, expected:${expected.depositFromOutFlowRate!.toString()}`
+//       );
+//     }
+//   }
 
-  if (expected.depositFromInFlowRate != undefined) {
-    try {
-      expect(result.depositFromInFlowRate).to.equal(expected.depositFromInFlowRate);
-      console.log('\x1b[32m%s\x1b[0m', '    ✔', `\x1b[30m#Deposit from Inflow Rate: ${result.depositFromInFlowRate.toString()}`);
-    } catch (error) {
-      console.log(
-        '\x1b[31m%s\x1b[0m',
-        '    x #Deposit from Inflow Rate:',
-        `\x1b[30m ${result.depositFromInFlowRate.toString()}, expected:${expected.depositFromInFlowRate!.toString()}`
-      );
-    }
-  }
+//   if (expected.depositFromInFlowRate != undefined) {
+//     try {
+//       expect(result.depositFromInFlowRate).to.equal(expected.depositFromInFlowRate);
+//       console.log('\x1b[32m%s\x1b[0m', '    ✔', `\x1b[30m#Deposit from Inflow Rate: ${result.depositFromInFlowRate.toString()}`);
+//     } catch (error) {
+//       console.log(
+//         '\x1b[31m%s\x1b[0m',
+//         '    x #Deposit from Inflow Rate:',
+//         `\x1b[30m ${result.depositFromInFlowRate.toString()}, expected:${expected.depositFromInFlowRate!.toString()}`
+//       );
+//     }
+//   }
 
-  if (expected.inFlowRate != undefined) {
-    try {
-      expect(result.inFlowRate).to.equal(expected.inFlowRate);
-      console.log('\x1b[32m%s\x1b[0m', '    ✔', `\x1b[30m#In-Flow Rate: ${result.inFlowRate.toString()}`);
-    } catch (error) {
-      console.log('\x1b[31m%s\x1b[0m', '    x #In-Flow Rate:', `\x1b[30m ${result.inFlowRate.toString()}, expected:${expected.inFlowRate!.toString()}`);
-    }
-  }
+//   if (expected.inFlowRate != undefined) {
+//     try {
+//       expect(result.inFlowRate).to.equal(expected.inFlowRate);
+//       console.log('\x1b[32m%s\x1b[0m', '    ✔', `\x1b[30m#In-Flow Rate: ${result.inFlowRate.toString()}`);
+//     } catch (error) {
+//       console.log('\x1b[31m%s\x1b[0m', '    x #In-Flow Rate:', `\x1b[30m ${result.inFlowRate.toString()}, expected:${expected.inFlowRate!.toString()}`);
+//     }
+//   }
 
-  if (expected.outFlowRate != undefined) {
-    try {
-      expect(result.outFlowRate).to.equal(expected.outFlowRate);
-      console.log('\x1b[32m%s\x1b[0m', '    ✔', `\x1b[30m#Out-Flow Rate: ${result.outFlowRate.toString()}`);
-    } catch (error) {
-      console.log('\x1b[31m%s\x1b[0m', '    x #Out-Flow Rate:', `\x1b[30m ${result.outFlowRate.toString()}, expected:${expected.outFlowRate!.toString()}`);
-    }
-  }
+//   if (expected.outFlowRate != undefined) {
+//     try {
+//       expect(result.outFlowRate).to.equal(expected.outFlowRate);
+//       console.log('\x1b[32m%s\x1b[0m', '    ✔', `\x1b[30m#Out-Flow Rate: ${result.outFlowRate.toString()}`);
+//     } catch (error) {
+//       console.log('\x1b[31m%s\x1b[0m', '    x #Out-Flow Rate:', `\x1b[30m ${result.outFlowRate.toString()}, expected:${expected.outFlowRate!.toString()}`);
+//     }
+//   }
 
  
-  if (expected.outFlowAssetsRate != undefined) {
-    try {
-      expect(result.outFlowAssetsRate).to.equal(expected.outFlowAssetsRate);
-      console.log('\x1b[32m%s\x1b[0m', '    ✔', `\x1b[30m#Out-Flow-ASSETS Rate: ${result.outFlowAssetsRate?.toString()}`);
-    } catch (error) {
-      console.log('\x1b[31m%s\x1b[0m', '    x #Out-Flow-ASSETS Rate:', `\x1b[30m ${result.outFlowAssetsRate?.toString()}, expected:${expected.outFlowAssetsRate!.toString()}`);
-    }
-  }
+//   if (expected.outFlowAssetsRate != undefined) {
+//     try {
+//       expect(result.outFlowAssetsRate).to.equal(expected.outFlowAssetsRate);
+//       console.log('\x1b[32m%s\x1b[0m', '    ✔', `\x1b[30m#Out-Flow-ASSETS Rate: ${result.outFlowAssetsRate?.toString()}`);
+//     } catch (error) {
+//       console.log('\x1b[31m%s\x1b[0m', '    x #Out-Flow-ASSETS Rate:', `\x1b[30m ${result.outFlowAssetsRate?.toString()}, expected:${expected.outFlowAssetsRate!.toString()}`);
+//     }
+//   }
 
 
-  if (expected.yieldAccruedSec != undefined) {
-    expect(result.yieldAccruedSec).to.equal(expected.yieldAccruedSec);
-    console.log('\x1b[32m%s\x1b[0m', '    ✔', `\x1b[30m#Yield accrued per sec: ${result.yieldAccruedSec.toString()}`);
-  }
+//   if (expected.yieldAccruedSec != undefined) {
+//     expect(result.yieldAccruedSec).to.equal(expected.yieldAccruedSec);
+//     console.log('\x1b[32m%s\x1b[0m', '    ✔', `\x1b[30m#Yield accrued per sec: ${result.yieldAccruedSec.toString()}`);
+//   }
 
-  if (expected.yieldTokenIndex != undefined) {
-    try {
-      expect(result.yieldTokenIndex).to.equal(expected.yieldTokenIndex);
-      console.log('\x1b[32m%s\x1b[0m', '    ✔', `\x1b[30m#Index Yield Token: ${result.yieldTokenIndex.toString()}`);
-    } catch (error) {
-      console.log('\x1b[31m%s\x1b[0m', '    x', `\x1b[30m#Index Yield Token: ${result.yieldTokenIndex.toString()}, expected:${expected.yieldTokenIndex!.toString()}`);
-    }
-  }
+//   if (expected.yieldTokenIndex != undefined) {
+//     try {
+//       expect(result.yieldTokenIndex).to.equal(expected.yieldTokenIndex);
+//       console.log('\x1b[32m%s\x1b[0m', '    ✔', `\x1b[30m#Index Yield Token: ${result.yieldTokenIndex.toString()}`);
+//     } catch (error) {
+//       console.log('\x1b[31m%s\x1b[0m', '    x', `\x1b[30m#Index Yield Token: ${result.yieldTokenIndex.toString()}, expected:${expected.yieldTokenIndex!.toString()}`);
+//     }
+//   }
 
-  if (expected.yieldInFlowRateIndex != undefined) {
-    try {
-      expect(result.yieldInFlowRateIndex).to.equal(expected.yieldInFlowRateIndex);
-      console.log('\x1b[32m%s\x1b[0m', '    ✔', `\x1b[30m#Index Yield In-FLOW : ${result.yieldInFlowRateIndex.toString()}`);
-    } catch (error) {
-      console.log('\x1b[31m%s\x1b[0m', '    x', `\x1b[30m#Index Yield In-FLOW: ${result.yieldInFlowRateIndex.toString()}, expected:${expected.yieldInFlowRateIndex!.toString()}`);
-    }
-  }
+//   if (expected.yieldInFlowRateIndex != undefined) {
+//     try {
+//       expect(result.yieldInFlowRateIndex).to.equal(expected.yieldInFlowRateIndex);
+//       console.log('\x1b[32m%s\x1b[0m', '    ✔', `\x1b[30m#Index Yield In-FLOW : ${result.yieldInFlowRateIndex.toString()}`);
+//     } catch (error) {
+//       console.log('\x1b[31m%s\x1b[0m', '    x', `\x1b[30m#Index Yield In-FLOW: ${result.yieldInFlowRateIndex.toString()}, expected:${expected.yieldInFlowRateIndex!.toString()}`);
+//     }
+//   }
 
-  if (expected.yieldOutFlowRateIndex != undefined) {
-    try {
-      expect(result.yieldOutFlowRateIndex).to.equal(expected.yieldOutFlowRateIndex);
-      console.log('\x1b[32m%s\x1b[0m', '    ✔', `\x1b[30m#Index Yield Out-FLOW : ${result.yieldOutFlowRateIndex.toString()}`);
-    } catch (error) {
-      console.log(
-        '\x1b[31m%s\x1b[0m',
-        '    x',
-        `\x1b[30m#Index Yield Out-FLOW: ${result.yieldOutFlowRateIndex.toString()}, expected:${expected.yieldOutFlowRateIndex!.toString()}`
-      );
-    }
-  }
+//   if (expected.yieldOutFlowRateIndex != undefined) {
+//     try {
+//       expect(result.yieldOutFlowRateIndex).to.equal(expected.yieldOutFlowRateIndex);
+//       console.log('\x1b[32m%s\x1b[0m', '    ✔', `\x1b[30m#Index Yield Out-FLOW : ${result.yieldOutFlowRateIndex.toString()}`);
+//     } catch (error) {
+//       console.log(
+//         '\x1b[31m%s\x1b[0m',
+//         '    x',
+//         `\x1b[30m#Index Yield Out-FLOW: ${result.yieldOutFlowRateIndex.toString()}, expected:${expected.yieldOutFlowRateIndex!.toString()}`
+//       );
+//     }
+//   }
 
-  // #endregion POOL      
-
-
-  for (const user of users) {
-
-  let userRealtimeBalance = await contracts.superTokenPool.totalBalanceSupplier(user.address);
-  let userShares = await contracts.superTokenPool.balanceOf(user.address);
-  let userTokenBalance = await contracts.tokenContract.balanceOf(user.address);
-  let userState = await contracts.superTokenPool.suppliersByAddress(user.address);
-  let periodSpan = BigNumber.from(tx).sub(userState.timestamp.sub(t0));
-
-  console.log('\x1b[35m%s\x1b[0m', '     ==================================', );
-
-  if (user.expected.realTimeBalance != undefined) {
-    try {
-      expect(userRealtimeBalance ).to.equal(user.expected.realTimeBalance);
-      console.log('\x1b[32m%s\x1b[0m', '    ✔', `\x1b[30m#${user.name} Balance Assets: ${user.expected.realTimeBalance?.toString()}`);
-    } catch (error) {
-      console.log(
-        '\x1b[31m%s\x1b[0m',
-        '    x',
-        `\x1b[30m#${user.name} Balance Assets: ${userRealtimeBalance.toString()}, expected:${user.expected.realTimeBalance!.toString()}`
-      );
-      console.log(+userRealtimeBalance.toString()-+user.expected.realTimeBalance!.toString())
-    }
-  }
-  if (userShares != undefined) {
-    try {
-      expect(userShares).to.equal(user.expected.shares);
-      console.log('\x1b[32m%s\x1b[0m', '    ✔', `\x1b[30m#${user.name} Shares: ${user.expected.shares?.toString()}`);
-    } catch (error) {
-      console.log(
-        '\x1b[31m%s\x1b[0m',
-        '    x',
-        `\x1b[30m#${user.name} Shares : ${userShares.toString()}, expected:${user.expected.shares!.toString()}`
-      );
-      console.log(+userShares.toString()-+user.expected.shares!.toString())
-    }
-
-  }
-
-  if (userTokenBalance != undefined) {
-    try {
-      expect(userTokenBalance).to.equal(user.expected.tokenBalance);
-      console.log('\x1b[32m%s\x1b[0m', '    ✔', `\x1b[30m#${user.name} Token Balance : ${user.expected.tokenBalance?.toString()}`);
-    } catch (error) {
-      console.log(
-        '\x1b[31m%s\x1b[0m',
-        '    x',
-        `\x1b[30m#${user.name} Token Balance : ${userTokenBalance.toString()}, expected:${user.expected.tokenBalance!.toString()}`
-      );
-      console.log(+userTokenBalance.toString()-+user.expected.tokenBalance!.toString())
-    }
-  }
+//   // #endregion POOL      
 
 
+//   // for (const user of users) {
 
-  if (user.expected.deposit != undefined) {
-    let depositOutFlow = userState.deposit.amount.sub(periodSpan.mul(userState.outAssets.flow).mul(1000000))
+//   // let userRealtimeBalance = await contracts.floowdy.totalBalanceSupplier(user.address);
+//   // let userShares = await contracts.floowdy.balanceOf(user.address);
+//   // let userTokenBalance = await contracts.tokenContract.balanceOf(user.address);
+//   // let userState = await contracts.floowdy.suppliersByAddress(user.address);
+//   // let periodSpan = BigNumber.from(tx).sub(userState.timestamp.sub(t0));
+
+//   // console.log('\x1b[35m%s\x1b[0m', '     ==================================', );
+
+//   // if (user.expected.realTimeBalance != undefined) {
+//   //   try {
+//   //     expect(userRealtimeBalance ).to.equal(user.expected.realTimeBalance);
+//   //     console.log('\x1b[32m%s\x1b[0m', '    ✔', `\x1b[30m#${user.name} Balance Assets: ${user.expected.realTimeBalance?.toString()}`);
+//   //   } catch (error) {
+//   //     console.log(
+//   //       '\x1b[31m%s\x1b[0m',
+//   //       '    x',
+//   //       `\x1b[30m#${user.name} Balance Assets: ${userRealtimeBalance.toString()}, expected:${user.expected.realTimeBalance!.toString()}`
+//   //     );
+//   //     console.log(+userRealtimeBalance.toString()-+user.expected.realTimeBalance!.toString())
+//   //   }
+//   // }
+//   // if (userShares != undefined) {
+//   //   try {
+//   //     expect(userShares).to.equal(user.expected.shares);
+//   //     console.log('\x1b[32m%s\x1b[0m', '    ✔', `\x1b[30m#${user.name} Shares: ${user.expected.shares?.toString()}`);
+//   //   } catch (error) {
+//   //     console.log(
+//   //       '\x1b[31m%s\x1b[0m',
+//   //       '    x',
+//   //       `\x1b[30m#${user.name} Shares : ${userShares.toString()}, expected:${user.expected.shares!.toString()}`
+//   //     );
+//   //     console.log(+userShares.toString()-+user.expected.shares!.toString())
+//   //   }
+
+//   // }
+
+//   // if (userTokenBalance != undefined) {
+//   //   try {
+//   //     expect(userTokenBalance).to.equal(user.expected.tokenBalance);
+//   //     console.log('\x1b[32m%s\x1b[0m', '    ✔', `\x1b[30m#${user.name} Token Balance : ${user.expected.tokenBalance?.toString()}`);
+//   //   } catch (error) {
+//   //     console.log(
+//   //       '\x1b[31m%s\x1b[0m',
+//   //       '    x',
+//   //       `\x1b[30m#${user.name} Token Balance : ${userTokenBalance.toString()}, expected:${user.expected.tokenBalance!.toString()}`
+//   //     );
+//   //     console.log(+userTokenBalance.toString()-+user.expected.tokenBalance!.toString())
+//   //   }
+//   // }
+
+
+
+//   // if (user.expected.deposit != undefined) {
+//   //   let depositOutFlow = userState.deposit.amount.sub(periodSpan.mul(userState.outAssets.flow).mul(1000000))
     
-    try {
-       expect(user.expected.deposit).to.equal(depositOutFlow );
-      console.log('\x1b[32m%s\x1b[0m', '    ✔', `\x1b[30m#${user.name} Deposit: ${depositOutFlow ?.toString()}`);
-    } catch (error) {
-      console.log(
-        '\x1b[31m%s\x1b[0m',
-        '    x',
-        `\x1b[30m#${user.name} Deposit : ${depositOutFlow !.toString()}, expected:${user.expected.deposit.toString()}`
-      );
-      console.log(+user.expected.deposit.toString()-+userState.deposit.amount!.toString())
-    }
-  }
+//   //   try {
+//   //      expect(user.expected.deposit).to.equal(depositOutFlow );
+//   //     console.log('\x1b[32m%s\x1b[0m', '    ✔', `\x1b[30m#${user.name} Deposit: ${depositOutFlow ?.toString()}`);
+//   //   } catch (error) {
+//   //     console.log(
+//   //       '\x1b[31m%s\x1b[0m',
+//   //       '    x',
+//   //       `\x1b[30m#${user.name} Deposit : ${depositOutFlow !.toString()}, expected:${user.expected.deposit.toString()}`
+//   //     );
+//   //     console.log(+user.expected.deposit.toString()-+userState.deposit.amount!.toString())
+//   //   }
+//   // }
 
 
-  if (user.expected.inFlow != undefined) {
-    try {
-      expect(user.expected.inFlow).to.equal(userState.inStream.flow);
-      console.log('\x1b[32m%s\x1b[0m', '    ✔', `\x1b[30m#${user.name} IN-FLOW: ${userState.inStream.flow?.toString()} units/s`);
-    } catch (error) {
-      console.log(
-        '\x1b[31m%s\x1b[0m',
-        '    x',
-        `\x1b[30m#${user.name} IN-FLOW:  ${userState.inStream.flow.toString()},  ${user.expected.inFlow.toString()} expected: units/s`
-      );
-      console.log(+user.expected.inFlow.toString()-+userState.inStream.flow.toString())
-    }
-  }
+//   // if (user.expected.inFlow != undefined) {
+//   //   try {
+//   //     expect(user.expected.inFlow).to.equal(userState.inStream.flow);
+//   //     console.log('\x1b[32m%s\x1b[0m', '    ✔', `\x1b[30m#${user.name} IN-FLOW: ${userState.inStream.flow?.toString()} units/s`);
+//   //   } catch (error) {
+//   //     console.log(
+//   //       '\x1b[31m%s\x1b[0m',
+//   //       '    x',
+//   //       `\x1b[30m#${user.name} IN-FLOW:  ${userState.inStream.flow.toString()},  ${user.expected.inFlow.toString()} expected: units/s`
+//   //     );
+//   //     console.log(+user.expected.inFlow.toString()-+userState.inStream.flow.toString())
+//   //   }
+//   // }
 
-  if (user.expected.inFlowId != undefined) {
-    try {
-      expect(user.expected.inFlowId ).to.equal(userState.inStream.cancelTaskId);
-      console.log('\x1b[32m%s\x1b[0m', '    ✔', `\x1b[30m#${user.name} INFLOW -TaskId: ${userState.inStream.cancelTaskId?.toString()}`);
-    } catch (error) {
-      console.log(
-        '\x1b[31m%s\x1b[0m',
-        '    x',
-        `\x1b[30m#${user.name} INFLOW -TaskId:  ${userState.inStream.cancelTaskId.toString()}, expected: ${user.expected.inFlowId.toString()}`
-      );
+//   // if (user.expected.inFlowId != undefined) {
+//   //   try {
+//   //     expect(user.expected.inFlowId ).to.equal(userState.inStream.cancelTaskId);
+//   //     console.log('\x1b[32m%s\x1b[0m', '    ✔', `\x1b[30m#${user.name} INFLOW -TaskId: ${userState.inStream.cancelTaskId?.toString()}`);
+//   //   } catch (error) {
+//   //     console.log(
+//   //       '\x1b[31m%s\x1b[0m',
+//   //       '    x',
+//   //       `\x1b[30m#${user.name} INFLOW -TaskId:  ${userState.inStream.cancelTaskId.toString()}, expected: ${user.expected.inFlowId.toString()}`
+//   //     );
     
-    }
-  }
+//   //   }
+//   // }
 
 
   
-  if (user.expected.nextExecIn != undefined) {
-    let nextExec =  (await contracts.ops?.timedTask(userState.inStream.cancelTaskId))?.nextExec as BigNumber;
+//   // if (user.expected.nextExecIn != undefined) {
+//   //   let nextExec =  (await contracts.ops?.timedTask(userState.inStream.cancelTaskId))?.nextExec as BigNumber;
     
-    try {
+//   //   try {
 
       
-      //console.log(+timed['nextExec'].toString())
+//   //     //console.log(+timed['nextExec'].toString())
     
-      expect(user.expected.nextExecIn).to.equal(nextExec);
-      console.log('\x1b[32m%s\x1b[0m', '    ✔', `\x1b[30m#${user.name} Gelato Task Next Execution Inflow: ${nextExec.sub(t0).sub(BigNumber.from(tx)).toString()}`);
-    } catch (error) {
-      console.log(
-        '\x1b[31m%s\x1b[0m',
-        '    x',
-        `\x1b[30m#${user.name} Gelato Task Next Execution Inflow:  ${nextExec.toString()}, expected: ${user.expected.nextExecIn.toString()}`
-      );
-      console.log(+nextExec.toString()-+user.expected.nextExecIn.toString())
-    }
-  }
+//   //     expect(user.expected.nextExecIn).to.equal(nextExec);
+//   //     console.log('\x1b[32m%s\x1b[0m', '    ✔', `\x1b[30m#${user.name} Gelato Task Next Execution Inflow: ${nextExec.sub(t0).sub(BigNumber.from(tx)).toString()}`);
+//   //   } catch (error) {
+//   //     console.log(
+//   //       '\x1b[31m%s\x1b[0m',
+//   //       '    x',
+//   //       `\x1b[30m#${user.name} Gelato Task Next Execution Inflow:  ${nextExec.toString()}, expected: ${user.expected.nextExecIn.toString()}`
+//   //     );
+//   //     console.log(+nextExec.toString()-+user.expected.nextExecIn.toString())
+//   //   }
+//   // }
 
 
-  if (user.expected.outFlow != undefined) {
-    try {
-      expect(user.expected.outFlow).to.equal(userState.outStream.flow);
-      console.log('\x1b[32m%s\x1b[0m', '    ✔', `\x1b[30m#${user.name} OUT-FLOW: ${userState.outStream.flow?.toString()} units/s`);
-    } catch (error) {
-      console.log(
-        '\x1b[31m%s\x1b[0m',
-        '    x',
-        `\x1b[30m#${user.name} OUT-FLOW: ${userState.outStream.flow.toString()} , expected: ${user.expected.outFlow.toString()} units/s`
-      );
-      console.log(+user.expected.outFlow.toString()-+userState.outStream.flow.toString())
-    }
-  }
+//   // if (user.expected.outFlow != undefined) {
+//   //   try {
+//   //     expect(user.expected.outFlow).to.equal(userState.outStream.flow);
+//   //     console.log('\x1b[32m%s\x1b[0m', '    ✔', `\x1b[30m#${user.name} OUT-FLOW: ${userState.outStream.flow?.toString()} units/s`);
+//   //   } catch (error) {
+//   //     console.log(
+//   //       '\x1b[31m%s\x1b[0m',
+//   //       '    x',
+//   //       `\x1b[30m#${user.name} OUT-FLOW: ${userState.outStream.flow.toString()} , expected: ${user.expected.outFlow.toString()} units/s`
+//   //     );
+//   //     console.log(+user.expected.outFlow.toString()-+userState.outStream.flow.toString())
+//   //   }
+//   // }
 
 
-  if (user.expected.outAssets != undefined) {
-    try {
-      expect(user.expected.outAssets).to.equal(userState.outAssets.flow);
-      console.log('\x1b[32m%s\x1b[0m', '    ✔', `\x1b[30m#${user.name} OUT-Assets: ${userState.outAssets.flow?.toString()} units/s`);
-    } catch (error) {
-      console.log(
-        '\x1b[31m%s\x1b[0m',
-        '    x',
-        `\x1b[30m#${user.name} OUT-Assets:  ${userState.outAssets.flow.toString()}, expected: ${user.expected.outAssets.toString()} units/s`
-      );
-      console.log(+user.expected.outAssets.toString()-+userState.outAssets.flow.toString())
-    }
-  }
+//   // if (user.expected.outAssets != undefined) {
+//   //   try {
+//   //     expect(user.expected.outAssets).to.equal(userState.outAssets.flow);
+//   //     console.log('\x1b[32m%s\x1b[0m', '    ✔', `\x1b[30m#${user.name} OUT-Assets: ${userState.outAssets.flow?.toString()} units/s`);
+//   //   } catch (error) {
+//   //     console.log(
+//   //       '\x1b[31m%s\x1b[0m',
+//   //       '    x',
+//   //       `\x1b[30m#${user.name} OUT-Assets:  ${userState.outAssets.flow.toString()}, expected: ${user.expected.outAssets.toString()} units/s`
+//   //     );
+//   //     console.log(+user.expected.outAssets.toString()-+userState.outAssets.flow.toString())
+//   //   }
+//   // }
 
-  if (user.expected.outAssetsId != undefined) {
-    try {
-      expect(user.expected.outAssetsId ).to.equal(userState.outAssets.cancelTaskId);
-      console.log('\x1b[32m%s\x1b[0m', '    ✔', `\x1b[30m#${user.name} OUT-Assets-TaskId: ${userState.outAssets.cancelTaskId?.toString()}`);
-    } catch (error) {
-      console.log(
-        '\x1b[31m%s\x1b[0m',
-        '    x',
-        `\x1b[30m#${user.name} OUT-Assets-TaskId:  ${userState.outAssets.cancelTaskId.toString()}, expected: ${user.expected.outAssetsId.toString()}`
-      );
+//   // if (user.expected.outAssetsId != undefined) {
+//   //   try {
+//   //     expect(user.expected.outAssetsId ).to.equal(userState.outAssets.cancelTaskId);
+//   //     console.log('\x1b[32m%s\x1b[0m', '    ✔', `\x1b[30m#${user.name} OUT-Assets-TaskId: ${userState.outAssets.cancelTaskId?.toString()}`);
+//   //   } catch (error) {
+//   //     console.log(
+//   //       '\x1b[31m%s\x1b[0m',
+//   //       '    x',
+//   //       `\x1b[30m#${user.name} OUT-Assets-TaskId:  ${userState.outAssets.cancelTaskId.toString()}, expected: ${user.expected.outAssetsId.toString()}`
+//   //     );
     
-    }
-  }
+//   //   }
+//   // }
 
 
   
-  if (user.expected.nextExecOut != undefined) {
-    let nextExec =  (await contracts.ops?.timedTask(userState.outAssets.cancelTaskId))?.nextExec as BigNumber;
+//   // if (user.expected.nextExecOut != undefined) {
+//   //   let nextExec =  (await contracts.ops?.timedTask(userState.outAssets.cancelTaskId))?.nextExec as BigNumber;
     
-    try {
+//   //   try {
 
       
-      //console.log(+timed['nextExec'].toString())
-      console.log((+await getTimestamp()).toString())
-      expect(user.expected.nextExecOut).to.equal(nextExec);
-      console.log('\x1b[32m%s\x1b[0m', '    ✔', `\x1b[30m#${user.name} Gelato Task Next Execution OutFlow: ${nextExec.sub(t0).sub(BigNumber.from(tx)).toString()}`);
-    } catch (error) {
-      console.log(
-        '\x1b[31m%s\x1b[0m',
-        '    x',
-        `\x1b[30m#${user.name} Gelato Task Next Execution OutFlow:  ${nextExec.toString()}, expected: ${user.expected.nextExecOut.toString()}`
-      );
-      console.log(+nextExec.toString()-+user.expected.nextExecOut.toString())
-    }
-  }
+//   //     //console.log(+timed['nextExec'].toString())
+//   //     console.log((+await getTimestamp()).toString())
+//   //     expect(user.expected.nextExecOut).to.equal(nextExec);
+//   //     console.log('\x1b[32m%s\x1b[0m', '    ✔', `\x1b[30m#${user.name} Gelato Task Next Execution OutFlow: ${nextExec.sub(t0).sub(BigNumber.from(tx)).toString()}`);
+//   //   } catch (error) {
+//   //     console.log(
+//   //       '\x1b[31m%s\x1b[0m',
+//   //       '    x',
+//   //       `\x1b[30m#${user.name} Gelato Task Next Execution OutFlow:  ${nextExec.toString()}, expected: ${user.expected.nextExecOut.toString()}`
+//   //     );
+//   //     console.log(+nextExec.toString()-+user.expected.nextExecOut.toString())
+//   //   }
+//   // }
 
-  if (user.expected.timestamp != undefined) {
-    let checkTimestamp = userState.timestamp.sub(t0);
+//   // if (user.expected.timestamp != undefined) {
+//   //   let checkTimestamp = userState.timestamp.sub(t0);
 
 
-    try {
-      expect(user.expected.timestamp).to.equal(checkTimestamp);
-      console.log('\x1b[32m%s\x1b[0m', '    ✔', `\x1b[30m#${user.name} TimeStamp: ${checkTimestamp?.toString()} ms`);
-    } catch (error) {
-      console.log(
-        '\x1b[31m%s\x1b[0m',
-        '    x',
-        `\x1b[30m#${user.name} TimeStamp: ${checkTimestamp.toString()} , expected: ${user.expected.timestamp.toString()} ms`
-      );
-      console.log(+user.expected.timestamp.toString()-+checkTimestamp.toString())
-    }
-  }
-  }
+//   //   try {
+//   //     expect(user.expected.timestamp).to.equal(checkTimestamp);
+//   //     console.log('\x1b[32m%s\x1b[0m', '    ✔', `\x1b[30m#${user.name} TimeStamp: ${checkTimestamp?.toString()} ms`);
+//   //   } catch (error) {
+//   //     console.log(
+//   //       '\x1b[31m%s\x1b[0m',
+//   //       '    x',
+//   //       `\x1b[30m#${user.name} TimeStamp: ${checkTimestamp.toString()} , expected: ${user.expected.timestamp.toString()} ms`
+//   //     );
+//   //     console.log(+user.expected.timestamp.toString()-+checkTimestamp.toString())
+//   //   }
+//   // }
+//   // }
 
-}
+// }
 
 export const printPeriodTest = async (result: IPERIOD_RESULT, expected: IPERIOD_RESULT, users?: Array<IUSER_CHECK>) => {
   if (result.poolTotalBalance != undefined) {
@@ -594,27 +597,27 @@ export const printPeriodTest = async (result: IPERIOD_RESULT, expected: IPERIOD_
   }
 };
 
-export const getPeriod = async (superTokenPool: Floowdy): Promise<any> => {
-  let periodTimestamp = +(await superTokenPool.lastPeriodTimestamp()).toString();
-  let periodRaw = await superTokenPool.periodByTimestamp(periodTimestamp);
+// export const getPeriod = async (floowdy: Floowdy): Promise<any> => {
+//   let periodTimestamp = +(await floowdy.lastPeriodTimestamp()).toString();
+//   let periodRaw = await floowdy.periodByTimestamp(periodTimestamp);
 
-  let period: IPERIOD = {
-    timestamp: periodRaw.timestamp,
-    deposit: periodRaw.deposit,
-    inFlowRate: periodRaw.inFlowRate,
-    outFlowRate: periodRaw.outFlowRate,
-    depositFromInFlowRate: periodRaw.depositFromInFlowRate,
-    depositFromOutFlowRate: periodRaw.depositFromOutFlowRate,
-    yieldTokenIndex: periodRaw.yieldTokenIndex,
-    yieldInFlowRateIndex: periodRaw.yieldInFlowRateIndex,
-    yieldOutFlowRateIndex: periodRaw.yieldOutFlowRateIndex,
-    yieldAccruedSec: periodRaw.yieldAccruedSec,
-    totalShares:periodRaw.totalShares,
-    outFlowAssetsRate:periodRaw.outFlowAssetsRate
-  };
+//   let period: IPERIOD = {
+//     timestamp: periodRaw.timestamp,
+//     deposit: periodRaw.deposit,
+//     inFlowRate: periodRaw.inFlowRate,
+//     outFlowRate: periodRaw.outFlowRate,
+//     depositFromInFlowRate: periodRaw.depositFromInFlowRate,
+//     depositFromOutFlowRate: periodRaw.depositFromOutFlowRate,
+//     yieldTokenIndex: periodRaw.yieldTokenIndex,
+//     yieldInFlowRateIndex: periodRaw.yieldInFlowRateIndex,
+//     yieldOutFlowRateIndex: periodRaw.yieldOutFlowRateIndex,
+//     yieldAccruedSec: periodRaw.yieldAccruedSec,
+//     totalShares:periodRaw.totalShares,
+//     outFlowAssetsRate:periodRaw.outFlowAssetsRate
+//   };
 
-  return period;
-};
+//   return period;
+// };
 
 
 export interface IMOCK_RESULT {
@@ -624,59 +627,79 @@ export interface IMOCK_RESULT {
 }
 
 
-export const testMockStrategy = async (
-  t0:BigNumber,
-  tx:number,
-  expected:IMOCK_RESULT,    
-   contracts: {
-    mockAllocation: AllocationMock,
-    tokenContract: ERC20, 
-    },
-    deployer:SignerWithAddress
-    
-    ) => {
-
- 
-
-}
-
-
 ////// CONTRACTS
 
-export const printPeriod = async (superTokenPool: PoolFactory, t0: number): Promise<any> => {
-  let periodTimestamp = +(await superTokenPool.lastPeriodTimestamp()).toString();
-  let period = await superTokenPool.periodByTimestamp(periodTimestamp);
-  console.log(period.timestamp.toString());
+// export const printPeriod = async (floowdy: PoolFactory, t0: number): Promise<any> => {
+//   let periodTimestamp = +(await floowdy.lastPeriodTimestamp()).toString();
+//   let period = await floowdy.periodByTimestamp(periodTimestamp);
+//   console.log(period.timestamp.toString());
 
-  console.log('\x1b[36m%s\x1b[0m', 'XXXXXXXXXXXXXXXXXXXX   PERIOD    XXXXXXXXXXXXXXXXXXXXX');
-  console.log(`TimeStamp ${+period.timestamp.toString() - t0} `);
-  console.log(`In-Flow ${period.inFlowRate.toString()}  units/s`);
-  console.log(`Out-Flow ${period.outFlowRate.toString()}  units/s`);
-  console.log(`Deposit From InFlow ${period.depositFromInFlowRate.toString()}  units`);
-  console.log(`Deposit From OutFlow ${period.depositFromOutFlowRate.toString()}  units`);
-  console.log(`Deposit ${period.deposit.toString()}  units`);
-  console.log(`IndexYieldToken: ${period.yieldTokenIndex.toString()}  units`);
-  console.log(`IndexYieldInFlowrate: ${period.yieldInFlowRateIndex.toString()}  units`);
-  console.log(`IndexYieldOutFlowrate: ${period.yieldOutFlowRateIndex.toString()}  units`);
-  console.log(`Yield Per Second: ${period.yieldAccruedSec.toString()}  units`);
-  console.log('\x1b[36m%s\x1b[0m', 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX');
+//   console.log('\x1b[36m%s\x1b[0m', 'XXXXXXXXXXXXXXXXXXXX   PERIOD    XXXXXXXXXXXXXXXXXXXXX');
+//   console.log(`TimeStamp ${+period.timestamp.toString() - t0} `);
+//   console.log(`In-Flow ${period.inFlowRate.toString()}  units/s`);
+//   console.log(`Out-Flow ${period.outFlowRate.toString()}  units/s`);
+//   console.log(`Deposit From InFlow ${period.depositFromInFlowRate.toString()}  units`);
+//   console.log(`Deposit From OutFlow ${period.depositFromOutFlowRate.toString()}  units`);
+//   console.log(`Deposit ${period.deposit.toString()}  units`);
+//   console.log(`IndexYieldToken: ${period.yieldTokenIndex.toString()}  units`);
+//   console.log(`IndexYieldInFlowrate: ${period.yieldInFlowRateIndex.toString()}  units`);
+//   console.log(`IndexYieldOutFlowrate: ${period.yieldOutFlowRateIndex.toString()}  units`);
+//   console.log(`Yield Per Second: ${period.yieldAccruedSec.toString()}  units`);
+//   console.log('\x1b[36m%s\x1b[0m', 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX');
 
-  return period;
-};
+//   return period;
+// };
 
-export const printUser = async (superTokenPool: Floowdy, userAddress: string): Promise<any> => {
-  let user = await superTokenPool.suppliersByAddress(userAddress);
+
+export const faucet = async (user:SignerWithAddress,erc20Under:any,superToken:string,supertokenContract: ISuperToken  ) =>{
+
+  await  waitForTx(erc20Under.connect(user)["mint(uint256)"](1000000000000))
+
+  await erc20Under.connect(user).approve(superToken, constants.MaxInt256)
+  let amountSuper = ethers.utils.parseEther("1000000")
+  await waitForTx(supertokenContract.connect(user).upgrade(amountSuper))
+  let userBalance = await supertokenContract.balanceOf(user.address);
+  console.log(user.address, userBalance.toString())
+}
+
+export const printUser = async (floowdy: Floowdy, userAddress: string): Promise<any> => {
+  let user = await floowdy.members(userAddress) as MemberStructOutput;
 
   console.log('\x1b[32m%s\x1b[0m', 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX');
-  console.log(`User ${userAddress.toString()} `);
-  console.log(`In-Flow  ${user.inStream.flow.toString()} units/s, `);
-  console.log(`Out-Flow  ${user.outStream.flow.toString()} units/s`);
-  console.log(`Deposit ${user.deposit.amount.toString()}  units`);
-  console.log(`TimeStamp ${user.timestamp.toString()}  units`);
-  console.log(`Cumulative Yield: ${user.cumulatedYield.toString()}  units`);
+  console.log(`Id ${user.id.toString()} `);
+  console.log(`User ${user.member.toString()} `);
+  console.log(`DEPOSIT ${user.deposit} units,`);
+  console.log(`Flow  ${user.flow} units/s,`);
+  console.log(`Flow Duration  ${user.flowDuration} s,`);
+  console.log(`Deposit Gelato Task Id ${user.flowGelatoId.toString()}`);
+  console.log(`Creted TimeStamp ${user.initTimestamp.toString()}`);
+  console.log(`TimeStamp ${user.timestamp.toString()}`);
+  console.log(`Cumulative Yield: ${user.yieldAccrued.toString()}  units`);
+  console.log(`Amount Locked: ${user.amountLocked.toString()}  units`);
   console.log('\x1b[32m%s\x1b[0m', 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX');
 
   return user;
+};
+
+
+export const prinCredit = async (floowdy: Floowdy, id: number): Promise<any> => {
+  let credit = await floowdy.creditsById(id) as CreditStructOutput;
+
+  console.log('\x1b[32m%s\x1b[0m', 'XXXXXXXXXXXXXX  CREDIT XXXXXXXXXXXXXXXXXXXXXXX');
+  console.log(`Id ${credit.id.toString()} `);
+  console.log(`Requester ${credit.requester.toString()} `);
+  console.log(`Amount ${credit.amount} units,`);
+  console.log(`Status ${credit.status} units,`);
+  console.log(`Rate ${credit.rate}`);
+  console.log(`Gelato Task Id ${credit.gelatoTaskId.toString()}`);
+  console.log(`Created TimeStamp ${credit.initTimestamp.toString()}`);
+  console.log(`Deny TimeStamp ${credit.denyPeriodTimestamp.toString()}`);
+  console.log(`Delegators: ${credit.delegators.toString()}  units`);
+  console.log(`Delegators Amount: ${credit.delegatorsAmount.toString()}  units`);
+
+  console.log('\x1b[32m%s\x1b[0m', 'XXXXXXXXXXXXXX  CREDIT XXXXXXXXXXXXXXXXXXXXXXX');
+
+  return credit;
 };
 
 export function matchEvent(receipt: TransactionReceipt, name: string, eventContract: Contract, expectedArgs?: any[]): void {

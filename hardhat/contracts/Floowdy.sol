@@ -61,6 +61,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
   uint256 public totalCredits;
   mapping(uint256 => DataTypes.Credit) public creditsById;
   mapping(address => uint256) public creditIdByAddresse;
+  mapping (uint256 => mapping( address=> bool)) public delegatorsStatus;
 
   uint256 MAX_ALLOWANCE = 50;
   uint256 CREDIT_FEE = 3;
@@ -207,13 +208,13 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
 
     uint256 yieldMember = totalYieldEarnedMember(_member);
 
-    if (member.flow > 0) {
+
       realtimeBalance =
         yieldMember +
         (member.deposit) +
         uint96(member.flow) *
         (block.timestamp - member.timestamp);
-    }
+
   }
 
   function _memberUpdate(address _member) internal {
@@ -452,28 +453,28 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
     credit.amount = amount;
     credit.rate = CREDIT_FEE;
     credit.delegatorsAmount = delegatorsAmount;
-
+     credit.gelatoTaskId= createCreditPeriodTask(credit.id, credit.denyPeriodTimestamp);
     //create task
   }
 
-  function creditCheckIn(uint256 creditId) public {
+  function creditCheckIn(uint256 creditId) public onlyMember {
     uint256 balance = _getMemberBalance(msg.sender);
     DataTypes.Credit storage credit = creditsById[creditId];
     require(balance > credit.delegatorsAmount, "NOT_ENOUGH_COLLATERAL");
     require(
-      credit.delegatorsStatus[msg.sender] = false,
+      delegatorsStatus[creditId][msg.sender] == false,
       "MEMBER_ALREADY_CHECK_IN"
     );
     require(credit.delegators < 5, "ALREADY_ENOUGH_DELEGATORS");
     credit.delegators++;
-    credit.delegatorsStatus[msg.sender] = true;
+     delegatorsStatus[creditId][msg.sender] = true;
   }
 
   function creditCheckOut(uint256 creditId) public onlyMember {
     DataTypes.Credit storage credit = creditsById[creditId];
-    require(credit.delegatorsStatus[msg.sender] = true, "MEMBER_NOT_CHECK_IN");
+    require(delegatorsStatus[creditId][msg.sender] = true, "MEMBER_NOT_CHECK_IN");
     credit.delegators--;
-    credit.delegatorsStatus[msg.sender] = false;
+    delegatorsStatus[creditId][msg.sender] = false;
   }
 
   function rejectCredit(uint256 creditId) public onlyMember {
@@ -699,7 +700,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
     returns (bytes32 taskId)
   {
     taskId = IOps(ops).createTimedTask(
-      uint128(block.timestamp + _dennyPeriod),
+      uint128(_dennyPeriod),
       600,
       address(this),
       this.stopCreditPeriodExec.selector,

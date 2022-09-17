@@ -66,7 +66,6 @@ library DataTypes {
     uint256 amount;
     uint256 rate;
     uint256 delegators;
-    mapping (address=> bool) delegatorsStatus;
     uint256 delegatorsAmount;
     bytes32 gelatoTaskId;
   }

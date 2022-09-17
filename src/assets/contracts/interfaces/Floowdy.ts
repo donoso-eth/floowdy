@@ -68,6 +68,7 @@ export interface FloowdyInterface extends utils.Interface {
     "creditCheckOut(uint256)": FunctionFragment;
     "creditIdByAddresse(address)": FunctionFragment;
     "creditsById(uint256)": FunctionFragment;
+    "delegatorsStatus(uint256,address)": FunctionFragment;
     "gelato()": FunctionFragment;
     "getMaxAmount()": FunctionFragment;
     "host()": FunctionFragment;
@@ -160,6 +161,10 @@ export interface FloowdyInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "creditsById",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "delegatorsStatus",
+    values: [BigNumberish, string]
   ): string;
   encodeFunctionData(functionFragment: "gelato", values?: undefined): string;
   encodeFunctionData(
@@ -296,6 +301,10 @@ export interface FloowdyInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "creditsById",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "delegatorsStatus",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "gelato", data: BytesLike): Result;
@@ -548,6 +557,12 @@ export interface Floowdy extends BaseContract {
         gelatoTaskId: string;
       }
     >;
+
+    delegatorsStatus(
+      arg0: BigNumberish,
+      arg1: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     gelato(overrides?: CallOverrides): Promise<[string]>;
 
@@ -833,6 +848,12 @@ export interface Floowdy extends BaseContract {
     }
   >;
 
+  delegatorsStatus(
+    arg0: BigNumberish,
+    arg1: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   gelato(overrides?: CallOverrides): Promise<string>;
 
   getMaxAmount(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1103,6 +1124,12 @@ export interface Floowdy extends BaseContract {
       }
     >;
 
+    delegatorsStatus(
+      arg0: BigNumberish,
+      arg1: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     gelato(overrides?: CallOverrides): Promise<string>;
 
     getMaxAmount(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1364,6 +1391,12 @@ export interface Floowdy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    delegatorsStatus(
+      arg0: BigNumberish,
+      arg1: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     gelato(overrides?: CallOverrides): Promise<BigNumber>;
 
     getMaxAmount(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1571,6 +1604,12 @@ export interface Floowdy extends BaseContract {
 
     creditsById(
       arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    delegatorsStatus(
+      arg0: BigNumberish,
+      arg1: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

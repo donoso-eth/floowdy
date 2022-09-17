@@ -15,6 +15,7 @@ library Events {
 
  event MemberAction(DataTypes.Member);
 
+ event CreditAction(DataTypes.Credit);
 
  event PoolUpdated(uint256 id);
 
