@@ -401,6 +401,8 @@ contract Floowdy is SuperAppBase, IERC777Recipient {
     // #endregion Pool
 
     // ============= ============= Aave ============= ============= //
+    // #region Aave
+
     function aaveSupply() public {
         uint256 poolSuperTokenBalance = (superToken.balanceOf(address(this)))
             .div(10**12);
@@ -417,6 +419,13 @@ contract Floowdy is SuperAppBase, IERC777Recipient {
     }
 
     // #endregion Aave
+
+
+    // ============= ============= Credit Delegation ============= ============= //
+    // #region Credit Delegation
+
+
+
 
     // ============= ============= Super App Calbacks ============= ============= //
     // #region Super App Calbacks
@@ -642,8 +651,6 @@ contract Floowdy is SuperAppBase, IERC777Recipient {
     }
 
     // #endregion Gelato functions
-
-
 
     // ============= =============  EPNS  ============= ============= //
     // #region  EPNS
