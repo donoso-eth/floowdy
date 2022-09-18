@@ -12,6 +12,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
 import { TabViewModule } from 'primeng/tabview';
 import { LensProfileModule } from 'src/app/shared/components/lens-profile/lens-profile.module';
+import { CreditTableModule } from 'src/app/shared/components/credit-table/credit-table.module';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { LensProfileModule } from 'src/app/shared/components/lens-profile/lens-p
     DialogModule,
     InputNumberModule,
     TabViewModule,
-    LensProfileModule
+    LensProfileModule,
+    CreditTableModule
   ]
 })
 export class DashboardModule { }
