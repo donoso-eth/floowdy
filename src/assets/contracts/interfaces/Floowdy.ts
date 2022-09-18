@@ -552,7 +552,7 @@ export interface Floowdy extends BaseContract {
         status: number;
         amount: BigNumber;
         rate: BigNumber;
-        delegators: BigNumber;
+        delegatorsNr: BigNumber;
         delegatorsAmount: BigNumber;
         gelatoTaskId: string;
       }
@@ -562,7 +562,7 @@ export interface Floowdy extends BaseContract {
       arg0: BigNumberish,
       arg1: string,
       overrides?: CallOverrides
-    ): Promise<[boolean]>;
+    ): Promise<[BigNumber]>;
 
     gelato(overrides?: CallOverrides): Promise<[string]>;
 
@@ -842,7 +842,7 @@ export interface Floowdy extends BaseContract {
       status: number;
       amount: BigNumber;
       rate: BigNumber;
-      delegators: BigNumber;
+      delegatorsNr: BigNumber;
       delegatorsAmount: BigNumber;
       gelatoTaskId: string;
     }
@@ -852,7 +852,7 @@ export interface Floowdy extends BaseContract {
     arg0: BigNumberish,
     arg1: string,
     overrides?: CallOverrides
-  ): Promise<boolean>;
+  ): Promise<BigNumber>;
 
   gelato(overrides?: CallOverrides): Promise<string>;
 
@@ -1118,7 +1118,7 @@ export interface Floowdy extends BaseContract {
         status: number;
         amount: BigNumber;
         rate: BigNumber;
-        delegators: BigNumber;
+        delegatorsNr: BigNumber;
         delegatorsAmount: BigNumber;
         gelatoTaskId: string;
       }
@@ -1128,7 +1128,7 @@ export interface Floowdy extends BaseContract {
       arg0: BigNumberish,
       arg1: string,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<BigNumber>;
 
     gelato(overrides?: CallOverrides): Promise<string>;
 

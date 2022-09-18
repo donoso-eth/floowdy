@@ -61,7 +61,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
   uint256 public totalCredits;
   mapping(uint256 => DataTypes.Credit) public creditsById;
   mapping(address => uint256) public creditIdByAddresse;
-  mapping (uint256 => mapping( address=> bool)) public delegatorsStatus;
+  mapping(uint256 => mapping(address => uint256)) public delegatorsStatus;
 
   uint256 MAX_ALLOWANCE = 50;
   uint256 CREDIT_FEE = 3;
@@ -170,7 +170,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
     }
 
     member.timestamp = block.timestamp;
-    emit Events.MemberAction(member);
+    emit Events.MemberDeposit(member);
   }
 
   // #endregion
@@ -208,13 +208,22 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
 
     uint256 yieldMember = totalYieldEarnedMember(_member);
 
+    realtimeBalance =
+      yieldMember +
+      (member.deposit) +
+      uint96(member.flow) *
+      (block.timestamp - member.timestamp);
+  }
 
-      realtimeBalance =
-        yieldMember +
-        (member.deposit) +
-        uint96(member.flow) *
-        (block.timestamp - member.timestamp);
+  function _getMemberAvailable(address _member)
+    internal
+    view
+    returns (uint256 availableBalance)
+  {
+    DataTypes.Member storage member = members[_member];
 
+    uint256 balance = _getMemberBalance(_member);
+    availableBalance = balance - member.amountLocked;
   }
 
   function _memberUpdate(address _member) internal {
@@ -270,6 +279,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
     member.flow = _inFlow;
 
     console.log("updateMemberFlow");
+    emit Events.MemberDeposit(member);
   }
 
   function _calculateYieldMember(address _member)
@@ -430,6 +440,8 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
     pool.supply(address(token), poolTokenBalance, address(this), 0);
   }
 
+  function delegateCreditToMember(uint256 _amount, address _to) internal {}
+
   // #endregion Aave
 
   // ============= ============= Credit Delegation ============= ============= //
@@ -438,8 +450,8 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
   function requestCredit(uint256 amount) external onlyMember onlyOneCredit {
     uint256 maxAmount = getMaxAmount();
     console.log(maxAmount);
-    console.log(amount*100);
-    require(amount  <= maxAmount, "NOT_ENOUGH_COLLATERAL");
+    console.log(amount * 100);
+    require(amount <= maxAmount, "NOT_ENOUGH_COLLATERAL");
 
     uint256 delegatorsAmount = amount.div(5);
     totalCredits++;
@@ -453,39 +465,62 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
     credit.amount = amount;
     credit.rate = CREDIT_FEE;
     credit.delegatorsAmount = delegatorsAmount;
-     credit.gelatoTaskId= createCreditPeriodTask(credit.id, credit.denyPeriodTimestamp);
-    //create task
+    credit.gelatoTaskId = createCreditPeriodTask(
+      credit.id,
+      credit.denyPeriodTimestamp
+    );
+
+    /// notify
+    emit Events.CreditRequested(credit);
   }
 
   function creditCheckIn(uint256 creditId) public onlyMember {
-    uint256 balance = _getMemberBalance(msg.sender);
+    uint256 balance = _getMemberAvailable(msg.sender);
     DataTypes.Credit storage credit = creditsById[creditId];
+    require(
+      credit.status == DataTypes.CreditStatus.PENDING,
+      "CREDIT_NOT_AVAILABLE"
+    );
     require(balance > credit.delegatorsAmount, "NOT_ENOUGH_COLLATERAL");
     require(
-      delegatorsStatus[creditId][msg.sender] == false,
+      delegatorsStatus[creditId][msg.sender] == 0,
       "MEMBER_ALREADY_CHECK_IN"
     );
-    require(credit.delegators < 5, "ALREADY_ENOUGH_DELEGATORS");
-    credit.delegators++;
-     delegatorsStatus[creditId][msg.sender] = true;
+    require(credit.delegatorsNr < 5, "ALREADY_ENOUGH_DELEGATORS");
+    credit.delegatorsNr++;
+    credit.delegators.push(msg.sender);
+    delegatorsStatus[creditId][msg.sender] = credit.delegatorsNr;
+    emit Events.CreditCheckIn(creditId,msg.sender);
   }
 
   function creditCheckOut(uint256 creditId) public onlyMember {
     DataTypes.Credit storage credit = creditsById[creditId];
-    require(delegatorsStatus[creditId][msg.sender] = true, "MEMBER_NOT_CHECK_IN");
-    credit.delegators--;
-    delegatorsStatus[creditId][msg.sender] = false;
+    require(delegatorsStatus[creditId][msg.sender] != 0, "MEMBER_NOT_CHECK_IN");
+
+    uint256 toDeleteDelegatorPosition = delegatorsStatus[creditId][msg.sender];
+    address lastDelegator = credit.delegators[credit.delegatorsNr - 1];
+    credit.delegators[toDeleteDelegatorPosition - 1] = lastDelegator;
+    delegatorsStatus[creditId][lastDelegator] = toDeleteDelegatorPosition;
+    credit.delegators.pop();
+    credit.delegatorsNr--;
+    delegatorsStatus[creditId][msg.sender] = 0;
+    emit Events.CreditCheckOut(creditId,msg.sender);
   }
 
   function rejectCredit(uint256 creditId) public onlyMember {
     DataTypes.Credit storage credit = creditsById[creditId];
+    require(
+      credit.status == DataTypes.CreditStatus.PENDING,
+      "CREDIT_NOT_AVAILABLE"
+    );
     credit.status = DataTypes.CreditStatus.REJECTED;
     //// Notify
-    /// cancelTaskId
+    cancelTask(credit.gelatoTaskId);
+    emit Events.CreditRejected(credit);
   }
 
   function getMaxAmount() public view returns (uint256 maxAmount) {
-    uint256 balance = _getMemberBalance(msg.sender);
+    uint256 balance = _getMemberAvailable(msg.sender);
     console.log(balance);
     maxAmount = (100 + (100 - MAX_ALLOWANCE)).mul(balance);
   }
@@ -543,7 +578,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
       taskId = createStopStreamTask(sender, duration);
     }
     _updateFlow(sender, inFlowRate, taskId, duration);
-    console.log('juanito');
+    console.log("juanito");
     return newCtx;
   }
 
@@ -691,7 +726,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
     }
   }
 
-  // #endregionTask1 push erc20 to aave
+  // #endregion Task1 push erc20 to aave
 
   // #region Task N close creditVoting
 
@@ -726,7 +761,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
   }
 
   /// called by Gelato
-  function stopCreditPeriodExec(uint256 creditId) external onlyOps {
+  function stopCreditPeriodExec(uint256 creditId) external {
     //// check if
 
     DataTypes.Credit storage credit = creditsById[creditId];
@@ -735,26 +770,35 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
     uint256 fee;
     address feeToken;
 
-    (fee, feeToken) = IOps(ops).getFeeDetails();
+    // (fee, feeToken) = IOps(ops).getFeeDetails();
 
-    _transfer(fee, feeToken);
+    // _transfer(fee, feeToken);
 
     if (
-      credit.status == DataTypes.CreditStatus.PENDING && credit.delegators == 5
+      credit.status == DataTypes.CreditStatus.PENDING &&
+      credit.delegatorsNr == 5 &&
+      credit.delegators.length == 5
     ) {
       credit.status = DataTypes.CreditStatus.APPROVED;
       // NOtify approve
+
+      for (uint256 i = 0; i < 5; i++) {
+        DataTypes.Member storage member = members[credit.delegators[0]];
+        member.amountLocked = credit.delegatorsAmount;
+      }
+       emit Events.CreditApproved(credit);
       //do the dance
     } else {
       credit.status = DataTypes.CreditStatus.REJECTED;
       // notify Rejected
       // clean
+       emit Events.CreditRejected(credit);
     }
 
     cancelTask(credit.gelatoTaskId);
   }
 
-  // #endregion Task N close creditVoting
+  // #endregion Task N close creditVotingmembera
 
   modifier onlyOps() {
     require(msg.sender == ops, "OpsReady: onlyOps");

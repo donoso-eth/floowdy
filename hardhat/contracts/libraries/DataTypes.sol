@@ -65,7 +65,8 @@ library DataTypes {
     CreditStatus status;
     uint256 amount;
     uint256 rate;
-    uint256 delegators;
+    uint256 delegatorsNr;
+    address[] delegators;
     uint256 delegatorsAmount;
     bytes32 gelatoTaskId;
   }

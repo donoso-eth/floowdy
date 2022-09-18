@@ -2,10 +2,46 @@ type Member @entity {
   id: ID!
   member: String!
   timestamp: BigInt!
-  deposit:BigInt!
-  flow:BigInt!
-   flowGelatoId:String!
-   flowduration:BigInt!
+  initTimestamp: BigInt!
+  deposit: BigInt!
+  flow: BigInt!
+  flowGelatoId: String!
+  flowDuration: BigInt!
+  yieldAccrued: BigInt!
+  amountLocked:BigInt!
+  creditsRequested: [Credit!]! @derivedFrom(field: "requester")
+  creditsDelegated: [MemberCredit!] @derivedFrom(field: "member")
+}
 
+type Pool @entity {
+  id: ID!
+  timestamp: BigInt!
+  totalDeposit: BigInt!
+  totalFlow: BigInt!
+  totalYield: BigInt!
+  totalDelegated: BigInt!
+  depositIndex: BigInt!
+  flowIndex: BigInt!
+  nrMembers: BigInt!
+}
 
+type Credit @entity {
+  id: ID!
+  requester: Member!
+  initTimestamp: BigInt!
+  denyPeriodTimestamp: BigInt!
+  status: BigInt!
+  amount: BigInt!
+  rate: BigInt!
+  delegatorsNr: BigInt!
+  delegatorsArray: [String!]!
+  delegatorsAmount: BigInt!
+  gelatoTaskId: String!
+  delegators: [MemberCredit!]! @derivedFrom(field: "credit")
+}
+
+type MemberCredit @entity {
+  id: ID! 
+  member: Member!
+  credit: Credit!
 }

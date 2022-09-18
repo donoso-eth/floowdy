@@ -688,14 +688,14 @@ export const prinCredit = async (floowdy: Floowdy, id: number): Promise<any> => 
   console.log('\x1b[32m%s\x1b[0m', 'XXXXXXXXXXXXXX  CREDIT XXXXXXXXXXXXXXXXXXXXXXX');
   console.log(`Id ${credit.id.toString()} `);
   console.log(`Requester ${credit.requester.toString()} `);
-  console.log(`Amount ${credit.amount} units,`);
-  console.log(`Status ${credit.status} units,`);
+  console.log(`Amount ${credit.amount}`);
+  console.log(`Status ${credit.status}`);
   console.log(`Rate ${credit.rate}`);
   console.log(`Gelato Task Id ${credit.gelatoTaskId.toString()}`);
   console.log(`Created TimeStamp ${credit.initTimestamp.toString()}`);
   console.log(`Deny TimeStamp ${credit.denyPeriodTimestamp.toString()}`);
-  console.log(`Delegators: ${credit.delegators.toString()}  units`);
-  console.log(`Delegators Amount: ${credit.delegatorsAmount.toString()}  units`);
+  console.log(`Delegators: ${credit.delegators.toString()}`);
+  console.log(`Delegators Amount: ${credit.delegatorsAmount.toString()}`);
 
   console.log('\x1b[32m%s\x1b[0m', 'XXXXXXXXXXXXXX  CREDIT XXXXXXXXXXXXXXXXXXXXXXX');
 

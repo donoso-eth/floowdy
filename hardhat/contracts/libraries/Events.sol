@@ -10,13 +10,23 @@ import {DataTypes} from "./DataTypes.sol";
  * @notice A standard library of events used throughout.
  */
 library Events {
-    
+  event MemberDeposit(DataTypes.Member member);
 
+  event MemberStream(DataTypes.Member member);
 
- event MemberAction(DataTypes.Member);
+  event MemberDelegateCredit(uint256 creditId, address member, uint256 amountLocked);
 
- event CreditAction(DataTypes.Credit);
+  event CreditAction(DataTypes.Credit credit);
 
- event PoolUpdated(uint256 id);
+  event CreditRequested(DataTypes.Credit credit);
 
-  }
+  event CreditApproved(DataTypes.Credit credit);
+
+  event CreditRejected(DataTypes.Credit credit);
+
+  event CreditCheckIn(uint256 creditId, address delegator);
+
+  event CreditCheckOut(uint256 creditId, address delegator);
+
+  event PoolUpdated(uint256 id);
+}

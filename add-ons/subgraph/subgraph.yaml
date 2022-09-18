@@ -6,7 +6,7 @@ dataSources:
     name: Floowdy
     network: goerli
     source:
-      address: '0xc2C7c624D02CB0Bea3532Ef7204361FdD2d65Ca3'
+      address: '0x35237B527acCe7a29Ada67E0B9949632c531Ffc2'
       abi: Floowdy
       startBlock: 7588383
     mapping:
@@ -18,7 +18,30 @@ dataSources:
       abis:
         - name: Floowdy
           file: ./abis/floowdy.json
+        - name: Floowdy
+          file: ./abis/floowdy.json
+        - name: Floowdy
+          file: ./abis/floowdy.json
       eventHandlers:
-        - event: MemberDeposit(uint256,uint256,uint256)
+        - event: >-
+            CreditApproved((uint256,address,uint256,uint256,uint8,uint256,uint256,uint256,address[],uint256,bytes32))
+          handler: handleCreditApproved
+        - event: >-
+            CreditRejected((uint256,address,uint256,uint256,uint8,uint256,uint256,uint256,address[],uint256,bytes32))
+          handler: handleCreditRejected
+        - event: >-
+            CreditRequested((uint256,address,uint256,uint256,uint8,uint256,uint256,uint256,address[],uint256,bytes32))
+          handler: handleCreditRequested
+        - event: PoolUpdated(uint256)
+          handler: handlePoolUpdated
+        - event: >-
+            MemberDeposit((uint256,address,int96,bytes32,uint256,uint256,uint256,uint256,uint256,uint256))
           handler: handleMemberDeposit
+        - event: >-
+            MemberStream((uint256,address,int96,bytes32,uint256,uint256,uint256,uint256,uint256,uint256))
+          handler: handleMemberStream
+        - event: CreditCheckIn(uint256,address)
+          handler: handleCreditCheckIn
+        - event: CreditCheckOut(uint256,address)
+          handler: handleCreditCheckOut
       file: ./src/mapping.ts

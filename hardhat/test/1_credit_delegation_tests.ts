@@ -107,7 +107,7 @@ let networks_config = JSON.parse(
   readFileSync(join(processDir, 'networks.config.json'), 'utf-8')
 ) as INETWORK_CONFIG;
 
-let network_params = networks_config['mumbai'];
+let network_params = networks_config['goerli'];
 
 describe.only('credit delegation tests', function () {
   beforeEach(async () => {
@@ -115,14 +115,14 @@ describe.only('credit delegation tests', function () {
       method: 'hardhat_reset',
       params: [
         {
-          forking: {
-            jsonRpcUrl: `https://polygon-mumbai.g.alchemy.com/v2/P2lEQkjFdNjdN0M_mpZKB8r3fAa2M0vT`,
-            blockNumber: 28154232,
-          }
           // forking: {
-          //   jsonRpcUrl: `https://goerli.infura.io/v3/1e43f3d31eea4244bf25ed4c13bfde0e`,
-          //   blockNumber: 7608752,
-          // },
+          //   jsonRpcUrl: `https://polygon-mumbai.g.alchemy.com/v2/P2lEQkjFdNjdN0M_mpZKB8r3fAa2M0vT`,
+          //   blockNumber: 28154232,
+          // }
+          forking: {
+            jsonRpcUrl: `https://goerli.infura.io/v3/1e43f3d31eea4244bf25ed4c13bfde0e`,
+            blockNumber: 7608752,
+          },
         },
       ],
     });
@@ -212,7 +212,6 @@ describe.only('credit delegation tests', function () {
     let amountInit = utils.parseEther('5');
     //await tokenContract.transfer(floowdyAddress, amountInit);
 
-    throw new Error("");
     
 
     await faucet(
@@ -331,13 +330,38 @@ describe.only('credit delegation tests', function () {
         [floowdyAddress, floowdyAddress, execSelector, false, ETH, resolverHash]
       )
     );
+  
 
-    console.log(ops)
-    console.log(ops.address);
+    await  waitForTx(floowdy.stopCreditPeriodExec(1));
 
+    await waitForTx(
+      supertokenContract.connect(user3).send(floowdyAddress, 60000, '0x')
+    );
+    await expect(waitForTx(floowdy.connect(user3).creditCheckIn(1))).to.be.revertedWith("CREDIT_NOT_AVAILABLE");
 
+ 
+    await waitForTx(floowdy.connect(user1).requestCredit(40000));
 
-  await ops.exec(hre.ethers.utils.parseEther('0.1'), ETH,floowdyAddress, false, true, resolverHash, floowdyAddress, execData);
+    await waitForTx(floowdy.connect(user2).creditCheckIn(2));
+    await waitForTx(floowdy.connect(user3).creditCheckIn(2));
+    
+    await waitForTx(
+      supertokenContract.connect(user4).send(floowdyAddress, 60000, '0x')
+    );
+    await waitForTx(floowdy.connect(user4).creditCheckIn(2));
+    
+    await waitForTx(
+      supertokenContract.connect(user5).send(floowdyAddress, 60000, '0x')
+    );
+    await waitForTx(floowdy.connect(user5).creditCheckIn(2));
+    
+    await waitForTx(
+      supertokenContract.connect(user6).send(floowdyAddress, 60000, '0x')
+    );
+    await waitForTx(floowdy.connect(user6).creditCheckIn(2));
+
+    await  waitForTx(floowdy.stopCreditPeriodExec(2));
+    await prinCredit(floowdy,2)
 
 
     throw new Error('');

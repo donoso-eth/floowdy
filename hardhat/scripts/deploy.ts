@@ -73,10 +73,6 @@ if (network_params == undefined) {
     epnsChannel:network_params.epnsChanel
   }
 
-console.log(floodyInit);
-
-
-
   //// DEPLOY POOLFACTORY
 
   const floowdy = await new Floowdy__factory(deployer).deploy(floodyInit)
