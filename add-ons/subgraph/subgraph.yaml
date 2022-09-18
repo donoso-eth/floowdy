@@ -21,6 +21,10 @@ dataSources:
       abis:
         - name: Floowdy
           file: ./abis/floowdy.json
+        - name: Floowdy
+          file: ./abis/floowdy.json
+        - name: Floowdy
+          file: ./abis/floowdy.json
       eventHandlers:
         - event: >-
             CreditApproved((uint256,address,uint256,uint256,uint8,uint256,uint256,uint256,address[],uint256,bytes32))
@@ -31,8 +35,6 @@ dataSources:
         - event: >-
             CreditRequested((uint256,address,uint256,uint256,uint8,uint256,uint256,uint256,address[],uint256,bytes32))
           handler: handleCreditRequested
-        - event: PoolUpdated(uint256)
-          handler: handlePoolUpdated
         - event: >-
             MemberDeposit((uint256,address,int96,bytes32,uint256,uint256,uint256,uint256,uint256,uint256))
           handler: handleMemberDeposit
@@ -43,4 +45,7 @@ dataSources:
           handler: handleCreditCheckIn
         - event: CreditCheckOut(uint256,address)
           handler: handleCreditCheckOut
+        - event: >-
+            PoolUpdated((uint256,uint256,int96,uint256,uint256,uint256,uint256,uint256,uint256,uint256))
+          handler: handlePoolUpdated
       file: ./src/mapping.ts

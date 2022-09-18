@@ -1,5 +1,6 @@
 type Member @entity {
   id: ID!
+  memberId: String!
   member: String!
   timestamp: BigInt!
   initTimestamp: BigInt!
@@ -15,6 +16,7 @@ type Member @entity {
 
 type Pool @entity {
   id: ID!
+  poolId: String!
   timestamp: BigInt!
   totalDeposit: BigInt!
   totalFlow: BigInt!
@@ -22,7 +24,7 @@ type Pool @entity {
   totalDelegated: BigInt!
   depositIndex: BigInt!
   flowIndex: BigInt!
-  nrMembers: BigInt!
+  totalMembers: BigInt!
 }
 
 type Credit @entity {

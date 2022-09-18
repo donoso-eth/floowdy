@@ -10,6 +10,7 @@ export class LoadingComponent implements OnChanges{
   constructor() { }
 
   @Input() public isBusy:boolean = true;
+  @Input() public isBusyMessage:{ header:string, body:string}  = { header:'', body:''};
 
   ngOnChanges(changes: SimpleChanges): void {
        

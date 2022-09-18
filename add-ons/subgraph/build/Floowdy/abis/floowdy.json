@@ -93,13 +93,6 @@
   },
   {
     "inputs": [],
-    "name": "_poolRebalance",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "aaveSupply",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -782,6 +775,11 @@
         "internalType": "uint256",
         "name": "totalDelegated",
         "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "totalMembers",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -798,6 +796,13 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "poolRebalance",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -1081,7 +1086,7 @@
         ],
         "indexed": false,
         "internalType": "struct DataTypes.Credit",
-        "name": "",
+        "name": "credit",
         "type": "tuple"
       }
     ],
@@ -1151,7 +1156,7 @@
         ],
         "indexed": false,
         "internalType": "struct DataTypes.Credit",
-        "name": "",
+        "name": "credit",
         "type": "tuple"
       }
     ],
@@ -1329,11 +1334,36 @@
         ],
         "indexed": false,
         "internalType": "struct DataTypes.Credit",
-        "name": "",
+        "name": "credit",
         "type": "tuple"
       }
     ],
     "name": "CreditRequested",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "creditId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "member",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amountLocked",
+        "type": "uint256"
+      }
+    ],
+    "name": "MemberDelegateCredit",
     "type": "event"
   },
   {
@@ -1394,7 +1424,7 @@
         ],
         "indexed": false,
         "internalType": "struct DataTypes.Member",
-        "name": "",
+        "name": "member",
         "type": "tuple"
       }
     ],
@@ -1459,7 +1489,7 @@
         ],
         "indexed": false,
         "internalType": "struct DataTypes.Member",
-        "name": "",
+        "name": "member",
         "type": "tuple"
       }
     ],
@@ -1470,10 +1500,62 @@
     "anonymous": false,
     "inputs": [
       {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "id",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "timestamp",
+            "type": "uint256"
+          },
+          {
+            "internalType": "int96",
+            "name": "totalFlow",
+            "type": "int96"
+          },
+          {
+            "internalType": "uint256",
+            "name": "totalDeposit",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "totalDepositFlow",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "totalYield",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "depositIndex",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "flowIndex",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "totalDelegated",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "totalMembers",
+            "type": "uint256"
+          }
+        ],
         "indexed": false,
-        "internalType": "uint256",
-        "name": "id",
-        "type": "uint256"
+        "internalType": "struct DataTypes.Pool",
+        "name": "pool",
+        "type": "tuple"
       }
     ],
     "name": "PoolUpdated",

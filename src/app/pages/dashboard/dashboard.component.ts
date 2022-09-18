@@ -115,14 +115,23 @@ export class DashboardComponent extends DappBaseComponent implements OnInit {
 
   async getCredits() {
     const member = this.graphqlService
-      .watchMember(this.dapp.signerAddress!)
-      .pipe(takeUntil(this.destroyHooks))
-      .subscribe((val: any) => {
+        .watchMember(this.dapp.signerAddress!)
+        .pipe(takeUntil(this.destroyHooks))
+        .subscribe((val: any) => {
+          console.log(val);
+          if (!!val && !!val.data && !!val.data.member) {
+            console.log(val.data)
+          }
+        });
+
+     let val =   await  this.graphqlService
+        .getCredits()
         console.log(val);
-        if (!!val && !!val.data && !!val.data.member) {
-          console.log(val.data.member())
-        }
-      });
+          if (!!val && !!val.data ) {
+            console.log(val.data)
+          }
+    
+
   }
 
   override async hookContractConnected(): Promise<void> {

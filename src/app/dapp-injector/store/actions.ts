@@ -24,16 +24,10 @@ const chainStatus = createAction('[Chain] Status', props<{ status: NETWORK_STATU
 const chainBusy = createAction('[Chain] Busy', props<{ status: boolean}>());
 const chainBusyWithMessage = createAction('[Chain] Busy with Message', props<{ status: boolean, message: {header:string,body:string} }>());
 const disconnectChain = createAction('[Disconnect] Chain',props<{status:'force-disconnect'}>());
-
 const refreshBalances = createAction('[Refresh] Balances',props<{refreshBalance:boolean}>());
-
 const setSignerNetwork = createAction('[Set] SignerNetwork', props<{ network: string }>());
-
 const setDollarExhange = createAction('[Set] Dollar', props<{ exchange: number }>());
-
 const updateWalletBalance = createAction('[Update] WalletBalance', props<{ walletBalance: number }>());
-
-
 
 
 export const Web3Actions = {

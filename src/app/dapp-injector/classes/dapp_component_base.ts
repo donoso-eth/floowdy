@@ -14,6 +14,8 @@ export class DappBaseComponent implements OnDestroy, AfterViewInit {
 
   ////// Public Available
   blockchain_is_busy: boolean = true;
+  is_busy_message = { header:'', body:''}
+
   blockchain_status: NETWORK_STATUS = 'loading';
 
   defaultContract!: AngularContract< Floowdy>;
@@ -98,13 +100,17 @@ export class DappBaseComponent implements OnDestroy, AfterViewInit {
       .pipe(takeUntil(this.destroyHooks))
       .subscribe((isBusy: boolean) => {
         this.blockchain_is_busy = isBusy;
+        if (isBusy == false) {
+          this.is_busy_message = { header:'', body:''}
+        }
       });
 
       this.store
       .select(web3Selectors.busyNetworkWithMessage)
       .pipe(takeUntil(this.destroyHooks))
-      .subscribe((payload:any) => {
-        console.log()
+      .subscribe((payload:{header:string, body:string}) => {
+        console.log(payload)
+        this.is_busy_message = payload;
       });
   }
 

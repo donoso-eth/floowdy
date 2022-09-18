@@ -7,6 +7,8 @@ import { Component, OnInit } from '@angular/core';
 })
 export class CreditTableComponent implements OnInit {
 
+
+
   products:any;
   constructor() {
     this.products =[
@@ -375,6 +377,14 @@ export class CreditTableComponent implements OnInit {
     
    }
 
+   goToCredit(id:string){
+
+   }
+
+   checkOut(id:string) {
+
+   }
+   
   ngOnInit(): void {
   }
 

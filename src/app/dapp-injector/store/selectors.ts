@@ -82,7 +82,7 @@ const busyNetwork = createSelector(
 
 const busyNetworkWithMessage = createSelector(
   selectWeb3State,
-  (state: Web3State) => (state.busyMessage,state.busyNetwork)
+  (state: Web3State) => (state.busyMessage)
 );
 
 

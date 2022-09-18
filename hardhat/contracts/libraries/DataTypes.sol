@@ -47,6 +47,7 @@ library DataTypes {
     uint256 depositIndex;
     uint256 flowIndex;
     uint256 totalDelegated;
+    uint256 totalMembers;
   }
 
 

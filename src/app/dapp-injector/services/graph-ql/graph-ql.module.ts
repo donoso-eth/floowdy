@@ -14,6 +14,7 @@ import {InMemoryCache} from '@apollo/client/core';
 })
 export class GraphQlModule {
   static forRoot(config:{uri:string}): ModuleWithProviders<GraphQlModule> {
+    console.log(config.uri);
     return {
       ngModule: GraphQlModule,
       providers: [GraphQlService,Apollo,
@@ -30,7 +31,8 @@ export class GraphQlModule {
               superfluid: /* <-- these settings will be saved by name: superfluid*/ {
                 cache: new InMemoryCache(),
                 link: httpLink.create({
-                  uri: 'https://api.thegraph.com/subgraphs/name/superfluid-finance/protocol-v1-goerli',
+                  uri: config.uri,
+                  //uri: 'https://api.thegraph.com/subgraphs/name/superfluid-finance/protocol-v1-goerli',
                 }),
               },
               lens: /* <-- these settings will be saved by name: lens*/ {

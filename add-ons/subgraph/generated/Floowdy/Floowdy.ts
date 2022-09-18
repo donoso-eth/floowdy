@@ -45,14 +45,14 @@ export class CreditAction__Params {
     this._event = event;
   }
 
-  get param0(): CreditActionParam0Struct {
-    return changetype<CreditActionParam0Struct>(
+  get credit(): CreditActionCreditStruct {
+    return changetype<CreditActionCreditStruct>(
       this._event.parameters[0].value.toTuple()
     );
   }
 }
 
-export class CreditActionParam0Struct extends ethereum.Tuple {
+export class CreditActionCreditStruct extends ethereum.Tuple {
   get id(): BigInt {
     return this[0].toBigInt();
   }
@@ -111,14 +111,14 @@ export class CreditApproved__Params {
     this._event = event;
   }
 
-  get param0(): CreditApprovedParam0Struct {
-    return changetype<CreditApprovedParam0Struct>(
+  get credit(): CreditApprovedCreditStruct {
+    return changetype<CreditApprovedCreditStruct>(
       this._event.parameters[0].value.toTuple()
     );
   }
 }
 
-export class CreditApprovedParam0Struct extends ethereum.Tuple {
+export class CreditApprovedCreditStruct extends ethereum.Tuple {
   get id(): BigInt {
     return this[0].toBigInt();
   }
@@ -287,14 +287,14 @@ export class CreditRequested__Params {
     this._event = event;
   }
 
-  get param0(): CreditRequestedParam0Struct {
-    return changetype<CreditRequestedParam0Struct>(
+  get credit(): CreditRequestedCreditStruct {
+    return changetype<CreditRequestedCreditStruct>(
       this._event.parameters[0].value.toTuple()
     );
   }
 }
 
-export class CreditRequestedParam0Struct extends ethereum.Tuple {
+export class CreditRequestedCreditStruct extends ethereum.Tuple {
   get id(): BigInt {
     return this[0].toBigInt();
   }
@@ -340,6 +340,32 @@ export class CreditRequestedParam0Struct extends ethereum.Tuple {
   }
 }
 
+export class MemberDelegateCredit extends ethereum.Event {
+  get params(): MemberDelegateCredit__Params {
+    return new MemberDelegateCredit__Params(this);
+  }
+}
+
+export class MemberDelegateCredit__Params {
+  _event: MemberDelegateCredit;
+
+  constructor(event: MemberDelegateCredit) {
+    this._event = event;
+  }
+
+  get creditId(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get member(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+
+  get amountLocked(): BigInt {
+    return this._event.parameters[2].value.toBigInt();
+  }
+}
+
 export class MemberDeposit extends ethereum.Event {
   get params(): MemberDeposit__Params {
     return new MemberDeposit__Params(this);
@@ -353,14 +379,14 @@ export class MemberDeposit__Params {
     this._event = event;
   }
 
-  get param0(): MemberDepositParam0Struct {
-    return changetype<MemberDepositParam0Struct>(
+  get member(): MemberDepositMemberStruct {
+    return changetype<MemberDepositMemberStruct>(
       this._event.parameters[0].value.toTuple()
     );
   }
 }
 
-export class MemberDepositParam0Struct extends ethereum.Tuple {
+export class MemberDepositMemberStruct extends ethereum.Tuple {
   get id(): BigInt {
     return this[0].toBigInt();
   }
@@ -415,14 +441,14 @@ export class MemberStream__Params {
     this._event = event;
   }
 
-  get param0(): MemberStreamParam0Struct {
-    return changetype<MemberStreamParam0Struct>(
+  get member(): MemberStreamMemberStruct {
+    return changetype<MemberStreamMemberStruct>(
       this._event.parameters[0].value.toTuple()
     );
   }
 }
 
-export class MemberStreamParam0Struct extends ethereum.Tuple {
+export class MemberStreamMemberStruct extends ethereum.Tuple {
   get id(): BigInt {
     return this[0].toBigInt();
   }
@@ -477,8 +503,52 @@ export class PoolUpdated__Params {
     this._event = event;
   }
 
+  get pool(): PoolUpdatedPoolStruct {
+    return changetype<PoolUpdatedPoolStruct>(
+      this._event.parameters[0].value.toTuple()
+    );
+  }
+}
+
+export class PoolUpdatedPoolStruct extends ethereum.Tuple {
   get id(): BigInt {
-    return this._event.parameters[0].value.toBigInt();
+    return this[0].toBigInt();
+  }
+
+  get timestamp(): BigInt {
+    return this[1].toBigInt();
+  }
+
+  get totalFlow(): BigInt {
+    return this[2].toBigInt();
+  }
+
+  get totalDeposit(): BigInt {
+    return this[3].toBigInt();
+  }
+
+  get totalDepositFlow(): BigInt {
+    return this[4].toBigInt();
+  }
+
+  get totalYield(): BigInt {
+    return this[5].toBigInt();
+  }
+
+  get depositIndex(): BigInt {
+    return this[6].toBigInt();
+  }
+
+  get flowIndex(): BigInt {
+    return this[7].toBigInt();
+  }
+
+  get totalDelegated(): BigInt {
+    return this[8].toBigInt();
+  }
+
+  get totalMembers(): BigInt {
+    return this[9].toBigInt();
   }
 }
 
@@ -633,6 +703,7 @@ export class Floowdy__poolByTimestampResult {
   value6: BigInt;
   value7: BigInt;
   value8: BigInt;
+  value9: BigInt;
 
   constructor(
     value0: BigInt,
@@ -643,7 +714,8 @@ export class Floowdy__poolByTimestampResult {
     value5: BigInt,
     value6: BigInt,
     value7: BigInt,
-    value8: BigInt
+    value8: BigInt,
+    value9: BigInt
   ) {
     this.value0 = value0;
     this.value1 = value1;
@@ -654,6 +726,7 @@ export class Floowdy__poolByTimestampResult {
     this.value6 = value6;
     this.value7 = value7;
     this.value8 = value8;
+    this.value9 = value9;
   }
 
   toMap(): TypedMap<string, ethereum.Value> {
@@ -667,6 +740,7 @@ export class Floowdy__poolByTimestampResult {
     map.set("value6", ethereum.Value.fromUnsignedBigInt(this.value6));
     map.set("value7", ethereum.Value.fromUnsignedBigInt(this.value7));
     map.set("value8", ethereum.Value.fromUnsignedBigInt(this.value8));
+    map.set("value9", ethereum.Value.fromUnsignedBigInt(this.value9));
     return map;
   }
 }
@@ -1339,7 +1413,7 @@ export class Floowdy extends ethereum.SmartContract {
   poolByTimestamp(param0: BigInt): Floowdy__poolByTimestampResult {
     let result = super.call(
       "poolByTimestamp",
-      "poolByTimestamp(uint256):(uint256,uint256,int96,uint256,uint256,uint256,uint256,uint256,uint256)",
+      "poolByTimestamp(uint256):(uint256,uint256,int96,uint256,uint256,uint256,uint256,uint256,uint256,uint256)",
       [ethereum.Value.fromUnsignedBigInt(param0)]
     );
 
@@ -1352,7 +1426,8 @@ export class Floowdy extends ethereum.SmartContract {
       result[5].toBigInt(),
       result[6].toBigInt(),
       result[7].toBigInt(),
-      result[8].toBigInt()
+      result[8].toBigInt(),
+      result[9].toBigInt()
     );
   }
 
@@ -1361,7 +1436,7 @@ export class Floowdy extends ethereum.SmartContract {
   ): ethereum.CallResult<Floowdy__poolByTimestampResult> {
     let result = super.tryCall(
       "poolByTimestamp",
-      "poolByTimestamp(uint256):(uint256,uint256,int96,uint256,uint256,uint256,uint256,uint256,uint256)",
+      "poolByTimestamp(uint256):(uint256,uint256,int96,uint256,uint256,uint256,uint256,uint256,uint256,uint256)",
       [ethereum.Value.fromUnsignedBigInt(param0)]
     );
     if (result.reverted) {
@@ -1378,7 +1453,8 @@ export class Floowdy extends ethereum.SmartContract {
         value[5].toBigInt(),
         value[6].toBigInt(),
         value[7].toBigInt(),
-        value[8].toBigInt()
+        value[8].toBigInt(),
+        value[9].toBigInt()
       )
     );
   }
@@ -1559,32 +1635,6 @@ export class _calculateYieldCall__Outputs {
   _call: _calculateYieldCall;
 
   constructor(call: _calculateYieldCall) {
-    this._call = call;
-  }
-}
-
-export class _poolRebalanceCall extends ethereum.Call {
-  get inputs(): _poolRebalanceCall__Inputs {
-    return new _poolRebalanceCall__Inputs(this);
-  }
-
-  get outputs(): _poolRebalanceCall__Outputs {
-    return new _poolRebalanceCall__Outputs(this);
-  }
-}
-
-export class _poolRebalanceCall__Inputs {
-  _call: _poolRebalanceCall;
-
-  constructor(call: _poolRebalanceCall) {
-    this._call = call;
-  }
-}
-
-export class _poolRebalanceCall__Outputs {
-  _call: _poolRebalanceCall;
-
-  constructor(call: _poolRebalanceCall) {
     this._call = call;
   }
 }
@@ -1863,6 +1913,32 @@ export class CreditCheckOutCall__Outputs {
   _call: CreditCheckOutCall;
 
   constructor(call: CreditCheckOutCall) {
+    this._call = call;
+  }
+}
+
+export class PoolRebalanceCall extends ethereum.Call {
+  get inputs(): PoolRebalanceCall__Inputs {
+    return new PoolRebalanceCall__Inputs(this);
+  }
+
+  get outputs(): PoolRebalanceCall__Outputs {
+    return new PoolRebalanceCall__Outputs(this);
+  }
+}
+
+export class PoolRebalanceCall__Inputs {
+  _call: PoolRebalanceCall;
+
+  constructor(call: PoolRebalanceCall) {
+    this._call = call;
+  }
+}
+
+export class PoolRebalanceCall__Outputs {
+  _call: PoolRebalanceCall;
+
+  constructor(call: PoolRebalanceCall) {
     this._call = call;
   }
 }

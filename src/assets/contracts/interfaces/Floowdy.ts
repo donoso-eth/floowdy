@@ -52,7 +52,6 @@ export interface FloowdyInterface extends utils.Interface {
   functions: {
     "ETH()": FunctionFragment;
     "_calculateYield()": FunctionFragment;
-    "_poolRebalance()": FunctionFragment;
     "aaveSupply()": FunctionFragment;
     "afterAgreementCreated(address,address,bytes32,bytes,bytes,bytes)": FunctionFragment;
     "afterAgreementTerminated(address,address,bytes32,bytes,bytes,bytes)": FunctionFragment;
@@ -79,6 +78,7 @@ export interface FloowdyInterface extends utils.Interface {
     "parseLoanData(bytes)": FunctionFragment;
     "poolByTimestamp(uint256)": FunctionFragment;
     "poolId()": FunctionFragment;
+    "poolRebalance()": FunctionFragment;
     "poolTimestamp()": FunctionFragment;
     "rejectCredit(uint256)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
@@ -99,10 +99,6 @@ export interface FloowdyInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "ETH", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "_calculateYield",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_poolRebalance",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -189,6 +185,10 @@ export interface FloowdyInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "poolId", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "poolRebalance",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "poolTimestamp",
     values?: undefined
   ): string;
@@ -246,10 +246,6 @@ export interface FloowdyInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "ETH", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_calculateYield",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_poolRebalance",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "aaveSupply", data: BytesLike): Result;
@@ -329,6 +325,10 @@ export interface FloowdyInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "poolId", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "poolRebalance",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "poolTimestamp",
     data: BytesLike
@@ -429,10 +429,6 @@ export interface Floowdy extends BaseContract {
     ETH(overrides?: CallOverrides): Promise<[string]>;
 
     _calculateYield(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    _poolRebalance(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -628,6 +624,7 @@ export interface Floowdy extends BaseContract {
         BigNumber,
         BigNumber,
         BigNumber,
+        BigNumber,
         BigNumber
       ] & {
         id: BigNumber;
@@ -639,10 +636,15 @@ export interface Floowdy extends BaseContract {
         depositIndex: BigNumber;
         flowIndex: BigNumber;
         totalDelegated: BigNumber;
+        totalMembers: BigNumber;
       }
     >;
 
     poolId(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    poolRebalance(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     poolTimestamp(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -719,10 +721,6 @@ export interface Floowdy extends BaseContract {
   ETH(overrides?: CallOverrides): Promise<string>;
 
   _calculateYield(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  _poolRebalance(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -913,6 +911,7 @@ export interface Floowdy extends BaseContract {
       BigNumber,
       BigNumber,
       BigNumber,
+      BigNumber,
       BigNumber
     ] & {
       id: BigNumber;
@@ -924,10 +923,15 @@ export interface Floowdy extends BaseContract {
       depositIndex: BigNumber;
       flowIndex: BigNumber;
       totalDelegated: BigNumber;
+      totalMembers: BigNumber;
     }
   >;
 
   poolId(overrides?: CallOverrides): Promise<BigNumber>;
+
+  poolRebalance(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   poolTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1004,8 +1008,6 @@ export interface Floowdy extends BaseContract {
     ETH(overrides?: CallOverrides): Promise<string>;
 
     _calculateYield(overrides?: CallOverrides): Promise<void>;
-
-    _poolRebalance(overrides?: CallOverrides): Promise<void>;
 
     aaveSupply(overrides?: CallOverrides): Promise<void>;
 
@@ -1192,6 +1194,7 @@ export interface Floowdy extends BaseContract {
         BigNumber,
         BigNumber,
         BigNumber,
+        BigNumber,
         BigNumber
       ] & {
         id: BigNumber;
@@ -1203,10 +1206,13 @@ export interface Floowdy extends BaseContract {
         depositIndex: BigNumber;
         flowIndex: BigNumber;
         totalDelegated: BigNumber;
+        totalMembers: BigNumber;
       }
     >;
 
     poolId(overrides?: CallOverrides): Promise<BigNumber>;
+
+    poolRebalance(overrides?: CallOverrides): Promise<void>;
 
     poolTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1286,10 +1292,6 @@ export interface Floowdy extends BaseContract {
     ETH(overrides?: CallOverrides): Promise<BigNumber>;
 
     _calculateYield(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    _poolRebalance(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1426,6 +1428,10 @@ export interface Floowdy extends BaseContract {
 
     poolId(overrides?: CallOverrides): Promise<BigNumber>;
 
+    poolRebalance(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     poolTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
 
     rejectCredit(
@@ -1502,10 +1508,6 @@ export interface Floowdy extends BaseContract {
     ETH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     _calculateYield(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    _poolRebalance(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1644,6 +1646,10 @@ export interface Floowdy extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     poolId(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    poolRebalance(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     poolTimestamp(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

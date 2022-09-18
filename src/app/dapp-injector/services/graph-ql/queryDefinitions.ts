@@ -1,18 +1,13 @@
-export const GET_OFFERS = `
+export const GET_CREDITS = `
     {
-      loanOffers(first: 5) {
+      credits(first: 5) {
         id
-  loanMaxAmount
-  loanMinAmount
-  fee
-  superToken
-  collateralShare
-  maxDuration
-  loanProvider {
-    id
-  }
-  status
-   
+        amount
+        rate
+        delegatorsNr
+        delegatorsAmount
+        gelatoTaskId
+        status
       }
     }
   `;
@@ -45,7 +40,7 @@ export const GET_DEMANDS = `
   `;
   export const GET_MEMBER = `
   query($address: String!){
-      member(member:$address) {
+      member(id:$address) {
     
        deposit,
        flow,
@@ -53,7 +48,26 @@ export const GET_DEMANDS = `
         denyPeriodTimestamp
         gelatoTaskId
        }
+       creditsDelegated {
+          member {
+            member 
+          }
+       }
        
       }
     }
+  `;
+
+  export const GET_MEMBER_CREDITS = `
+  {
+    membercredits(first: 5) {
+      id
+      member {
+        member
+      }
+      credit {
+        id
+      }πgrap
+    }
+  }
   `;

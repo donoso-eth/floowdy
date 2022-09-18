@@ -16,7 +16,11 @@ export async function initEnv(hre: HardhatRuntimeEnvironment): Promise<any[]> {
     const user4 = accounts[4];
     const user5 = accounts[5];
     const user6 = accounts[6];
-    return [deployer, user1, user2, user3, user4, user5, user6];
+    const user7 = accounts[7];
+    const user8 = accounts[8];
+    const user9 = accounts[9];
+    const user10 = accounts[10];
+    return [deployer, user1, user2, user3, user4, user5, user6, user7, user8, user9, user10];
   } else {
     const deployer_provider = hre.ethers.provider;
     const privKeyDEPLOYER = process.env['DEPLOYER_KEY'] as BytesLike;

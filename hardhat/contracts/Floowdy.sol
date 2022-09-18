@@ -124,6 +124,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
       TOKENS_RECIPIENT_INTERFACE_HASH,
       address(this)
     );
+
   }
 
   /**
@@ -171,6 +172,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
 
     member.timestamp = block.timestamp;
     emit Events.MemberDeposit(member);
+    emit Events.PoolUpdated(poolByTimestamp[poolTimestamp]);
   }
 
   // #endregion
@@ -280,6 +282,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
 
     console.log("updateMemberFlow");
     emit Events.MemberDeposit(member);
+    emit Events.PoolUpdated(poolByTimestamp[poolTimestamp]);
   }
 
   function _calculateYieldMember(address _member)
@@ -330,14 +333,21 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
   // ============= ============= Pool ============= ============= //
   // #region Pool
 
+  function poolRebalance() external {
+    _poolRebalance();
+    emit Events.PoolUpdated(poolByTimestamp[poolTimestamp]);
+
+  }
+
   function _calculateYield() public {}
 
-  function _poolRebalance() public {
+  function _poolRebalance() internal{
     poolId++;
 
     DataTypes.Pool memory currentPool = DataTypes.Pool(
-      0,
+      poolId++,
       block.timestamp,
+      0,
       0,
       0,
       0,
@@ -363,6 +373,8 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
     currentPool.flowIndex = currentPool.flowIndex + lastPool.flowIndex;
 
     currentPool.totalFlow = lastPool.totalFlow;
+
+    currentPool.totalMembers = totalMembers;
 
     currentPool.timestamp = block.timestamp;
 

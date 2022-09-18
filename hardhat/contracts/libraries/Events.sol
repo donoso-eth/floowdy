@@ -28,5 +28,8 @@ library Events {
 
   event CreditCheckOut(uint256 creditId, address delegator);
 
-  event PoolUpdated(uint256 id);
+  event PoolUpdated(DataTypes.Pool pool);
+
+  
+
 }

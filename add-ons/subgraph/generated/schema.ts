@@ -17,6 +17,7 @@ export class Member extends Entity {
     super();
     this.set("id", Value.fromString(id));
 
+    this.set("memberId", Value.fromString(""));
     this.set("member", Value.fromString(""));
     this.set("timestamp", Value.fromBigInt(BigInt.zero()));
     this.set("initTimestamp", Value.fromBigInt(BigInt.zero()));
@@ -52,6 +53,15 @@ export class Member extends Entity {
 
   set id(value: string) {
     this.set("id", Value.fromString(value));
+  }
+
+  get memberId(): string {
+    let value = this.get("memberId");
+    return value!.toString();
+  }
+
+  set memberId(value: string) {
+    this.set("memberId", Value.fromString(value));
   }
 
   get member(): string {
@@ -167,6 +177,7 @@ export class Pool extends Entity {
     super();
     this.set("id", Value.fromString(id));
 
+    this.set("poolId", Value.fromString(""));
     this.set("timestamp", Value.fromBigInt(BigInt.zero()));
     this.set("totalDeposit", Value.fromBigInt(BigInt.zero()));
     this.set("totalFlow", Value.fromBigInt(BigInt.zero()));
@@ -174,7 +185,7 @@ export class Pool extends Entity {
     this.set("totalDelegated", Value.fromBigInt(BigInt.zero()));
     this.set("depositIndex", Value.fromBigInt(BigInt.zero()));
     this.set("flowIndex", Value.fromBigInt(BigInt.zero()));
-    this.set("nrMembers", Value.fromBigInt(BigInt.zero()));
+    this.set("totalMembers", Value.fromBigInt(BigInt.zero()));
   }
 
   save(): void {
@@ -201,6 +212,15 @@ export class Pool extends Entity {
 
   set id(value: string) {
     this.set("id", Value.fromString(value));
+  }
+
+  get poolId(): string {
+    let value = this.get("poolId");
+    return value!.toString();
+  }
+
+  set poolId(value: string) {
+    this.set("poolId", Value.fromString(value));
   }
 
   get timestamp(): BigInt {
@@ -266,13 +286,13 @@ export class Pool extends Entity {
     this.set("flowIndex", Value.fromBigInt(value));
   }
 
-  get nrMembers(): BigInt {
-    let value = this.get("nrMembers");
+  get totalMembers(): BigInt {
+    let value = this.get("totalMembers");
     return value!.toBigInt();
   }
 
-  set nrMembers(value: BigInt) {
-    this.set("nrMembers", Value.fromBigInt(value));
+  set totalMembers(value: BigInt) {
+    this.set("totalMembers", Value.fromBigInt(value));
   }
 }
 
