@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -18,115 +18,115 @@ import { Floowdy } from 'src/assets/contracts/interfaces/Floowdy';
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.scss']
+  styleUrls: ['./dashboard.component.scss'],
 })
-export class DashboardComponent extends DappBaseComponent  implements OnInit {
-
+export class DashboardComponent extends DappBaseComponent implements OnInit {
   balanceSupertoken = 0;
   poolToken?: IPOOL_TOKEN;
-  poolState!: IPOOL_STATE ;
+  poolState!: IPOOL_STATE;
   twoDec!: string;
   fourDec!: string;
-  
-  depositAmountCtrl = new FormControl('',[Validators.required, Validators.min(1)]);
 
-
+  depositAmountCtrl = new FormControl('', [
+    Validators.required,
+    Validators.min(1),
+  ]);
 
   constructor(
-    store: Store, 
-    dapp: DappInjector,   public router:Router,
+    store: Store,
+    dapp: DappInjector,
+    public router: Router,
     public formBuilder: FormBuilder,
-   public global: GlobalService, 
-   private graphqlService: GraphQlService,
-   public erc777: ERC777Service,
-   public msg:MessageService
-  ) { 
-    super(dapp,store);
-    
- 
+    public global: GlobalService,
+    private graphqlService: GraphQlService,
+    public erc777: ERC777Service,
+    public msg: MessageService
+  ) {
+    super(dapp, store);
   }
 
-  showStartFlow(){
-    this.router.navigateByUrl('start-flow')
+  showStartFlow() {
+    this.router.navigateByUrl('start-flow');
   }
 
- async wrapp(){
+  async wrapp() {}
 
- }
-
- async mint(){
-  this.store.dispatch(Web3Actions.chainBusy({ status: true }));
-  await this.global.mint()
-  this.refreshBalance();
-  this.store.dispatch(Web3Actions.chainBusy({ status: false }));
-
- }
- 
- async deposit() {
-  if (this.depositAmountCtrl.invalid) {
-    this.msg.add({ key: 'tst', severity: 'error', summary: 'OOPS', detail: `Value minimum to deposit 1 token` });
- 
-    return
+  async mint() {
+    this.store.dispatch(Web3Actions.chainBusy({ status: true }));
+    await this.global.mint();
+    this.refreshBalance();
+    this.store.dispatch(Web3Actions.chainBusy({ status: false }));
   }
 
+  async deposit() {
+    if (this.depositAmountCtrl.invalid) {
+      this.msg.add({
+        key: 'tst',
+        severity: 'error',
+        summary: 'OOPS',
+        detail: `Value minimum to deposit 1 token`,
+      });
 
-  let amount =  utils.parseEther(this.depositAmountCtrl.value.toString())
-  console.log(amount)
-  this.store.dispatch(Web3Actions.chainBusy({ status: true }));
-  await this.erc777.depositIntoPool(amount)
-  this.refreshBalance();
-  this.store.dispatch(Web3Actions.chainBusy({ status: false }));
+      return;
+    }
 
- }
-
-
- async refreshBalance() {
-    
-  let result  = await this.global.getPoolToken();
-
-  this.poolToken = result.poolToken;
-  this.poolState = result.poolState;
-  console.log(this.poolState)
-  
-  
-  let formated = this.global.prepareNumbers(+this.poolToken.superTokenBalance!)
-  this.twoDec = formated.twoDec; 
-  this.fourDec = formated.fourDec; 
-
-  if (this.poolState.inFlow > 0) {
-  
-  this.destroyHooks.next()
-  let source = interval(500);
-  source
-    .pipe(takeUntil(this.destroyHooks))
-    .subscribe((val) => {
-
-      const todayms = (new Date()).getTime()/1000
-      const alreadydFlow = (todayms - this.poolState.timestamp)
-
-      let formated = this.global.prepareNumbers(+alreadydFlow* this.poolState.inFlow);
-      this.twoDec = formated.twoDec; 
-      this.fourDec = formated.fourDec; 
-    });
-  
+    let amount = utils.parseEther(this.depositAmountCtrl.value.toString());
+    console.log(amount);
+    this.store.dispatch(Web3Actions.chainBusy({ status: true }));
+    await this.erc777.depositIntoPool(amount);
+    this.refreshBalance();
+    this.store.dispatch(Web3Actions.chainBusy({ status: false }));
   }
 
+  async refreshBalance() {
+    let result = await this.global.getPoolToken();
 
+    this.poolToken = result.poolToken;
+    this.poolState = result.poolState;
+    console.log(this.poolState);
 
+    let formated = this.global.prepareNumbers(
+      +this.poolToken.superTokenBalance!
+    );
+    this.twoDec = formated.twoDec;
+    this.fourDec = formated.fourDec;
 
-}
+    if (this.poolState.inFlow > 0) {
+      this.destroyHooks.next();
+      let source = interval(500);
+      source.pipe(takeUntil(this.destroyHooks)).subscribe((val) => {
+        const todayms = new Date().getTime() / 1000;
+        const alreadydFlow = todayms - this.poolState.timestamp;
 
-  ngOnInit(): void {
-  
+        let formated = this.global.prepareNumbers(
+          +alreadydFlow * this.poolState.inFlow
+        );
+        this.twoDec = formated.twoDec;
+        this.fourDec = formated.fourDec;
+      });
+    }
   }
+
+  ngOnInit(): void {}
 
   requestCredit() {
-    this.router.navigateByUrl('request-credit')
+    this.router.navigateByUrl('request-credit');
   }
 
-  override async  hookContractConnected(): Promise<void> {
-    this.refreshBalance()
-   
+  async getCredits() {
+    const member = this.graphqlService
+      .watchMember(this.dapp.signerAddress!)
+      .pipe(takeUntil(this.destroyHooks))
+      .subscribe((val: any) => {
+        console.log(val);
+        if (!!val && !!val.data && !!val.data.member) {
+          console.log(val.data.member())
+        }
+      });
   }
 
+  override async hookContractConnected(): Promise<void> {
+    this.refreshBalance();
+    this.getCredits();
+  }
 }
