@@ -126,7 +126,7 @@
             class="line-height-3 m-0 text-center"
           >
            
-          <credit-table></credit-table>
+          <credit-table *ngIf="member!= undefined" [credits]="member.creditsDelegated"  ></credit-table>
           <button
               pButton
               pRipple

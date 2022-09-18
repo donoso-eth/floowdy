@@ -1,17 +1,3 @@
-export const GET_CREDITS = `
-    {
-      credits(first: 5) {
-        id
-        amount
-        rate
-        delegatorsNr
-        delegatorsAmount
-        gelatoTaskId
-        status
-      }
-    }
-  `;
-
 export const GET_DEMANDS = `
     {
       loanDemands(first: 5, where: {status:"0"}, orderBy: id, orderDirection: asc) {
@@ -24,6 +10,28 @@ export const GET_DEMANDS = `
         loanTaker
         status
    
+      }
+    }
+  `;
+
+
+
+export const GET_CREDITS = `
+    {
+      credits(first: 5) {
+        id
+        initTimestamp
+        denyPeriodTimestamp
+        amount
+        status
+        rate
+        delegatorsNr
+        delegatorsAmount
+        gelatoTaskId
+        requester {
+          member
+        }
+      
       }
     }
   `;
@@ -46,11 +54,22 @@ export const GET_DEMANDS = `
        flow,
        creditsRequested {
         denyPeriodTimestamp
+        amount
+        rate
+        delegatorsNr
         gelatoTaskId
        }
        creditsDelegated {
-          member {
-            member 
+          credit {
+              id
+              amount
+              rate
+              status
+              requester {
+                member
+              }
+              denyPeriodTimestamp
+              initTimestamp
           }
        }
        

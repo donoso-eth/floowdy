@@ -46,10 +46,10 @@ task('mockState', 'mock state').setAction(async ({}, hre) => {
 
  let networks_config = JSON.parse(readFileSync( join(processDir,'networks.config.json'),'utf-8')) as INETWORK_CONFIG;
 
-let   network_params = networks_config["goerli"];
+let network_params = networks_config["goerli"];
  
 
- let   supertokenContract = await ISuperToken__factory.connect(
+ let supertokenContract = await ISuperToken__factory.connect(
   network_params.superToken,
   deployer
 );
@@ -61,87 +61,87 @@ let erc20Under = new hre.ethers.Contract(
   deployer
 );
 
-  await faucet(
-    deployer,
-    erc20Under,
-    network_params.superToken,
-    supertokenContract
-  );
+//   await faucet(
+//     deployer,
+//     erc20Under,
+//     network_params.superToken,
+//     supertokenContract
+//   );
 
 
-  await faucet(
-    user1,
-    erc20Under,
-    network_params.superToken,
-    supertokenContract
-  );
+//   await faucet(
+//     user1,
+//     erc20Under,
+//     network_params.superToken,
+//     supertokenContract
+//   );
 
-  await faucet(
-    user2,
-    erc20Under,
-    network_params.superToken,
-    supertokenContract
-  );
-  await faucet(
-    user3,
-    erc20Under,
-    network_params.superToken,
-    supertokenContract
-  );
-  await faucet(
-    user4,
-    erc20Under,
-    network_params.superToken,
-    supertokenContract
-  );
-  await faucet(
-    user5,
-    erc20Under,
-    network_params.superToken,
-    supertokenContract
-  );
-  await faucet(
-    user6,
-    erc20Under,
-    network_params.superToken,
-  supertokenContract
-);
+//   await faucet(
+//     user2,
+//     erc20Under,
+//     network_params.superToken,
+//     supertokenContract
+//   );
+//   await faucet(
+//     user3,
+//     erc20Under,
+//     network_params.superToken,
+//     supertokenContract
+//   );
+//   await faucet(
+//     user4,
+//     erc20Under,
+//     network_params.superToken,
+//     supertokenContract
+//   );
+//   await faucet(
+//     user5,
+//     erc20Under,
+//     network_params.superToken,
+//     supertokenContract
+//   );
+//   await faucet(
+//     user6,
+//     erc20Under,
+//     network_params.superToken,
+//   supertokenContract
+// );
 
-await faucet(
-  user7,
-  erc20Under,
-  network_params.superToken,
-supertokenContract
-);
+// await faucet(
+//   user7,
+//   erc20Under,
+//   network_params.superToken,
+// supertokenContract
+// );
 
-await faucet(
-  user8,
-  erc20Under,
-  network_params.superToken,
-supertokenContract
-);
+// await faucet(
+//   user8,
+//   erc20Under,
+//   network_params.superToken,
+// supertokenContract
+// );
 
-await faucet(
-  user9,
-  erc20Under,
-  network_params.superToken,
-supertokenContract
-);
-await faucet(
-  user10,
-  erc20Under,
-  network_params.superToken,
-supertokenContract
-);
+// await faucet(
+//   user9,
+//   erc20Under,
+//   network_params.superToken,
+// supertokenContract
+// );
+// await faucet(
+//   user10,
+//   erc20Under,
+//   network_params.superToken,
+// supertokenContract
+// );
 
 
-let creditNr = 1;
+let creditNr = 3;
 
 await waitForTx(
 supertokenContract.connect(deployer).send(floowdyAddress, 20000, '0x')
 )
 
-await waitForTx(floowdy.connect(deployer).requestCredit(20000));
+await waitForTx(floowdy.connect(user5).requestCredit(10000));
 
 await waitForTx(
   supertokenContract.connect(user1).send(floowdyAddress, 20000, '0x')
@@ -160,17 +160,17 @@ await waitForTx(
 );
 await waitForTx(floowdy.connect(user3).creditCheckIn(creditNr));
 
-await waitForTx(
-  supertokenContract.connect(user4).send(floowdyAddress, 40000, '0x')
-);
-await waitForTx(floowdy.connect(user4).creditCheckIn(creditNr));
+// await waitForTx(
+//   supertokenContract.connect(user4).send(floowdyAddress, 40000, '0x')
+// );
+// await waitForTx(floowdy.connect(deployer).creditCheckIn(creditNr));
  
-await waitForTx(
-  supertokenContract.connect(user5).send(floowdyAddress, 40000, '0x')
-);
-await waitForTx(floowdy.connect(user5).creditCheckIn(creditNr));
+// await waitForTx(
+//   supertokenContract.connect(user5).send(floowdyAddress, 40000, '0x')
+// );
+// await waitForTx(floowdy.connect(user5).creditCheckIn(creditNr));
  
-await  waitForTx(floowdy.stopCreditPeriodExec(creditNr));
+//await  waitForTx(floowdy.stopCreditPeriodExec(creditNr));
 
 
 });

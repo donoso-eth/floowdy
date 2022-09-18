@@ -36,7 +36,6 @@ type Credit @entity {
   amount: BigInt!
   rate: BigInt!
   delegatorsNr: BigInt!
-  delegatorsArray: [String!]!
   delegatorsAmount: BigInt!
   gelatoTaskId: String!
   delegators: [MemberCredit!]! @derivedFrom(field: "credit")

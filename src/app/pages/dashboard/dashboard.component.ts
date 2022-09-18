@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { DappBaseComponent, DappInjector, Web3Actions } from 'angular-web3';
+import { DappBaseComponent, DappInjector, Web3Actions, IMEMBER_QUERY } from 'angular-web3';
 import { utils } from 'ethers';
 import { MessageService } from 'primeng/api';
 import { interval, takeUntil, async } from 'rxjs';
@@ -31,6 +31,9 @@ export class DashboardComponent extends DappBaseComponent implements OnInit {
     Validators.required,
     Validators.min(1),
   ]);
+
+  member!:IMEMBER_QUERY;
+
 
   constructor(
     store: Store,
@@ -120,7 +123,14 @@ export class DashboardComponent extends DappBaseComponent implements OnInit {
         .subscribe((val: any) => {
           console.log(val);
           if (!!val && !!val.data && !!val.data.member) {
-            console.log(val.data)
+            let queryMember = val.data.member;
+            this.member =  {
+                deposit:queryMember.deposit,
+                flow:queryMember.flow,
+                creditsRequested : queryMember.creditsRequested,
+                creditsDelegated: queryMember.creditsDelegated.map((map:any)=> map.credit)
+            }
+               console.log(this.member)
           }
         });
 
