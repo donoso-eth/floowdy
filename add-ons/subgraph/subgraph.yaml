@@ -4,7 +4,7 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: Floowdy
-    network: goerli
+    network: localhost
     source:
       address: '0x35237B527acCe7a29Ada67E0B9949632c531Ffc2'
       abi: Floowdy
@@ -14,12 +14,11 @@ dataSources:
       apiVersion: 0.0.5
       language: wasm/assemblyscript
       entities:
-        - Gravatar
+        - Member
+        - Pool
+        - Credit
+        - MemberCredit
       abis:
-        - name: Floowdy
-          file: ./abis/floowdy.json
-        - name: Floowdy
-          file: ./abis/floowdy.json
         - name: Floowdy
           file: ./abis/floowdy.json
       eventHandlers:

@@ -6,7 +6,7 @@ import { ethers, network } from 'hardhat';
 import { expect } from 'chai';
 import { ERC20, ERC777, Floowdy, IOps, ISuperfluidToken, ISuperToken,} from '../../typechain-types';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
-import { CreditStructOutput, MemberStructOutput } from 'hardhat/typechain-types/Events';
+import { CreditStructOutput, MemberStructOutput } from '../../typechain-types/Events';
 import { waitForTx } from '../../helpers/utils';
 
 
