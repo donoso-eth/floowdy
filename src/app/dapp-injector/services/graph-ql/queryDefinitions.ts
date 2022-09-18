@@ -43,51 +43,17 @@ export const GET_DEMANDS = `
       }
     }
   `;
-  export const GET_USER = `
+  export const GET_MEMBER = `
   query($address: String!){
-      user(id:$address) {
-        offersCreated {
-          loanMaxAmount
-          loanMinAmount
-          fee
-          collateralShare
-          id
-          maxDuration
-          superToken
-          loanProvider {
-            id
-          }
-        }
-        loansSold {
-          id
-          loanTotalAmount
-          loanAmount
-          collateral
-          initTimestamp
-          flowRate
-          status
-          collateralShare
-          fee
-          loanTaker {id}
-          loanProvider { id }
-          duration
-          superToken
-        }
-        loansBought {
-          id
-          loanTotalAmount
-          loanAmount
-          collateral
-          initTimestamp
-          flowRate
-          status
-          collateralShare
-          fee
-          loanTaker {id}
-          loanProvider { id }
-          duration
-          superToken
-        }
+      member(member:$address) {
+    
+       deposit,
+       flow,
+       creditsRequested {
+        denyPeriodTimestamp
+        gelatoTaskId
+       }
+       
       }
     }
   `;

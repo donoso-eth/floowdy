@@ -39,7 +39,7 @@ export const settings = {
     sfNetwork: 'local',
     subgraph:
       'https://thegraph.com/hosted-service/subgraph/superfluid-finance/protocol-v1-goerli',
-      graphUri:"http://localhost:8000/subgraphs/name/donoso-eth/floowdystream-polis",
+      graphUri:"http://localhost:8000/subgraphs/name/donoso-eth/floowdy",
       wallet:'local'
   },
   goerli: {
