@@ -28,8 +28,8 @@
                         <td style="width: 10%;">
                             <button pButton pRipple type="button" (click)="goToCredit(credit.id)" icon="pi pi-search" class="p-button p-component p-button-text p-button-icon-only"></button>
                         </td>
-                        <td style="width: 10%;">
-                            <button pButton pRipple type="button"  (click)="checkOut(credit.id)" label="Check Out" class="p-button p-component p-button-text p-button-icon-only"></button>
+                        <td style="width: 30%;">
+                            <button pButton pRipple type="button"  [disabled]="true" (click)="checkOut(credit.id)" label="Check Out" class="p-button p-component p-button-text"></button>
                         </td>
                         <td style="width: 5%; min-width: 8rem;">{{credit.status}}</td>
                      
