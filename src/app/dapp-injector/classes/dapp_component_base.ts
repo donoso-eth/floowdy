@@ -94,10 +94,17 @@ export class DappBaseComponent implements OnDestroy, AfterViewInit {
 
     //////////  APP IS BUSY   ///////////////////
     this.store
-      .select(web3Selectors.isNetworkBusy)
+      .select(web3Selectors.busyNetwork)
       .pipe(takeUntil(this.destroyHooks))
       .subscribe((isBusy: boolean) => {
         this.blockchain_is_busy = isBusy;
+      });
+
+      this.store
+      .select(web3Selectors.busyNetworkWithMessage)
+      .pipe(takeUntil(this.destroyHooks))
+      .subscribe((payload:any) => {
+        console.log()
       });
   }
 

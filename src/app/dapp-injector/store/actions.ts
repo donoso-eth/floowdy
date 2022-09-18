@@ -5,6 +5,7 @@ import { NETWORK_STATUS } from './models';
 export enum Web3ActionTypes {
   ChainStatus = '[Chain] Status',
   ChainBusy = '[Chain] Busy',
+  ChainBusyWithMessage = '[Chain] Busy with Message',
   DisconnectChain = '[Disconnect] Chain',
   setSignerNetwork = '[Set] SignerNetwork',
 
@@ -20,8 +21,8 @@ export enum Web3ActionTypes {
 // const chainReady = createAction('[Chain] Ready')();
 
 const chainStatus = createAction('[Chain] Status', props<{ status: NETWORK_STATUS }>());
-const chainBusy = createAction('[Chain] Busy', props<{ status: boolean }>());
-
+const chainBusy = createAction('[Chain] Busy', props<{ status: boolean}>());
+const chainBusyWithMessage = createAction('[Chain] Busy with Message', props<{ status: boolean, message: {header:string,body:string} }>());
 const disconnectChain = createAction('[Disconnect] Chain',props<{status:'force-disconnect'}>());
 
 const refreshBalances = createAction('[Refresh] Balances',props<{refreshBalance:boolean}>());
@@ -39,12 +40,10 @@ export const Web3Actions = {
 
   chainStatus,
   chainBusy,
+  chainBusyWithMessage,
   disconnectChain,
-
   refreshBalances,
-
   setSignerNetwork,
-
   setDollarExhange,
   updateWalletBalance
 

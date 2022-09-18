@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Apollo, QueryRef, gql } from 'apollo-angular';
 import { firstValueFrom, Subscription } from 'rxjs';
 import { DappInjector } from '../../dapp-injector.service';
-import { GET_MEMBER, GET_SUMMARY, GET_USER } from './queryDefinitions';
+import { GET_MEMBER, GET_SUMMARY} from './queryDefinitions';
 import { GET_EVENTS, GET_PROFILES } from './querySuperFluid';
 
 export interface ProfilesRequest {

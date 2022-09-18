@@ -1,6 +1,8 @@
 export interface Web3State {
     chainStatus: NETWORK_STATUS;
-    isNetworkBusy:boolean;
+    busyNetwork:boolean;
+    busyMessage: { header:string, body:string},
+
     readContactReady:boolean
     signerNetwork:string;
 
