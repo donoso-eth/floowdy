@@ -7,6 +7,7 @@ const routes: Routes = [
   { path: 'dashboard', loadChildren: () => import('./pages/dashboard/dashboard.module').then(m => m.DashboardModule) },
   { path: 'start-flow', loadChildren: () => import('./pages/start-flow/start-flow.module').then(m => m.StartFlowModule) },
   { path: 'request-credit', loadChildren: () => import('./pages/request-credit/request-credit.module').then(m => m.RequestCreditModule) },
+  { path: 'details-credit', loadChildren: () => import('./pages/details-credit/details-credit.module').then(m => m.DetailsCreditModule) },
  
 ];
 
