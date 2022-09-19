@@ -89,6 +89,7 @@ export interface FloowdyInterface extends utils.Interface {
     "setVotingPeriod(uint256)": FunctionFragment;
     "stopCreditPeriodExec(uint256)": FunctionFragment;
     "stopStreamExec(address)": FunctionFragment;
+    "toggleCollateral(bool)": FunctionFragment;
     "tokensReceived(address,address,address,uint256,bytes,bytes)": FunctionFragment;
     "totalCredits()": FunctionFragment;
     "totalYieldEarnedMember(address)": FunctionFragment;
@@ -224,6 +225,10 @@ export interface FloowdyInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "stopStreamExec",
     values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "toggleCollateral",
+    values: [boolean]
   ): string;
   encodeFunctionData(
     functionFragment: "tokensReceived",
@@ -364,6 +369,10 @@ export interface FloowdyInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "stopStreamExec",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "toggleCollateral",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -587,7 +596,8 @@ export interface Floowdy extends BaseContract {
         BigNumber,
         BigNumber,
         BigNumber,
-        BigNumber
+        BigNumber,
+        boolean
       ] & {
         id: BigNumber;
         member: string;
@@ -599,6 +609,7 @@ export interface Floowdy extends BaseContract {
         initTimestamp: BigNumber;
         yieldAccrued: BigNumber;
         amountLocked: BigNumber;
+        collateral: boolean;
       }
     >;
 
@@ -625,18 +636,26 @@ export interface Floowdy extends BaseContract {
         BigNumber,
         BigNumber,
         BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
         BigNumber
       ] & {
         id: BigNumber;
         timestamp: BigNumber;
-        totalFlow: BigNumber;
         totalDeposit: BigNumber;
-        totalDepositFlow: BigNumber;
-        totalYield: BigNumber;
         depositIndex: BigNumber;
         flowIndex: BigNumber;
-        totalDelegated: BigNumber;
+        totalFlow: BigNumber;
+        totalDepositFlow: BigNumber;
+        totalYield: BigNumber;
         totalMembers: BigNumber;
+        totalDelegated: BigNumber;
+        collateralIndex: BigNumber;
+        totalYieldDelegation: BigNumber;
+        totalMembersCollateral: BigNumber;
+        minCollateral: BigNumber;
       }
     >;
 
@@ -688,6 +707,11 @@ export interface Floowdy extends BaseContract {
 
     stopStreamExec(
       _receiver: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    toggleCollateral(
+      collateral: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -877,7 +901,8 @@ export interface Floowdy extends BaseContract {
       BigNumber,
       BigNumber,
       BigNumber,
-      BigNumber
+      BigNumber,
+      boolean
     ] & {
       id: BigNumber;
       member: string;
@@ -889,6 +914,7 @@ export interface Floowdy extends BaseContract {
       initTimestamp: BigNumber;
       yieldAccrued: BigNumber;
       amountLocked: BigNumber;
+      collateral: boolean;
     }
   >;
 
@@ -912,18 +938,26 @@ export interface Floowdy extends BaseContract {
       BigNumber,
       BigNumber,
       BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
       BigNumber
     ] & {
       id: BigNumber;
       timestamp: BigNumber;
-      totalFlow: BigNumber;
       totalDeposit: BigNumber;
-      totalDepositFlow: BigNumber;
-      totalYield: BigNumber;
       depositIndex: BigNumber;
       flowIndex: BigNumber;
-      totalDelegated: BigNumber;
+      totalFlow: BigNumber;
+      totalDepositFlow: BigNumber;
+      totalYield: BigNumber;
       totalMembers: BigNumber;
+      totalDelegated: BigNumber;
+      collateralIndex: BigNumber;
+      totalYieldDelegation: BigNumber;
+      totalMembersCollateral: BigNumber;
+      minCollateral: BigNumber;
     }
   >;
 
@@ -975,6 +1009,11 @@ export interface Floowdy extends BaseContract {
 
   stopStreamExec(
     _receiver: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  toggleCollateral(
+    collateral: boolean,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1157,7 +1196,8 @@ export interface Floowdy extends BaseContract {
         BigNumber,
         BigNumber,
         BigNumber,
-        BigNumber
+        BigNumber,
+        boolean
       ] & {
         id: BigNumber;
         member: string;
@@ -1169,6 +1209,7 @@ export interface Floowdy extends BaseContract {
         initTimestamp: BigNumber;
         yieldAccrued: BigNumber;
         amountLocked: BigNumber;
+        collateral: boolean;
       }
     >;
 
@@ -1195,18 +1236,26 @@ export interface Floowdy extends BaseContract {
         BigNumber,
         BigNumber,
         BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
         BigNumber
       ] & {
         id: BigNumber;
         timestamp: BigNumber;
-        totalFlow: BigNumber;
         totalDeposit: BigNumber;
-        totalDepositFlow: BigNumber;
-        totalYield: BigNumber;
         depositIndex: BigNumber;
         flowIndex: BigNumber;
-        totalDelegated: BigNumber;
+        totalFlow: BigNumber;
+        totalDepositFlow: BigNumber;
+        totalYield: BigNumber;
         totalMembers: BigNumber;
+        totalDelegated: BigNumber;
+        collateralIndex: BigNumber;
+        totalYieldDelegation: BigNumber;
+        totalMembersCollateral: BigNumber;
+        minCollateral: BigNumber;
       }
     >;
 
@@ -1251,6 +1300,11 @@ export interface Floowdy extends BaseContract {
     ): Promise<void>;
 
     stopStreamExec(_receiver: string, overrides?: CallOverrides): Promise<void>;
+
+    toggleCollateral(
+      collateral: boolean,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     tokensReceived(
       operator: string,
@@ -1477,6 +1531,11 @@ export interface Floowdy extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    toggleCollateral(
+      collateral: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     tokensReceived(
       operator: string,
       from: string,
@@ -1693,6 +1752,11 @@ export interface Floowdy extends BaseContract {
 
     stopStreamExec(
       _receiver: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    toggleCollateral(
+      collateral: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

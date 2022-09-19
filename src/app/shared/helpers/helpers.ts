@@ -21,6 +21,13 @@ export const displayAdress= (address: string): string => {
     return true;
   };
 
+
+  export const blockTimeToTime =(timestamp:number) => {
+      let utcTime = new Date(timestamp*1000);
+      return utcTime.toLocaleString()
+
+  }
+
   export const createERC20Instance = (ERC: string, signer: Signer): Contract => {
     return new Contract(ERC, abi_ERC20, signer);
   };

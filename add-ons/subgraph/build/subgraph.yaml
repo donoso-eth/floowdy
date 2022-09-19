@@ -6,7 +6,7 @@ dataSources:
     name: Floowdy
     network: localhost
     source:
-      address: "0x35237B527acCe7a29Ada67E0B9949632c531Ffc2"
+      address: "0xFD4356404e9213CB7c776AcDc5fC9A77B72ef93c"
       abi: Floowdy
       startBlock: 7588383
     mapping:
@@ -20,11 +20,11 @@ dataSources:
         - MemberCredit
       abis:
         - name: Floowdy
-          file: Floowdy/abis/floowdy.json
+          file: Floowdy\abis\floowdy.json
         - name: Floowdy
-          file: Floowdy/abis/floowdy.json
+          file: Floowdy\abis\floowdy.json
         - name: Floowdy
-          file: Floowdy/abis/floowdy.json
+          file: Floowdy\abis\floowdy.json
       eventHandlers:
         - event: CreditApproved((uint256,address,uint256,uint256,uint8,uint256,uint256,uint256,address[],uint256,bytes32))
           handler: handleCreditApproved
@@ -42,4 +42,4 @@ dataSources:
           handler: handleCreditCheckOut
         - event: PoolUpdated((uint256,uint256,int96,uint256,uint256,uint256,uint256,uint256,uint256,uint256))
           handler: handlePoolUpdated
-      file: Floowdy/Floowdy.wasm
+      file: Floowdy\Floowdy.wasm

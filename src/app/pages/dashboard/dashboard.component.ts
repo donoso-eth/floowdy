@@ -5,7 +5,7 @@ import { Store } from '@ngrx/store';
 import { DappBaseComponent, DappInjector, Web3Actions, IMEMBER_QUERY } from 'angular-web3';
 import { utils } from 'ethers';
 import { MessageService } from 'primeng/api';
-import { interval, takeUntil, async } from 'rxjs';
+import { interval, takeUntil, async, Subject } from 'rxjs';
 import { doSignerTransaction } from 'src/app/dapp-injector/classes/transactor';
 import { GraphQlService } from 'src/app/dapp-injector/services/graph-ql/graph-ql.service';
 import { SuperFluidService } from 'src/app/dapp-injector/services/super-fluid/super-fluid-service.service';
@@ -20,12 +20,15 @@ import { Floowdy } from 'src/assets/contracts/interfaces/Floowdy';
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
 })
-export class DashboardComponent extends DappBaseComponent implements OnInit {
+export class DashboardComponent extends DappBaseComponent implements OnInit, OnDestroy {
   balanceSupertoken = 0;
   poolToken?: IPOOL_TOKEN;
   poolState!: IPOOL_STATE;
   twoDec!: string;
   fourDec!: string;
+
+  destroyQueries: Subject<void> = new Subject();
+  destroyFormatting: Subject<void> = new Subject();
 
   depositAmountCtrl = new FormControl('', [
     Validators.required,
@@ -117,9 +120,10 @@ export class DashboardComponent extends DappBaseComponent implements OnInit {
   }
 
   async getCredits() {
+    this.destroyQueries.next()
     const member = this.graphqlService
         .watchMember(this.dapp.signerAddress!)
-        .pipe(takeUntil(this.destroyHooks))
+        .pipe(takeUntil(this.destroyQueries))
         .subscribe((val: any) => {
           console.log(val);
           if (!!val && !!val.data && !!val.data.member) {
@@ -148,4 +152,13 @@ export class DashboardComponent extends DappBaseComponent implements OnInit {
     this.refreshBalance();
     this.getCredits();
   }
+
+  override ngOnDestroy(): void {
+      this.destroyFormatting.next();
+      this.destroyQueries.next()
+      this.destroyFormatting.complete();
+      this.destroyQueries.complete()
+      super.ngOnDestroy()
+  }
+
 }
