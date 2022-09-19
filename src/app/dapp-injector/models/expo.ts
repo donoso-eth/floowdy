@@ -1,6 +1,7 @@
 export interface IMEMBER_QUERY {
   deposit: string;
   flow: string;
+  timestamp:string;
   creditsRequested: Array<ICREDIT_REQUESTED>
   creditsDelegated: Array<ICREDIT_DELEGATED>;
 }

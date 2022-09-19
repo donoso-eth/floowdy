@@ -55,7 +55,12 @@ library DataTypes {
     NONE,
     PENDING,
     APPROVED,
-    REJECTED
+    REJECTED,
+    PENDING_REJECTED,
+    DISCARDED,
+    REPAYED,
+    LIQUIDATED,
+    CANCELLED
   }
 
   struct Credit {
@@ -67,6 +72,7 @@ library DataTypes {
     uint256 amount;
     uint256 rate;
     uint256 delegatorsNr;
+    uint256 delegatorsRequired;
     address[] delegators;
     uint256 delegatorsAmount;
     bytes32 gelatoTaskId;

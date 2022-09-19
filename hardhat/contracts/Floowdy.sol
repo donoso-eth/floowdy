@@ -33,869 +33,909 @@ import {DataTypes} from "./libraries/DataTypes.sol";
 import {Events} from "./libraries/Events.sol";
 
 contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
-  using SafeMath for uint256;
+    using SafeMath for uint256;
 
-  uint256 MAX_INT;
+    uint256 MAX_INT;
 
-  ISuperfluid public host; // host
-  IConstantFlowAgreementV1 public cfa; // the stored constant flow agreement class address
-  ISuperToken superToken;
+    ISuperfluid public host; // host
+    IConstantFlowAgreementV1 public cfa; // the stored constant flow agreement class address
+    ISuperToken superToken;
 
-  IERC20 token;
-  IERC20 aToken;
+    IERC20 token;
+    IERC20 aToken;
 
-  IPool pool;
+    IPool pool;
 
-  using CFAv1Library for CFAv1Library.InitData;
-  CFAv1Library.InitData internal _cfaLib;
+    using CFAv1Library for CFAv1Library.InitData;
+    CFAv1Library.InitData internal _cfaLib;
 
-  mapping(address => DataTypes.Member) public members;
-  mapping(uint256 => address) public memberAdressById;
+    mapping(address => DataTypes.Member) public members;
+    mapping(uint256 => address) public memberAdressById;
 
-  uint256 totalMembers;
-  mapping(uint256 => DataTypes.Pool) public poolByTimestamp;
-  uint256 public poolId;
-  uint256 public poolTimestamp;
+    uint256 totalMembers;
+    mapping(uint256 => DataTypes.Pool) public poolByTimestamp;
+    uint256 public poolId;
+    uint256 public poolTimestamp;
 
-  //////// CREDIT STATE
-  uint256 public totalCredits;
-  mapping(uint256 => DataTypes.Credit) public creditsById;
-  mapping(address => uint256) public creditIdByAddresse;
-  mapping(uint256 => mapping(address => uint256)) public delegatorsStatus;
+    //////// CREDIT STATE
+    uint256 public totalCredits;
+    mapping(uint256 => DataTypes.Credit) public creditsById;
+    mapping(address => uint256) public creditIdByAddresse;
+    mapping(uint256 => mapping(address => uint256)) public delegatorsStatus;
 
-  uint256 MAX_ALLOWANCE = 50;
-  uint256 CREDIT_FEE = 3;
-  uint256 VOTING_PERIOD = 600;
+    uint256 MAX_ALLOWANCE = 50;
+    uint256 CREDIT_FEE = 3;
+    uint256 VOTING_PERIOD = 600;
 
-  address public ops;
-  address payable public gelato;
-  address public constant ETH = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
+    address public ops;
+    address payable public gelato;
+    address public constant ETH = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 
-  address epnsComm;
-  address epnsChannel;
+    address epnsComm;
+    address epnsChannel;
 
-  constructor(DataTypes.Floowdy_Init memory floowdy_init) {
-    require(address(floowdy_init.host) != address(0), "host is zero address");
-    require(
-      address(floowdy_init.superToken) != address(0),
-      "acceptedToken is zero address"
-    );
-    host = floowdy_init.host;
-    superToken = floowdy_init.superToken;
-    token = floowdy_init.token;
-    pool = floowdy_init.pool;
-    aToken = floowdy_init.aToken;
-    epnsComm = floowdy_init.epnsComm;
-    epnsChannel = floowdy_init.epnsChannel;
-
-    cfa = IConstantFlowAgreementV1(
-      address(
-        host.getAgreementClass(
-          keccak256(
-            "org.superfluid-finance.agreements.ConstantFlowAgreement.v1"
-          )
-        )
-      )
-    );
-    uint256 configWord = SuperAppDefinitions.APP_LEVEL_FINAL |
-      SuperAppDefinitions.BEFORE_AGREEMENT_CREATED_NOOP |
-      SuperAppDefinitions.BEFORE_AGREEMENT_UPDATED_NOOP |
-      SuperAppDefinitions.BEFORE_AGREEMENT_TERMINATED_NOOP;
-
-    host.registerApp(configWord);
-
-    MAX_INT = 2**256 - 1;
-    token.approve(address(pool), MAX_INT);
-
-    //// tokens receie implementation
-    ops = floowdy_init.ops;
-    gelato = IOps(ops).gelato();
-
-    //// tokens receie implementation
-    IERC1820Registry _erc1820 = IERC1820Registry(
-      0x1820a4B7618BdE71Dce8cdc73aAB6C95905faD24
-    );
-    bytes32 TOKENS_RECIPIENT_INTERFACE_HASH = keccak256(
-      "ERC777TokensRecipient"
-    );
-
-    _erc1820.setInterfaceImplementer(
-      address(this),
-      TOKENS_RECIPIENT_INTERFACE_HASH,
-      address(this)
-    );
-  }
-
-  /**
-   * @notice ERC277 call back allowing deposit tokens via .send()
-   * @param from Member (user sending tokens / depositing)
-   * @param amount amount received
-   */
-  function tokensReceived(
-    address operator,
-    address from,
-    address to,
-    uint256 amount,
-    bytes calldata userData,
-    bytes calldata operatorData
-  ) external override {
-    require(msg.sender == address(superToken), "INVALID_TOKEN");
-    require(amount > 0, "AMOUNT_TO_BE_POSITIVE");
-
-    console.log("tokens_reveived");
-
-    console.log(amount);
-    _deposit(from, amount);
-  }
-
-  // ============= ============= Members ============= ============= //
-  // #region Members
-
-  function _deposit(address _member, uint256 amount) internal {
-    _poolRebalance();
-
-    _memberUpdate(_member);
-
-    // poolByTimestamp[block.timestamp].totalShares = poolByTimestamp[block.timestamp].totalShares + inDeposit - outDeposit;
-    poolByTimestamp[block.timestamp].totalDeposit += amount;
-
-    DataTypes.Member storage member = _getMember(_member);
-
-    member.deposit += amount;
-
-    if (member.flow > 0) {
-      member.deposit +=
-        uint96(member.flow) *
-        (block.timestamp - member.timestamp);
-    }
-
-    member.timestamp = block.timestamp;
-    emit Events.MemberDeposit(member);
-    emit Events.PoolUpdated(poolByTimestamp[poolTimestamp]);
-  }
-
-  // #endregion
-
-  // #region  ============= =============  Internal Member Functions ============= ============= //
-
-  function _getMember(address _member)
-    internal
-    returns (DataTypes.Member storage)
-  {
-    DataTypes.Member storage member = members[_member];
-
-    if (member.id == 0) {
-      totalMembers++;
-      member.member = _member;
-      member.initTimestamp = block.timestamp;
-      member.id = totalMembers;
-      memberAdressById[member.id] = _member;
-    }
-
-    return member;
-  }
-
-  /**
-   * @notice Calculate the total balance of a user/member
-   * @dev it calculate the yield earned and add the total deposit (send+stream)
-   * @return realtimeBalance the realtime balance multiplied by precission (10**6)
-   */
-  function _getMemberBalance(address _member)
-    internal
-    view
-    returns (uint256 realtimeBalance)
-  {
-    DataTypes.Member storage member = members[_member];
-
-    uint256 yieldMember = totalYieldEarnedMember(_member);
-
-    realtimeBalance =
-      yieldMember +
-      (member.deposit) +
-      uint96(member.flow) *
-      (block.timestamp - member.timestamp);
-  }
-
-  function _getMemberAvailable(address _member)
-    internal
-    view
-    returns (uint256 availableBalance)
-  {
-    DataTypes.Member storage member = members[_member];
-
-    uint256 balance = _getMemberBalance(_member);
-    availableBalance = balance - member.amountLocked;
-  }
-
-  function _memberUpdate(address _member) internal {
-    DataTypes.Member storage member = members[_member];
-
-    if (member.timestamp < block.timestamp) {
-      uint256 memberBalance = _getMemberBalance(_member);
-      // uint256 memberShares = balanceOf(_member);
-
-      // member.shares = memberShares;
-
-      int256 memberDepositUpdate = int256(memberBalance) -
-        int256(member.deposit);
-
-      uint256 yieldMember = totalYieldEarnedMember(_member);
-
-      if (member.flow > 0) {
-        poolByTimestamp[block.timestamp].totalDepositFlow =
-          poolByTimestamp[block.timestamp].totalDepositFlow -
-          uint96(member.flow) *
-          (block.timestamp - member.timestamp);
-        poolByTimestamp[block.timestamp].totalDeposit =
-          poolByTimestamp[block.timestamp].totalDeposit +
-          uint256(memberDepositUpdate);
-      }
-      member.deposit = memberBalance;
-      member.timestamp = block.timestamp;
-    }
-  }
-
-  function _updateFlow(
-    address _member,
-    int96 _inFlow,
-    bytes32 _taskId,
-    uint256 _duration
-  ) internal {
-    DataTypes.Member storage member = members[_member];
-    require(_inFlow >= 0, "ONLY_STREAM_IN_POSITIONS");
-
-    _memberUpdate(_member);
-
-    if (member.flowGelatoId != bytes32(0)) {
-      cancelTask(member.flowGelatoId);
-    }
-    member.flowGelatoId = _taskId;
-    member.flowDuration = _duration;
-
-    poolByTimestamp[block.timestamp].totalFlow =
-      poolByTimestamp[block.timestamp].totalFlow -
-      member.flow +
-      _inFlow;
-
-    member.flow = _inFlow;
-
-    console.log("updateMemberFlow");
-    emit Events.MemberDeposit(member);
-    emit Events.PoolUpdated(poolByTimestamp[poolTimestamp]);
-  }
-
-  function _calculateYieldMember(address _member)
-    internal
-    view
-    returns (uint256 yieldMember)
-  {
-    DataTypes.Member storage member = members[_member];
-
-    uint256 lastTimestamp = member.timestamp;
-
-    ///// Yield from deposit
-
-    uint256 yieldFromDeposit = (member.deposit *
-      (poolByTimestamp[poolTimestamp].depositIndex -
-        poolByTimestamp[lastTimestamp].depositIndex));
-
-    yieldMember = yieldFromDeposit;
-    if (member.flow > 0) {
-      ///// Yield from flow
-      uint256 yieldFromFlow = uint96(member.flow) *
-        (poolByTimestamp[poolTimestamp].flowIndex -
-          poolByTimestamp[lastTimestamp].flowIndex);
-
-      yieldMember = yieldMember + yieldFromFlow;
-    }
-  }
-
-  function totalYieldEarnedMember(address _member)
-    public
-    view
-    returns (uint256 yieldMember)
-  {
-    uint256 yieldEarned = _calculateYieldMember(_member);
-
-    (uint256 yieldDepositNew, uint256 yieldFlowNew) = _calculateIndexes();
-
-    DataTypes.Member storage member = members[_member];
-
-    uint256 yieldDeposit = yieldDepositNew * member.deposit;
-    uint256 yieldInFlow = uint96(member.flow) * yieldFlowNew;
-
-    yieldMember = yieldEarned + yieldDeposit + yieldInFlow;
-  }
-
-  // #endregion
-
-  // ============= ============= Pool ============= ============= //
-  // #region Pool
-
-  function poolRebalance() external {
-    _poolRebalance();
-    emit Events.PoolUpdated(poolByTimestamp[poolTimestamp]);
-  }
-
-  function _calculateYield() public {}
-
-  function _poolRebalance() internal {
-    poolId++;
-
-    DataTypes.Pool memory currentPool = DataTypes.Pool(
-      poolId++,
-      block.timestamp,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-    );
-
-    DataTypes.Pool memory lastPool = poolByTimestamp[poolTimestamp];
-
-    uint256 poolSpan = currentPool.timestamp - lastPool.timestamp;
-
-    currentPool.totalDepositFlow =
-      uint96(lastPool.totalFlow) *
-      poolSpan +
-      lastPool.totalDepositFlow;
-
-    currentPool.totalFlow = lastPool.totalFlow;
-    (currentPool.depositIndex, currentPool.flowIndex) = _calculateIndexes();
-
-    currentPool.depositIndex = currentPool.depositIndex + lastPool.depositIndex;
-    currentPool.flowIndex = currentPool.flowIndex + lastPool.flowIndex;
-
-    currentPool.totalFlow = lastPool.totalFlow;
-
-    currentPool.totalMembers = totalMembers;
-
-    currentPool.timestamp = block.timestamp;
-
-    poolByTimestamp[block.timestamp] = currentPool;
-
-    poolTimestamp = block.timestamp;
-
-    // poolTimestampById[PoolId.current()] = block.timestamp;
-
-    console.log("pool_update");
-  }
-
-  function _calculateIndexes()
-    internal
-    view
-    returns (uint256 depositIndex, uint256 depositFlow)
-  {
-    DataTypes.Pool storage lastPool = poolByTimestamp[poolTimestamp];
-
-    uint256 poolSpan = block.timestamp - lastPool.timestamp;
-
-    uint256 averageFlowDeposit = (
-      (uint96(lastPool.totalFlow) + lastPool.totalDepositFlow * poolSpan)
-    ).div(2);
-
-    uint256 totalDepositToYield = averageFlowDeposit + lastPool.totalDeposit;
-
-    uint256 yieldPool = _calculatePoolYield();
-
-    if (totalDepositToYield == 0 || yieldPool == 0) {
-      depositIndex = 0;
-      depositFlow = 0;
-    } else {
-      if (lastPool.totalDeposit != 0) {
-        depositIndex = (
-          (lastPool.totalDeposit * yieldPool).div(
-            (lastPool.totalDeposit) * totalDepositToYield
-          )
+    constructor(DataTypes.Floowdy_Init memory floowdy_init) {
+        require(
+            address(floowdy_init.host) != address(0),
+            "host is zero address"
         );
-      }
-      if (lastPool.totalFlow != 0) {
-        depositFlow = (
-          (averageFlowDeposit * yieldPool).div(
-            uint96(lastPool.totalFlow) * totalDepositToYield
-          )
+        require(
+            address(floowdy_init.superToken) != address(0),
+            "acceptedToken is zero address"
         );
-      }
-    }
-  }
-
-  function _calculatePoolYield() internal view returns (uint256 yield) {
-    uint256 randomYield = 1000 + (block.timestamp % 1000);
-
-    yield = (block.timestamp - poolTimestamp) * randomYield;
-  }
-
-  // #endregion Pool
-
-  // ============= ============= Aave ============= ============= //
-  // #region Aave
-
-  function aaveSupply() public {
-    uint256 poolSuperTokenBalance = (superToken.balanceOf(address(this))).div(
-      10**12
-    );
-
-    superToken.downgrade(poolSuperTokenBalance);
-
-    uint256 poolTokenBalance = token.balanceOf(address(this));
-
-    if (poolTokenBalance > 10000000000000) {
-      poolTokenBalance = 10000000000000;
-    }
-
-    pool.supply(address(token), poolTokenBalance, address(this), 0);
-  }
-
-  function delegateCreditToMember(uint256 _amount, address _to) internal {}
-
-  // #endregion Aave
-
-  // ============= ============= Credit Delegation ============= ============= //
-  // #region Credit Delegation
-
-
-  function requestCredit(uint256 amount) external onlyMember onlyOneCredit {
-    uint256 maxAmount = getMaxAmount();
-    console.log(maxAmount);
-    console.log(amount * 100);
-    require(amount <= maxAmount, "NOT_ENOUGH_COLLATERAL");
-
-    uint256 delegatorsAmount = amount.div(5);
-    totalCredits++;
-    DataTypes.Credit storage credit = creditsById[totalCredits];
-
-    credit.id = totalCredits;
-    credit.requester = msg.sender;
-    credit.initTimestamp = block.timestamp;
-    credit.denyPeriodTimestamp = block.timestamp + VOTING_PERIOD;
-    credit.status = DataTypes.CreditStatus.PENDING;
-    credit.amount = amount;
-    credit.rate = CREDIT_FEE;
-    credit.delegatorsAmount = delegatorsAmount;
-    credit.gelatoTaskId = createCreditPeriodTask(
-      credit.id,
-      credit.denyPeriodTimestamp
-    );
-
-    /// notify
-    emit Events.CreditRequested(credit);
-  }
-
-  function creditCheckIn(uint256 creditId) public onlyMember {
-    uint256 balance = _getMemberAvailable(msg.sender);
-    DataTypes.Credit storage credit = creditsById[creditId];
-    DataTypes.Member storage member = members[msg.sender];
-    require(
-      credit.status == DataTypes.CreditStatus.PENDING,
-      "CREDIT_NOT_AVAILABLE"
-    );
-    require(balance > credit.delegatorsAmount, "NOT_ENOUGH_COLLATERAL");
-    require(
-      delegatorsStatus[creditId][msg.sender] == 0,
-      "MEMBER_ALREADY_CHECK_IN"
-    );
-    require(credit.delegatorsNr < 5, "ALREADY_ENOUGH_DELEGATORS");
-    credit.delegatorsNr++;
-    credit.delegators.push(msg.sender);
-    delegatorsStatus[creditId][msg.sender] = credit.delegatorsNr;
-    
-    member.amountLocked += credit.delegatorsAmount;
-    emit Events.CreditCheckIn(creditId, msg.sender);
-  }
-
-  function creditCheckOut(uint256 creditId) public onlyMember {
-    DataTypes.Credit storage credit = creditsById[creditId];
-     DataTypes.Member storage member = members[msg.sender];
-    require(delegatorsStatus[creditId][msg.sender] != 0, "MEMBER_NOT_CHECK_IN");
-
-    uint256 toDeleteDelegatorPosition = delegatorsStatus[creditId][msg.sender];
-    address lastDelegator = credit.delegators[credit.delegatorsNr - 1];
-    credit.delegators[toDeleteDelegatorPosition - 1] = lastDelegator;
-    delegatorsStatus[creditId][lastDelegator] = toDeleteDelegatorPosition;
-    credit.delegators.pop();
-    credit.delegatorsNr--;
-    delegatorsStatus[creditId][msg.sender] = 0;
-    member.amountLocked -= credit.delegatorsAmount;
-    emit Events.CreditCheckOut(creditId, msg.sender);
-  }
-
-  function rejectCredit(uint256 creditId) public onlyMember {
-    DataTypes.Credit storage credit = creditsById[creditId];
-    require(
-      credit.status == DataTypes.CreditStatus.PENDING,
-      "CREDIT_NOT_AVAILABLE"
-    );
-    credit.status = DataTypes.CreditStatus.REJECTED;
-    //// Notify
-    cancelTask(credit.gelatoTaskId);
-    emit Events.CreditRejected(credit);
-  }
-
-  function getMaxAmount() public view returns (uint256 maxAmount) {
-    uint256 balance = _getMemberAvailable(msg.sender);
-    console.log(balance);
-    maxAmount = (100 + (100 - MAX_ALLOWANCE)).mul(balance);
-  }
-
-  modifier onlyOneCredit() {
-    uint256 id = creditIdByAddresse[msg.sender];
-    DataTypes.Credit storage credit = creditsById[id];
-    console.log(492, uint256(credit.status));
-    require(
-      credit.status != DataTypes.CreditStatus.PENDING,
-      "ALREADY_CREDIT_REQUEST"
-    );
-    _;
-  }
-
-  modifier onlyMember() {
-    DataTypes.Member memory _member = members[msg.sender];
-    require(_member.id > 0, "NOT_MEMBER");
-    _;
-  }
-
-
-  // #endregion Credit Delegation
-
-  // ============= ============= Super App Calbacks ============= ============= //
-  // #region Super App Calbacks
-  function afterAgreementCreated(
-    ISuperToken _superToken,
-    address _agreementClass,
-    bytes32, // _agreementId,
-    bytes calldata _agreementData,
-    bytes calldata, // _cbdata,
-    bytes calldata _ctx
-  )
-    external
-    override
-    onlyExpected(_superToken, _agreementClass)
-    onlyHost
-    returns (bytes memory newCtx)
-  {
-    newCtx = _ctx;
-
-    (address sender, address receiver) = abi.decode(
-      _agreementData,
-      (address, address)
-    );
-
-    (, int96 inFlowRate, , ) = cfa.getFlow(superToken, sender, address(this));
-    ISuperfluid.Context memory decodedContext = host.decodeCtx(_ctx);
-
-    uint256 duration = 0;
-    bytes32 taskId = bytes32(0);
-    console.log(decodedContext.userData.length);
-    if (decodedContext.userData.length > 0) {
-      duration = parseLoanData(host.decodeCtx(_ctx).userData);
-      taskId = createStopStreamTask(sender, duration);
-    }
-    _updateFlow(sender, inFlowRate, taskId, duration);
-    console.log("juanito");
-    return newCtx;
-  }
-
-  function afterAgreementUpdated(
-    ISuperToken _superToken,
-    address _agreementClass,
-    bytes32, // _agreementId,
-    bytes calldata _agreementData,
-    bytes calldata, //_cbdata,
-    bytes calldata _ctx
-  )
-    external
-    override
-    onlyExpected(_superToken, _agreementClass)
-    onlyHost
-    returns (bytes memory newCtx)
-  {
-    newCtx = _ctx;
-
-    (address sender, address receiver) = abi.decode(
-      _agreementData,
-      (address, address)
-    );
-
-    (, int96 inFlowRate, , ) = cfa.getFlow(superToken, sender, address(this));
-    ISuperfluid.Context memory decodedContext = host.decodeCtx(_ctx);
-
-    uint256 duration = 0;
-    bytes32 taskId = bytes32(0);
-    if (decodedContext.userData.length > 0) {
-      duration = parseLoanData(host.decodeCtx(_ctx).userData);
-      taskId = createStopStreamTask(sender, duration);
-    }
-    _updateFlow(sender, inFlowRate, taskId, duration);
-
-    return newCtx;
-  }
-
-  function afterAgreementTerminated(
-    ISuperToken, /*superToken*/
-    address, /*agreementClass*/
-    bytes32, // _agreementId,
-    bytes calldata _agreementData,
-    bytes calldata, /*cbdata*/
-    bytes calldata _ctx
-  ) external virtual override returns (bytes memory newCtx) {
-    (address sender, address receiver) = abi.decode(
-      _agreementData,
-      (address, address)
-    );
-    newCtx = _ctx;
-    _updateFlow(sender, 0, 0, 0);
-    return newCtx;
-  }
-
-  function parseLoanData(bytes memory data)
-    public
-    pure
-    returns (uint256 duration)
-  {
-    duration = abi.decode(data, (uint256));
-  }
-
-  function _isCFAv1(address agreementClass) private view returns (bool) {
-    return
-      ISuperAgreement(agreementClass).agreementType() ==
-      keccak256("org.superfluid-finance.agreements.ConstantFlowAgreement.v1");
-  }
-
-  function _isSameToken(ISuperToken _superToken) private view returns (bool) {
-    return address(_superToken) == address(superToken);
-  }
-
-  modifier onlyHost() {
-    require(msg.sender == address(host), "RedirectAll: support only one host");
-    _;
-  }
-
-  modifier onlyExpected(ISuperToken _superToken, address agreementClass) {
-    require(_isSameToken(_superToken), "RedirectAll: not accepted token");
-    require(_isCFAv1(agreementClass), "RedirectAll: only CFAv1 supported");
-    _;
-  }
-
-  // endregion Super App Calbacks
-
-  // ============= =============  Gelato TASKS  ============= ============= //
-  // #region Gelato Tasks
-
-  // #region Task1 push erc20 to aave
-
-  function createStopStreamTask(address _member, uint256 _duration)
-    internal
-    returns (bytes32 taskId)
-  {
-    taskId = IOps(ops).createTimedTask(
-      uint128(block.timestamp + _duration),
-      600,
-      address(this),
-      this.stopStreamExec.selector,
-      address(this),
-      abi.encodeWithSelector(this.checkStopStream.selector, _member),
-      ETH,
-      false
-    );
-  }
-
-  // called by Gelato Execs
-  function checkStopStream(address _receiver)
-    external
-    pure
-    returns (bool canExec, bytes memory execPayload)
-  {
-    canExec = true;
-
-    execPayload = abi.encodeWithSelector(
-      this.stopStreamExec.selector,
-      address(_receiver)
-    );
-  }
-
-  /// called by Gelato
-  function stopStreamExec(address _receiver) external onlyOps {
-    //// check if
-
-    _poolRebalance();
-
-    //// every task will be payed with a transfer, therefore receive(), we have to fund the contract
-    uint256 fee;
-    address feeToken;
-
-    (fee, feeToken) = IOps(ops).getFeeDetails();
-
-    _transfer(fee, feeToken);
-
-    (, int96 inFlowRate, , ) = cfa.getFlow(
-      superToken,
-      _receiver,
-      address(this)
-    );
-
-    if (inFlowRate > 0) {
-      _cfaLib.deleteFlow(_receiver, address(this), superToken);
-      _updateFlow(_receiver, 0, 0, 0);
-    }
-  }
-
-  // #endregion Task1 push erc20 to aave
-
-  // #region Task N close creditVoting
-
-  function createCreditPeriodTask(uint256 _creditId, uint256 _dennyPeriod)
-    internal
-    returns (bytes32 taskId)
-  {
-    taskId = IOps(ops).createTimedTask(
-      uint128(_dennyPeriod),
-      600,
-      address(this),
-      this.stopCreditPeriodExec.selector,
-      address(this),
-      abi.encodeWithSelector(this.checkCreditPeriod.selector, _creditId),
-      ETH,
-      false
-    );
-  }
-
-  // called by Gelato Execs
-  function checkCreditPeriod(uint256 _creditId)
-    external
-    pure
-    returns (bool canExec, bytes memory execPayload)
-  {
-    canExec = true;
-
-    execPayload = abi.encodeWithSelector(
-      this.stopCreditPeriodExec.selector,
-      _creditId
-    );
-  }
-
-  /// called by Gelato
-  function stopCreditPeriodExec(uint256 creditId) external {
-    //// check if
-
-    DataTypes.Credit storage credit = creditsById[creditId];
-
-    //// every task will be payed with a transfer, therefore receive(), we have to fund the contract
-    uint256 fee;
-    address feeToken;
-
-    // (fee, feeToken) = IOps(ops).getFeeDetails();
-
-    // _transfer(fee, feeToken);
-
-    if (
-      credit.status == DataTypes.CreditStatus.PENDING &&
-      credit.delegatorsNr == 5 &&
-      credit.delegators.length == 5
-    ) {
-      credit.status = DataTypes.CreditStatus.APPROVED;
-      // NOtify approve
-
-     
-      emit Events.CreditApproved(credit);
-      //do the dance
-    } else {
-      for (uint256 i = 0; i < credit.delegatorsNr ; i++) {
-         DataTypes.Member storage member = members[credit.delegators[i]];
-         member.amountLocked -= credit.delegatorsAmount;
-      }
-      credit.status = DataTypes.CreditStatus.REJECTED;
-      // notify Rejected
-      // clean
-      emit Events.CreditRejected(credit);
+        host = floowdy_init.host;
+        superToken = floowdy_init.superToken;
+        token = floowdy_init.token;
+        pool = floowdy_init.pool;
+        aToken = floowdy_init.aToken;
+        epnsComm = floowdy_init.epnsComm;
+        epnsChannel = floowdy_init.epnsChannel;
+
+        cfa = IConstantFlowAgreementV1(
+            address(
+                host.getAgreementClass(
+                    keccak256(
+                        "org.superfluid-finance.agreements.ConstantFlowAgreement.v1"
+                    )
+                )
+            )
+        );
+        uint256 configWord = SuperAppDefinitions.APP_LEVEL_FINAL |
+            SuperAppDefinitions.BEFORE_AGREEMENT_CREATED_NOOP |
+            SuperAppDefinitions.BEFORE_AGREEMENT_UPDATED_NOOP |
+            SuperAppDefinitions.BEFORE_AGREEMENT_TERMINATED_NOOP;
+
+        host.registerApp(configWord);
+
+        MAX_INT = 2**256 - 1;
+        token.approve(address(pool), MAX_INT);
+
+        //// tokens receie implementation
+        ops = floowdy_init.ops;
+        gelato = IOps(ops).gelato();
+
+        //// tokens receie implementation
+        IERC1820Registry _erc1820 = IERC1820Registry(
+            0x1820a4B7618BdE71Dce8cdc73aAB6C95905faD24
+        );
+        bytes32 TOKENS_RECIPIENT_INTERFACE_HASH = keccak256(
+            "ERC777TokensRecipient"
+        );
+
+        _erc1820.setInterfaceImplementer(
+            address(this),
+            TOKENS_RECIPIENT_INTERFACE_HASH,
+            address(this)
+        );
     }
 
-    cancelTask(credit.gelatoTaskId);
-  }
+    /**
+     * @notice ERC277 call back allowing deposit tokens via .send()
+     * @param from Member (user sending tokens / depositing)
+     * @param amount amount received
+     */
+    function tokensReceived(
+        address operator,
+        address from,
+        address to,
+        uint256 amount,
+        bytes calldata userData,
+        bytes calldata operatorData
+    ) external override {
+        require(msg.sender == address(superToken), "INVALID_TOKEN");
+        require(amount > 0, "AMOUNT_TO_BE_POSITIVE");
 
-  // #endregion Task N close creditVotingmembera
+        console.log("tokens_reveived");
 
-  modifier onlyOps() {
-    require(msg.sender == ops, "OpsReady: onlyOps");
-    _;
-  }
-
-  function cancelTask(bytes32 _taskId) public {
-    IOps(ops).cancelTask(_taskId);
-  }
-
-  function withdraw() external returns (bool) {
-    (bool result, ) = payable(msg.sender).call{value: address(this).balance}(
-      ""
-    );
-    return result;
-  }
-
-  receive() external payable {}
-
-  function _transfer(uint256 _amount, address _paymentToken) internal {
-    if (_paymentToken == ETH) {
-      (bool success, ) = gelato.call{value: _amount}("");
-      require(success, "_transfer: ETH transfer failed");
-    } else {
-      SafeERC20.safeTransfer(IERC20(_paymentToken), gelato, _amount);
+        console.log(amount);
+        _deposit(from, amount);
     }
-  }
 
-  // #endregion Gelato functions
+    // ============= ============= Members ============= ============= //
+    // #region Members
 
-  // ============= =============  EPNS  ============= ============= //
-  // #region  EPNS
+    function _deposit(address _member, uint256 amount) internal {
+        _poolRebalance();
 
-  function sendNotif() public {
-    IPUSHCommInterface(epnsComm).sendNotification(
-      epnsChannel, // from channel - recommended to set channel via dApp and put it's value -> then once contract is deployed, go back and add the contract address as delegate for your channel
-      address(this), // to recipient, put address(this) in case you want Broadcast or Subset. For Targetted put the address to which you want to send
-      bytes(
-        string(
-          // We are passing identity here: https://docs.epns.io/developers/developer-guides/sending-notifications/advanced/notification-payload-types/identity/payload-identity-implementations
-          abi.encodePacked(
-            "0", // this is notification identity: https://docs.epns.io/developers/developer-guides/sending-notifications/advanced/notification-payload-types/identity/payload-identity-implementations
-            "+", // segregator
-            "3", // this is payload type: https://docs.epns.io/developers/developer-guides/sending-notifications/advanced/notification-payload-types/payload (1, 3 or 4) = (Broadcast, targetted or subset)
-            "+", // segregator
-            "Title", // this is notificaiton title
-            "+", // segregator
-            "Body" // notification body
-          )
-        )
-      )
-    );
-  }
+        _memberUpdate(_member);
 
-  // endregion EPNS
+        // poolByTimestamp[block.timestamp].totalShares = poolByTimestamp[block.timestamp].totalShares + inDeposit - outDeposit;
+        poolByTimestamp[block.timestamp].totalDeposit += amount;
 
-  // ============= =============  PARAMETERS ONLY OWNER  ============= ============= //
-  // #region ONLY OWNER
+        DataTypes.Member storage member = _getMember(_member);
 
-  function setCreditFee(uint256 _CREDIT_FEE) external onlyOwner {
-    require(
-      _CREDIT_FEE > 0 && _CREDIT_FEE < 100,
-      "CREDIT_FEE_MUS_BE_BETWEEN_0_100"
-    );
-    CREDIT_FEE = _CREDIT_FEE;
-  }
+        member.deposit += amount;
 
-  function setMaxAllowance(uint256 _MAX_ALLOWANCE) external onlyOwner {
-    require(
-      _MAX_ALLOWANCE > 0 && _MAX_ALLOWANCE < 100,
-      "MAX_ALLOWANCE_MUS_BE_BETWEEN_0_100"
-    );
-    MAX_ALLOWANCE = _MAX_ALLOWANCE;
-  }
+        if (member.flow > 0) {
+            member.deposit +=
+                uint96(member.flow) *
+                (block.timestamp - member.timestamp);
+        }
 
-  function setVotingPeriod(uint256 _VOTING_PERIOD) external onlyOwner {
-    require(_VOTING_PERIOD > 600, "VOTING_PERIODE_GREATER_THAN_10_MINUTS");
-    VOTING_PERIOD = _VOTING_PERIOD;
-  }
+        member.timestamp = block.timestamp;
+        emit Events.MemberDeposit(member);
+        emit Events.PoolUpdated(poolByTimestamp[poolTimestamp]);
+    }
 
-  // #endregion
+    // #endregion
+
+    // #region  ============= =============  Internal Member Functions ============= ============= //
+
+    function _getMember(address _member)
+        internal
+        returns (DataTypes.Member storage)
+    {
+        DataTypes.Member storage member = members[_member];
+
+        if (member.id == 0) {
+            totalMembers++;
+            member.member = _member;
+            member.initTimestamp = block.timestamp;
+            member.id = totalMembers;
+            memberAdressById[member.id] = _member;
+        }
+
+        return member;
+    }
+
+    /**
+     * @notice Calculate the total balance of a user/member
+     * @dev it calculate the yield earned and add the total deposit (send+stream)
+     * @return realtimeBalance the realtime balance multiplied by precission (10**6)
+     */
+    function _getMemberBalance(address _member)
+        internal
+        view
+        returns (uint256 realtimeBalance)
+    {
+        DataTypes.Member storage member = members[_member];
+
+        uint256 yieldMember = totalYieldEarnedMember(_member);
+
+        realtimeBalance =
+            yieldMember +
+            (member.deposit) +
+            uint96(member.flow) *
+            (block.timestamp - member.timestamp);
+    }
+
+    function _getMemberAvailable(address _member)
+        internal
+        view
+        returns (uint256 availableBalance)
+    {
+        DataTypes.Member storage member = members[_member];
+
+        uint256 balance = _getMemberBalance(_member);
+        availableBalance = balance - member.amountLocked;
+    }
+
+    function _memberUpdate(address _member) internal {
+        DataTypes.Member storage member = members[_member];
+
+        if (member.timestamp < block.timestamp) {
+            uint256 memberBalance = _getMemberBalance(_member);
+            // uint256 memberShares = balanceOf(_member);
+
+            // member.shares = memberShares;
+
+            int256 memberDepositUpdate = int256(memberBalance) -
+                int256(member.deposit);
+
+            uint256 yieldMember = totalYieldEarnedMember(_member);
+
+            if (member.flow > 0) {
+                poolByTimestamp[block.timestamp].totalDepositFlow =
+                    poolByTimestamp[block.timestamp].totalDepositFlow -
+                    uint96(member.flow) *
+                    (block.timestamp - member.timestamp);
+                poolByTimestamp[block.timestamp].totalDeposit =
+                    poolByTimestamp[block.timestamp].totalDeposit +
+                    uint256(memberDepositUpdate);
+            }
+            member.deposit = memberBalance;
+            member.timestamp = block.timestamp;
+        }
+    }
+
+    function _updateFlow(
+        address _member,
+        int96 _inFlow,
+        bytes32 _taskId,
+        uint256 _duration
+    ) internal {
+        DataTypes.Member storage member = members[_member];
+        require(_inFlow >= 0, "ONLY_STREAM_IN_POSITIONS");
+
+        _memberUpdate(_member);
+
+        if (member.flowGelatoId != bytes32(0)) {
+            cancelTask(member.flowGelatoId);
+        }
+        member.flowGelatoId = _taskId;
+        member.flowDuration = _duration;
+
+        poolByTimestamp[block.timestamp].totalFlow =
+            poolByTimestamp[block.timestamp].totalFlow -
+            member.flow +
+            _inFlow;
+
+        member.flow = _inFlow;
+
+        console.log("updateMemberFlow");
+        emit Events.MemberDeposit(member);
+        emit Events.PoolUpdated(poolByTimestamp[poolTimestamp]);
+    }
+
+    function _calculateYieldMember(address _member)
+        internal
+        view
+        returns (uint256 yieldMember)
+    {
+        DataTypes.Member storage member = members[_member];
+
+        uint256 lastTimestamp = member.timestamp;
+
+        ///// Yield from deposit
+
+        uint256 yieldFromDeposit = (member.deposit *
+            (poolByTimestamp[poolTimestamp].depositIndex -
+                poolByTimestamp[lastTimestamp].depositIndex));
+
+        yieldMember = yieldFromDeposit;
+        if (member.flow > 0) {
+            ///// Yield from flow
+            uint256 yieldFromFlow = uint96(member.flow) *
+                (poolByTimestamp[poolTimestamp].flowIndex -
+                    poolByTimestamp[lastTimestamp].flowIndex);
+
+            yieldMember = yieldMember + yieldFromFlow;
+        }
+    }
+
+    function totalYieldEarnedMember(address _member)
+        public
+        view
+        returns (uint256 yieldMember)
+    {
+        uint256 yieldEarned = _calculateYieldMember(_member);
+
+        (uint256 yieldDepositNew, uint256 yieldFlowNew) = _calculateIndexes();
+
+        DataTypes.Member storage member = members[_member];
+
+        uint256 yieldDeposit = yieldDepositNew * member.deposit;
+        uint256 yieldInFlow = uint96(member.flow) * yieldFlowNew;
+
+        yieldMember = yieldEarned + yieldDeposit + yieldInFlow;
+    }
+
+    // #endregion
+
+    // ============= ============= Pool ============= ============= //
+    // #region Pool
+
+    function poolRebalance() external {
+        _poolRebalance();
+        emit Events.PoolUpdated(poolByTimestamp[poolTimestamp]);
+    }
+
+    function _calculateYield() public {}
+
+    function _poolRebalance() internal {
+        poolId++;
+
+        DataTypes.Pool memory currentPool = DataTypes.Pool(
+            poolId++,
+            block.timestamp,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+        );
+
+        DataTypes.Pool memory lastPool = poolByTimestamp[poolTimestamp];
+
+        uint256 poolSpan = currentPool.timestamp - lastPool.timestamp;
+
+        currentPool.totalDepositFlow =
+            uint96(lastPool.totalFlow) *
+            poolSpan +
+            lastPool.totalDepositFlow;
+
+        currentPool.totalFlow = lastPool.totalFlow;
+        (currentPool.depositIndex, currentPool.flowIndex) = _calculateIndexes();
+
+        currentPool.depositIndex =
+            currentPool.depositIndex +
+            lastPool.depositIndex;
+        currentPool.flowIndex = currentPool.flowIndex + lastPool.flowIndex;
+
+        currentPool.totalFlow = lastPool.totalFlow;
+
+        currentPool.totalMembers = totalMembers;
+
+        currentPool.timestamp = block.timestamp;
+
+        poolByTimestamp[block.timestamp] = currentPool;
+
+        poolTimestamp = block.timestamp;
+
+        // poolTimestampById[PoolId.current()] = block.timestamp;
+
+        console.log("pool_update");
+    }
+
+    function _calculateIndexes()
+        internal
+        view
+        returns (uint256 depositIndex, uint256 depositFlow)
+    {
+        DataTypes.Pool storage lastPool = poolByTimestamp[poolTimestamp];
+
+        uint256 poolSpan = block.timestamp - lastPool.timestamp;
+
+        uint256 averageFlowDeposit = (
+            (uint96(lastPool.totalFlow) + lastPool.totalDepositFlow * poolSpan)
+        ).div(2);
+
+        uint256 totalDepositToYield = averageFlowDeposit +
+            lastPool.totalDeposit;
+
+        uint256 yieldPool = _calculatePoolYield();
+
+        if (totalDepositToYield == 0 || yieldPool == 0) {
+            depositIndex = 0;
+            depositFlow = 0;
+        } else {
+            if (lastPool.totalDeposit != 0) {
+                depositIndex = (
+                    (lastPool.totalDeposit * yieldPool).div(
+                        (lastPool.totalDeposit) * totalDepositToYield
+                    )
+                );
+            }
+            if (lastPool.totalFlow != 0) {
+                depositFlow = (
+                    (averageFlowDeposit * yieldPool).div(
+                        uint96(lastPool.totalFlow) * totalDepositToYield
+                    )
+                );
+            }
+        }
+    }
+
+    function _calculatePoolYield() internal view returns (uint256 yield) {
+        uint256 randomYield = 1000 + (block.timestamp % 1000);
+
+        yield = (block.timestamp - poolTimestamp) * randomYield;
+    }
+
+    // #endregion Pool
+
+    // ============= ============= Aave ============= ============= //
+    // #region Aave
+
+    function aaveSupply() public {
+        uint256 poolSuperTokenBalance = (superToken.balanceOf(address(this)))
+            .div(10**12);
+
+        superToken.downgrade(poolSuperTokenBalance);
+
+        uint256 poolTokenBalance = token.balanceOf(address(this));
+
+        if (poolTokenBalance > 10000000000000) {
+            poolTokenBalance = 10000000000000;
+        }
+
+        pool.supply(address(token), poolTokenBalance, address(this), 0);
+    }
+
+    function delegateCreditToMember(uint256 _amount, address _to) internal {}
+
+    // #endregion Aave
+
+    // ============= ============= Credit Delegation ============= ============= //
+    // #region Credit Delegation
+
+    function requestCredit(uint256 amount, uint256 rate) external onlyMember onlyOneCredit {
+        require(rate >= CREDIT_FEE, 'RATE_TOO_LOW');
+        uint256 maxAmount = getMaxAmount();
+        console.log(maxAmount);
+        console.log(amount * 100);
+        require(amount <= maxAmount, "NOT_ENOUGH_COLLATERAL");
+
+        uint256 delegatorsAmount = amount.div(5);
+        totalCredits++;
+        DataTypes.Credit storage credit = creditsById[totalCredits];
+
+        credit.id = totalCredits;
+        credit.requester = msg.sender;
+        credit.initTimestamp = block.timestamp;
+        credit.denyPeriodTimestamp = block.timestamp + VOTING_PERIOD;
+        credit.status = DataTypes.CreditStatus.PENDING;
+        credit.amount = amount;
+        credit.delegatorsRequired = 5;
+        credit.rate = rate ;
+        credit.delegatorsAmount = delegatorsAmount;
+        credit.gelatoTaskId = createCreditPeriodTask(
+            credit.id,
+            VOTING_PERIOD
+        );
+
+        /// notify
+        emit Events.CreditRequested(credit);
+    }
+
+    function cancelCredit(uint256 creditId) external onlyMember {
+        DataTypes.Credit storage credit = creditsById[creditId];
+        require(credit.requester == msg.sender, "NOT_CREDIT_OWNER");
+        credit.status = DataTypes.CreditStatus.CANCELLED;
+        for (uint256 i = 0; i < credit.delegatorsNr; i++) {
+            DataTypes.Member storage member = members[credit.delegators[i]];
+            member.amountLocked -= credit.delegatorsAmount;
+        }
+         emit Events.CreditCancelled(credit);
+    }
+
+    function creditCheckIn(uint256 creditId) public onlyMember {
+        uint256 balance = _getMemberAvailable(msg.sender);
+        DataTypes.Credit storage credit = creditsById[creditId];
+        DataTypes.Member storage member = members[msg.sender];
+        require(
+            credit.status == DataTypes.CreditStatus.PENDING,
+            "CREDIT_NOT_AVAILABLE"
+        );
+        require(balance > credit.delegatorsAmount, "NOT_ENOUGH_COLLATERAL");
+        require(
+            delegatorsStatus[creditId][msg.sender] == 0,
+            "MEMBER_ALREADY_CHECK_IN"
+        );
+        require(credit.delegatorsNr < 5, "ALREADY_ENOUGH_DELEGATORS");
+        credit.delegatorsNr++;
+        credit.delegators.push(msg.sender);
+        delegatorsStatus[creditId][msg.sender] = credit.delegatorsNr;
+
+        member.amountLocked += credit.delegatorsAmount;
+        emit Events.CreditCheckIn(creditId, msg.sender);
+    }
+
+    function creditCheckOut(uint256 creditId) public onlyMember {
+        DataTypes.Credit storage credit = creditsById[creditId];
+        DataTypes.Member storage member = members[msg.sender];
+        require(
+            delegatorsStatus[creditId][msg.sender] != 0,
+            "MEMBER_NOT_CHECK_IN"
+        );
+
+        uint256 toDeleteDelegatorPosition = delegatorsStatus[creditId][
+            msg.sender
+        ];
+        address lastDelegator = credit.delegators[credit.delegatorsNr - 1];
+        credit.delegators[toDeleteDelegatorPosition - 1] = lastDelegator;
+        delegatorsStatus[creditId][lastDelegator] = toDeleteDelegatorPosition;
+        credit.delegators.pop();
+        credit.delegatorsNr--;
+        delegatorsStatus[creditId][msg.sender] = 0;
+        member.amountLocked -= credit.delegatorsAmount;
+        emit Events.CreditCheckOut(creditId, msg.sender);
+    }
+
+    function rejectCredit(uint256 creditId) public onlyMember {
+        DataTypes.Credit storage credit = creditsById[creditId];
+        require(
+            credit.status == DataTypes.CreditStatus.PENDING,
+            "CREDIT_NOT_AVAILABLE"
+        );
+        credit.status = DataTypes.CreditStatus.REJECTED;
+        credit.delegatorsRequired = 10;
+        credit.denyPeriodTimestamp += VOTING_PERIOD;
+        //// Notify
+        cancelTask(credit.gelatoTaskId);
+        emit Events.CreditRejected(credit);
+    }
+
+    function getMaxAmount() public view returns (uint256 maxAmount) {
+        uint256 balance = _getMemberAvailable(msg.sender);
+        console.log(balance);
+        maxAmount = (100 + (100 - MAX_ALLOWANCE)).mul(balance);
+    }
+
+    modifier onlyOneCredit() {
+        uint256 id = creditIdByAddresse[msg.sender];
+        DataTypes.Credit storage credit = creditsById[id];
+        console.log(492, uint256(credit.status));
+        require(
+            credit.status != DataTypes.CreditStatus.PENDING,
+            "ALREADY_CREDIT_REQUEST"
+        );
+        _;
+    }
+
+    modifier onlyMember() {
+        DataTypes.Member memory _member = members[msg.sender];
+        require(_member.id > 0, "NOT_MEMBER");
+        _;
+    }
+
+    // #endregion Credit Delegation
+
+    // ============= ============= Super App Calbacks ============= ============= //
+    // #region Super App Calbacks
+    function afterAgreementCreated(
+        ISuperToken _superToken,
+        address _agreementClass,
+        bytes32, // _agreementId,
+        bytes calldata _agreementData,
+        bytes calldata, // _cbdata,
+        bytes calldata _ctx
+    )
+        external
+        override
+        onlyExpected(_superToken, _agreementClass)
+        onlyHost
+        returns (bytes memory newCtx)
+    {
+        newCtx = _ctx;
+
+        (address sender, address receiver) = abi.decode(
+            _agreementData,
+            (address, address)
+        );
+
+        (, int96 inFlowRate, , ) = cfa.getFlow(
+            superToken,
+            sender,
+            address(this)
+        );
+        ISuperfluid.Context memory decodedContext = host.decodeCtx(_ctx);
+
+        uint256 duration = 0;
+        bytes32 taskId = bytes32(0);
+        console.log(decodedContext.userData.length);
+        if (decodedContext.userData.length > 0) {
+            duration = parseLoanData(host.decodeCtx(_ctx).userData);
+            taskId = createStopStreamTask(sender, duration);
+        }
+        _updateFlow(sender, inFlowRate, taskId, duration);
+        console.log("juanito");
+        return newCtx;
+    }
+
+    function afterAgreementUpdated(
+        ISuperToken _superToken,
+        address _agreementClass,
+        bytes32, // _agreementId,
+        bytes calldata _agreementData,
+        bytes calldata, //_cbdata,
+        bytes calldata _ctx
+    )
+        external
+        override
+        onlyExpected(_superToken, _agreementClass)
+        onlyHost
+        returns (bytes memory newCtx)
+    {
+        newCtx = _ctx;
+
+        (address sender, address receiver) = abi.decode(
+            _agreementData,
+            (address, address)
+        );
+
+        (, int96 inFlowRate, , ) = cfa.getFlow(
+            superToken,
+            sender,
+            address(this)
+        );
+        ISuperfluid.Context memory decodedContext = host.decodeCtx(_ctx);
+
+        uint256 duration = 0;
+        bytes32 taskId = bytes32(0);
+        if (decodedContext.userData.length > 0) {
+            duration = parseLoanData(host.decodeCtx(_ctx).userData);
+            taskId = createStopStreamTask(sender, duration);
+        }
+        _updateFlow(sender, inFlowRate, taskId, duration);
+
+        return newCtx;
+    }
+
+    function afterAgreementTerminated(
+        ISuperToken, /*superToken*/
+        address, /*agreementClass*/
+        bytes32, // _agreementId,
+        bytes calldata _agreementData,
+        bytes calldata, /*cbdata*/
+        bytes calldata _ctx
+    ) external virtual override returns (bytes memory newCtx) {
+        (address sender, address receiver) = abi.decode(
+            _agreementData,
+            (address, address)
+        );
+        newCtx = _ctx;
+        _updateFlow(sender, 0, 0, 0);
+        return newCtx;
+    }
+
+    function parseLoanData(bytes memory data)
+        public
+        pure
+        returns (uint256 duration)
+    {
+        duration = abi.decode(data, (uint256));
+    }
+
+    function _isCFAv1(address agreementClass) private view returns (bool) {
+        return
+            ISuperAgreement(agreementClass).agreementType() ==
+            keccak256(
+                "org.superfluid-finance.agreements.ConstantFlowAgreement.v1"
+            );
+    }
+
+    function _isSameToken(ISuperToken _superToken) private view returns (bool) {
+        return address(_superToken) == address(superToken);
+    }
+
+    modifier onlyHost() {
+        require(
+            msg.sender == address(host),
+            "RedirectAll: support only one host"
+        );
+        _;
+    }
+
+    modifier onlyExpected(ISuperToken _superToken, address agreementClass) {
+        require(_isSameToken(_superToken), "RedirectAll: not accepted token");
+        require(_isCFAv1(agreementClass), "RedirectAll: only CFAv1 supported");
+        _;
+    }
+
+    // endregion Super App Calbacks
+
+    // ============= =============  Gelato TASKS  ============= ============= //
+    // #region Gelato Tasks
+
+    // #region Task1 push erc20 to aave
+
+    function createStopStreamTask(address _member, uint256 _duration)
+        internal
+        returns (bytes32 taskId)
+    {
+        taskId = IOps(ops).createTimedTask(
+            uint128(block.timestamp + _duration),
+            600,
+            address(this),
+            this.stopStreamExec.selector,
+            address(this),
+            abi.encodeWithSelector(this.checkStopStream.selector, _member),
+            ETH,
+            false
+        );
+    }
+
+    // called by Gelato Execs
+    function checkStopStream(address _receiver)
+        external
+        pure
+        returns (bool canExec, bytes memory execPayload)
+    {
+        canExec = true;
+
+        execPayload = abi.encodeWithSelector(
+            this.stopStreamExec.selector,
+            address(_receiver)
+        );
+    }
+
+    /// called by Gelato
+    function stopStreamExec(address _receiver) external onlyOps {
+        //// check if
+
+        _poolRebalance();
+
+        //// every task will be payed with a transfer, therefore receive(), we have to fund the contract
+        uint256 fee;
+        address feeToken;
+
+        (fee, feeToken) = IOps(ops).getFeeDetails();
+
+        _transfer(fee, feeToken);
+
+        (, int96 inFlowRate, , ) = cfa.getFlow(
+            superToken,
+            _receiver,
+            address(this)
+        );
+
+        if (inFlowRate > 0) {
+            _cfaLib.deleteFlow(_receiver, address(this), superToken);
+            _updateFlow(_receiver, 0, 0, 0);
+        }
+    }
+
+    // #endregion Task1 push erc20 to aave
+
+    // #region Task N close creditVoting
+
+    function createCreditPeriodTask(uint256 _creditId, uint256 _dennyPeriod)
+        internal
+        returns (bytes32 taskId)
+    {
+        taskId = IOps(ops).createTimedTask(
+            uint128(block.timestamp) + uint128(_dennyPeriod),
+            uint128(_dennyPeriod),
+            address(this),
+            this.stopCreditPeriodExec.selector,
+            address(this),
+            abi.encodeWithSelector(this.checkCreditPeriod.selector, _creditId),
+            ETH,
+            false
+        );
+    }
+
+    // called by Gelato Execs
+    function checkCreditPeriod(uint256 _creditId)
+        external
+        pure
+        returns (bool canExec, bytes memory execPayload)
+    {
+        canExec = true;
+
+        execPayload = abi.encodeWithSelector(
+            this.stopCreditPeriodExec.selector,
+            _creditId
+        );
+    }
+
+    /// called by Gelato
+    function stopCreditPeriodExec(uint256 creditId) external {
+        //// check if
+
+        DataTypes.Credit storage credit = creditsById[creditId];
+
+        //// every task will be payed with a transfer, therefore receive(), we have to fund the contract
+        uint256 fee;
+        address feeToken;
+
+        // (fee, feeToken) = IOps(ops).getFeeDetails();
+
+        // _transfer(fee, feeToken);
+
+        if (
+            (credit.status == DataTypes.CreditStatus.PENDING &&
+            credit.delegatorsNr == 5 &&
+            credit.delegators.length == 5)  
+        ) {
+            credit.status = DataTypes.CreditStatus.APPROVED;
+            // NOtify approve
+             cancelTask(credit.gelatoTaskId);
+            emit Events.CreditApproved(credit);
+            //do the dance
+        } else if(credit.status == DataTypes.CreditStatus.REJECTED && credit.delegatorsNr == 10 &&
+            credit.delegators.length == 10){
+            credit.status = DataTypes.CreditStatus.APPROVED;
+            cancelTask(credit.gelatoTaskId);
+            emit Events.CreditApproved(credit);
+            } else  {
+            for (uint256 i = 0; i < credit.delegatorsNr; i++) {
+                DataTypes.Member storage member = members[credit.delegators[i]];
+                member.amountLocked -= credit.delegatorsAmount;
+            }
+            credit.status = DataTypes.CreditStatus.REJECTED;
+            // notify Rejected
+            // clean
+            emit Events.CreditDiscarded(credit);
+        }
+
+       
+    }
+
+    // #endregion Task N close creditVotingmembera
+
+    modifier onlyOps() {
+        require(msg.sender == ops, "OpsReady: onlyOps");
+        _;
+    }
+
+    function cancelTask(bytes32 _taskId) public {
+        IOps(ops).cancelTask(_taskId);
+    }
+
+    function withdraw() external returns (bool) {
+        (bool result, ) = payable(msg.sender).call{
+            value: address(this).balance
+        }("");
+        return result;
+    }
+
+    receive() external payable {}
+
+    function _transfer(uint256 _amount, address _paymentToken) internal {
+        if (_paymentToken == ETH) {
+            (bool success, ) = gelato.call{value: _amount}("");
+            require(success, "_transfer: ETH transfer failed");
+        } else {
+            SafeERC20.safeTransfer(IERC20(_paymentToken), gelato, _amount);
+        }
+    }
+
+    // #endregion Gelato functions
+
+    // ============= =============  EPNS  ============= ============= //
+    // #region  EPNS
+
+    function sendNotif() public {
+        IPUSHCommInterface(epnsComm).sendNotification(
+            epnsChannel, // from channel - recommended to set channel via dApp and put it's value -> then once contract is deployed, go back and add the contract address as delegate for your channel
+            address(this), // to recipient, put address(this) in case you want Broadcast or Subset. For Targetted put the address to which you want to send
+            bytes(
+                string(
+                    // We are passing identity here: https://docs.epns.io/developers/developer-guides/sending-notifications/advanced/notification-payload-types/identity/payload-identity-implementations
+                    abi.encodePacked(
+                        "0", // this is notification identity: https://docs.epns.io/developers/developer-guides/sending-notifications/advanced/notification-payload-types/identity/payload-identity-implementations
+                        "+", // segregator
+                        "3", // this is payload type: https://docs.epns.io/developers/developer-guides/sending-notifications/advanced/notification-payload-types/payload (1, 3 or 4) = (Broadcast, targetted or subset)
+                        "+", // segregator
+                        "Title", // this is notificaiton title
+                        "+", // segregator
+                        "Body" // notification body
+                    )
+                )
+            )
+        );
+    }
+
+    // endregion EPNS
+
+    // ============= =============  PARAMETERS ONLY OWNER  ============= ============= //
+    // #region ONLY OWNER
+
+    function setCreditFee(uint256 _CREDIT_FEE) external onlyOwner {
+        require(
+            _CREDIT_FEE > 0 && _CREDIT_FEE < 100,
+            "CREDIT_FEE_MUS_BE_BETWEEN_0_100"
+        );
+        CREDIT_FEE = _CREDIT_FEE;
+    }
+
+    function setMaxAllowance(uint256 _MAX_ALLOWANCE) external onlyOwner {
+        require(
+            _MAX_ALLOWANCE > 0 && _MAX_ALLOWANCE < 100,
+            "MAX_ALLOWANCE_MUS_BE_BETWEEN_0_100"
+        );
+        MAX_ALLOWANCE = _MAX_ALLOWANCE;
+    }
+
+    function setVotingPeriod(uint256 _VOTING_PERIOD) external onlyOwner {
+        require(_VOTING_PERIOD > 600, "VOTING_PERIODE_GREATER_THAN_10_MINUTS");
+        VOTING_PERIOD = _VOTING_PERIOD;
+    }
+
+    // #endregion
 }

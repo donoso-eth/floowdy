@@ -1,8 +1,9 @@
 import { IMEMBER_QUERY } from "../../models";
 
 export const mockMember1 = {
-  deposit: '540000',
-  flow: '0',
+  deposit: '540000000000000000000',
+  flow: '300000000000000000',
+  timestamp:'1663400132',
   creditsRequested: [
     {
       __typename: 'Credit',
@@ -53,7 +54,7 @@ export const mockMember1 = {
 
 export const mockMember2 = {
   deposit: '280000',
-  flow: '0',
+  flow: '5000000000',
   creditsRequested: [],
   creditsDelegated: [
     {

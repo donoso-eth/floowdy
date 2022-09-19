@@ -2,6 +2,8 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CreditSummaryComponent } from './credit-summary/credit-summary.component';
 
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { LensProfileModule } from '../lens-profile/lens-profile.module';
 
 
 @NgModule({
@@ -9,7 +11,10 @@ import { CreditSummaryComponent } from './credit-summary/credit-summary.componen
     CreditSummaryComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    LensProfileModule 
   ],
   exports: [
     CreditSummaryComponent

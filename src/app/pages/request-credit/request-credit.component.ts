@@ -31,9 +31,8 @@ export class RequestCreditComponent
     this.requestCreditForm = this.formBuilder.group({
 
       amountCtrl: [10],
-      flowRateTimeCtrl: [
-        { name: 'months', id: 3, factor: 2592000 },
-        [Validators.required],
+      rateTimeCtrl: [ 3,
+        [Validators.required, Validators.min(1)],
       ],
       flowRateConditionCtrl: [
         { condition: 'No stop',  id: 0 },
@@ -47,10 +46,10 @@ export class RequestCreditComponent
   async requestCredit() {
     
     let amount = this.requestCreditForm.controls.amountCtrl.value;
-    
+    let rate = this.requestCreditForm.controls.rateCtrl.value;
     this.store.dispatch(Web3Actions.chainBusy({ status: true }));
 
-    await doSignerTransaction(this.dapp.defaultContract?.instance.requestCredit(amount)!)
+    await doSignerTransaction(this.dapp.defaultContract?.instance.requestCredit(amount, rate)!)
 
     this.store.dispatch(Web3Actions.chainBusy({ status: false }));
   }

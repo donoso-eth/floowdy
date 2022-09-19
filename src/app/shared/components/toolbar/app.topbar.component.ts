@@ -71,7 +71,7 @@ export class AppTopBarComponent extends DappBaseComponent {
       this.localUserCtrl.setValue(index + 1, { emitEvent: false });
 
     }
-    this.router.navigateByUrl('dashboard')
+    this.router.navigateByUrl('landing')
 
     
   }

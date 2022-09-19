@@ -21,6 +21,7 @@ import { SuperFluidServiceModule } from './dapp-injector/services/super-fluid/su
 import { ERC777Service } from './shared/services/erc777.service';
 import { GraphQlModule } from './dapp-injector/services/graph-ql/graph-ql.module';
 import { HttpClientModule } from '@angular/common/http';
+import { ClipboardModule } from '@angular/cdk/clipboard';
 
 const network = 'localhost';
 
@@ -46,7 +47,8 @@ const network = 'localhost';
     ProgressSpinnerModule,
     ToastModule,
     ButtonModule,
-    SuperFluidServiceModule
+    SuperFluidServiceModule,
+    ClipboardModule
   ],
   providers: [MessageService,GlobalService,ERC777Service],
   bootstrap: [AppComponent]

@@ -59,6 +59,7 @@ export interface FloowdyInterface extends utils.Interface {
     "beforeAgreementCreated(address,address,bytes32,bytes,bytes)": FunctionFragment;
     "beforeAgreementTerminated(address,address,bytes32,bytes,bytes)": FunctionFragment;
     "beforeAgreementUpdated(address,address,bytes32,bytes,bytes)": FunctionFragment;
+    "cancelCredit(uint256)": FunctionFragment;
     "cancelTask(bytes32)": FunctionFragment;
     "cfa()": FunctionFragment;
     "checkCreditPeriod(uint256)": FunctionFragment;
@@ -82,7 +83,7 @@ export interface FloowdyInterface extends utils.Interface {
     "poolTimestamp()": FunctionFragment;
     "rejectCredit(uint256)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
-    "requestCredit(uint256)": FunctionFragment;
+    "requestCredit(uint256,uint256)": FunctionFragment;
     "sendNotif()": FunctionFragment;
     "setCreditFee(uint256)": FunctionFragment;
     "setMaxAllowance(uint256)": FunctionFragment;
@@ -128,6 +129,10 @@ export interface FloowdyInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "beforeAgreementUpdated",
     values: [string, string, BytesLike, BytesLike, BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "cancelCredit",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "cancelTask",
@@ -202,7 +207,7 @@ export interface FloowdyInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "requestCredit",
-    values: [BigNumberish]
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "sendNotif", values?: undefined): string;
   encodeFunctionData(
@@ -271,6 +276,10 @@ export interface FloowdyInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "beforeAgreementUpdated",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "cancelCredit",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "cancelTask", data: BytesLike): Result;
@@ -493,6 +502,11 @@ export interface Floowdy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
+    cancelCredit(
+      creditId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     cancelTask(
       _taskId: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -539,6 +553,7 @@ export interface Floowdy extends BaseContract {
         BigNumber,
         BigNumber,
         BigNumber,
+        BigNumber,
         string
       ] & {
         id: BigNumber;
@@ -549,6 +564,7 @@ export interface Floowdy extends BaseContract {
         amount: BigNumber;
         rate: BigNumber;
         delegatorsNr: BigNumber;
+        delegatorsRequired: BigNumber;
         delegatorsAmount: BigNumber;
         gelatoTaskId: string;
       }
@@ -659,6 +675,7 @@ export interface Floowdy extends BaseContract {
 
     requestCredit(
       amount: BigNumberish,
+      rate: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -785,6 +802,11 @@ export interface Floowdy extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
+  cancelCredit(
+    creditId: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   cancelTask(
     _taskId: BytesLike,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -831,6 +853,7 @@ export interface Floowdy extends BaseContract {
       BigNumber,
       BigNumber,
       BigNumber,
+      BigNumber,
       string
     ] & {
       id: BigNumber;
@@ -841,6 +864,7 @@ export interface Floowdy extends BaseContract {
       amount: BigNumber;
       rate: BigNumber;
       delegatorsNr: BigNumber;
+      delegatorsRequired: BigNumber;
       delegatorsAmount: BigNumber;
       gelatoTaskId: string;
     }
@@ -946,6 +970,7 @@ export interface Floowdy extends BaseContract {
 
   requestCredit(
     amount: BigNumberish,
+    rate: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1068,6 +1093,11 @@ export interface Floowdy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
+    cancelCredit(
+      creditId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     cancelTask(_taskId: BytesLike, overrides?: CallOverrides): Promise<void>;
 
     cfa(overrides?: CallOverrides): Promise<string>;
@@ -1111,6 +1141,7 @@ export interface Floowdy extends BaseContract {
         BigNumber,
         BigNumber,
         BigNumber,
+        BigNumber,
         string
       ] & {
         id: BigNumber;
@@ -1121,6 +1152,7 @@ export interface Floowdy extends BaseContract {
         amount: BigNumber;
         rate: BigNumber;
         delegatorsNr: BigNumber;
+        delegatorsRequired: BigNumber;
         delegatorsAmount: BigNumber;
         gelatoTaskId: string;
       }
@@ -1225,6 +1257,7 @@ export interface Floowdy extends BaseContract {
 
     requestCredit(
       amount: BigNumberish,
+      rate: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1356,6 +1389,11 @@ export interface Floowdy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    cancelCredit(
+      creditId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     cancelTask(
       _taskId: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1445,6 +1483,7 @@ export interface Floowdy extends BaseContract {
 
     requestCredit(
       amount: BigNumberish,
+      rate: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1572,6 +1611,11 @@ export interface Floowdy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    cancelCredit(
+      creditId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     cancelTask(
       _taskId: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1664,6 +1708,7 @@ export interface Floowdy extends BaseContract {
 
     requestCredit(
       amount: BigNumberish,
+      rate: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

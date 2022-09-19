@@ -145,17 +145,17 @@ if(creditNr == 1){
 //await doAllFaucet(erc20Under, supertokenContract, network_params,deployer, user1, user2, user3, user4, user5, user6, user7, user8, user9, user10)
 }
 
-
+let amount = utils.parseEther("20000")
 
 
 await waitForTx(
-supertokenContract.connect(deployer).send(floowdyAddress, 20000, '0x')
+supertokenContract.connect(deployer).send(floowdyAddress, amount, '0x')
 )
 
-await waitForTx(floowdy.connect(deployer).requestCredit(10000));
+await waitForTx(floowdy.connect(deployer).requestCredit(100000000000000000000,5));
 
 await waitForTx(
-  supertokenContract.connect(user1).send(floowdyAddress, 20000, '0x')
+  supertokenContract.connect(user1).send(floowdyAddress, amount  ,'0x')
 );
 
 
@@ -164,22 +164,22 @@ await waitForTx(floowdy.connect(user1).creditCheckIn(creditNr));
 
 
 await waitForTx(
-  supertokenContract.connect(user2).send(floowdyAddress, 40000, '0x')
+  supertokenContract.connect(user2).send(floowdyAddress, amount , '0x')
 );
 await waitForTx(floowdy.connect(user2).creditCheckIn(creditNr));
 
 await waitForTx(
-  supertokenContract.connect(user3).send(floowdyAddress, 40000, '0x')
+  supertokenContract.connect(user3).send(floowdyAddress, amount.mul(3) , '0x')
 );
 await waitForTx(floowdy.connect(user3).creditCheckIn(creditNr));
 
 await waitForTx(
-  supertokenContract.connect(user4).send(floowdyAddress, 40000, '0x')
+  supertokenContract.connect(user4).send(floowdyAddress,amount.mul(2) , '0x')
 );
 await waitForTx(floowdy.connect(user4).creditCheckIn(creditNr));
  
 // await waitForTx(
-//   supertokenContract.connect(user5).send(floowdyAddress, 40000, '0x')
+//   supertokenContract.connect(user5).send(floowdyAddress, 2 * amount  '0x')
 // );
 // await waitForTx(floowdy.connect(user5).creditCheckIn(creditNr));
  

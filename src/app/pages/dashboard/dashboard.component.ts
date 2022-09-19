@@ -38,6 +38,7 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
 
   member!:IMEMBER_QUERY;
 
+  memberDisplay: any;  
 
   constructor(
     store: Store,
@@ -92,26 +93,7 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
     this.poolState = result.poolState;
     console.log(this.poolState);
 
-    let formated = this.global.prepareNumbers(
-      +this.poolToken.superTokenBalance!
-    );
-    this.twoDec = formated.twoDec;
-    this.fourDec = formated.fourDec;
 
-    if (this.poolState.inFlow > 0) {
-      this.destroyHooks.next();
-      let source = interval(500);
-      source.pipe(takeUntil(this.destroyHooks)).subscribe((val) => {
-        const todayms = new Date().getTime() / 1000;
-        const alreadydFlow = todayms - this.poolState.timestamp;
-
-        let formated = this.global.prepareNumbers(
-          +alreadydFlow * this.poolState.inFlow
-        );
-        this.twoDec = formated.twoDec;
-        this.fourDec = formated.fourDec;
-      });
-    }
   }
 
   ngOnInit(): void {}
@@ -140,15 +122,49 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
     //       }
     //     });
     
-        let queryMember = mockMember2;
+        let queryMember = mockMember1;
+
+
+
             this.member =  {
                 deposit:queryMember.deposit,
                 flow:queryMember.flow,
+                timestamp: queryMember.timestamp,
                 creditsRequested : queryMember.creditsRequested,
                 creditsDelegated: queryMember.creditsDelegated
             }
+        
+            console.log(this.member)
 
+        this.memberDisplay = {
+
+
+        } 
             
+        let value = +this.member.flow * ( (new Date().getTime() / 1000)- +this.member.timestamp);
+        let formated = this.global.prepareNumbers(
+          +this.member.deposit + value
+        );
+        this.twoDec = formated.twoDec;
+        this.fourDec = formated.fourDec;
+          
+        console.log(+this.member.flow)
+
+        if (+this.member.flow > 0) {
+          this.destroyFormatting.next();
+          let source = interval(500);
+          source.pipe(takeUntil(this.destroyFormatting)).subscribe((val) => {
+            const todayms = (new Date().getTime() / 1000)- +this.member.timestamp;
+           
+    
+            let formated = this.global.prepareNumbers(
+              +todayms * +this.member.flow +  +this.member.deposit
+            );
+            this.twoDec = formated.twoDec;
+            this.fourDec = formated.fourDec;
+          });
+        }
+
 
     //  let val =   await  this.graphqlService
     //     .getCredits()
