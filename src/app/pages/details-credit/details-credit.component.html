@@ -1,1 +1,13 @@
-<p>details-credit works!</p>
+<div class="grid justify-content-center">
+    <div class="col-12">
+        <div style="position: relative; border-color: transparent" class="text-center">
+            <div class="card">
+                <div class="flex align-items-center justify-content-between mb-0">
+                    <h5>Credit's Summary</h5>
+
+                </div>
+                <credit-summary *ngIf="credit!=undefined"  [role]="role" [credit]="credit"></credit-summary>
+            </div>
+        </div>
+    </div>
+</div>

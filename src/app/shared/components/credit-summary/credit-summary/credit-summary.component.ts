@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+import { ICREDIT_DELEGATED, ROLE } from 'angular-web3';
 
 @Component({
   selector: 'credit-summary',
@@ -9,6 +10,8 @@ export class CreditSummaryComponent implements OnInit {
 
   constructor() { }
 
+  @Input() credit!:ICREDIT_DELEGATED;
+  @Input() role!: ROLE
   ngOnInit(): void {
   }
 

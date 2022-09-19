@@ -23,3 +23,4 @@ export interface ICREDIT_REQUESTED  {
   rate: string;
   delegatorsNr: string;
 };
+ export type ROLE = 'member' | 'requester' |'delegater'
