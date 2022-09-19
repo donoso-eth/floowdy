@@ -53,6 +53,8 @@ export const GET_CREDITS = `
        deposit,
        flow,
        creditsRequested {
+        id
+        status
         denyPeriodTimestamp
         amount
         rate
@@ -63,6 +65,8 @@ export const GET_CREDITS = `
           credit {
               id
               amount
+              delegatorsAmount
+              delegatorsNr
               rate
               status
               requester {

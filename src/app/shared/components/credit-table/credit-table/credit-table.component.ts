@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ICREDIT_DELEGATED, ICREDIT_REQUESTED } from 'angular-web3';
+import { Store } from '@ngrx/store';
+import { DappBaseComponent, DappInjector, ICREDIT_DELEGATED, ICREDIT_REQUESTED } from 'angular-web3';
 import { blockTimeToTime, displayAdress } from 'src/app/shared/helpers/helpers';
 
 @Component({
@@ -7,13 +8,16 @@ import { blockTimeToTime, displayAdress } from 'src/app/shared/helpers/helpers';
   templateUrl: './credit-table.component.html',
   styleUrls: ['./credit-table.component.scss']
 })
-export class CreditTableComponent implements OnInit {
+export class CreditTableComponent extends DappBaseComponent implements OnInit {
 
 
 
   products:any;
-  constructor() {
-  
+  constructor(dapp: DappInjector, store:Store) {
+    super(dapp, store)
+    
+    console.log(this.credits)
+
    }
 
    displayAddress = displayAdress;
@@ -30,6 +34,10 @@ export class CreditTableComponent implements OnInit {
 
    }
    
+   stopCredit(id:string){
+
+   }
+
   ngOnInit(): void {
   }
 

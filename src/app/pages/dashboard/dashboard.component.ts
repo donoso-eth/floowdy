@@ -8,6 +8,7 @@ import { MessageService } from 'primeng/api';
 import { interval, takeUntil, async, Subject } from 'rxjs';
 import { doSignerTransaction } from 'src/app/dapp-injector/classes/transactor';
 import { GraphQlService } from 'src/app/dapp-injector/services/graph-ql/graph-ql.service';
+import { mockMember1, mockMember2 } from 'src/app/dapp-injector/services/graph-ql/mockQueries';
 import { SuperFluidService } from 'src/app/dapp-injector/services/super-fluid/super-fluid-service.service';
 import { IPOOL_STATE, IPOOL_TOKEN } from 'src/app/shared/models/models';
 import { ERC777Service } from 'src/app/shared/services/erc777.service';
@@ -120,30 +121,41 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
   }
 
   async getCredits() {
-    this.destroyQueries.next()
-    const member = this.graphqlService
-        .watchMember(this.dapp.signerAddress!)
-        .pipe(takeUntil(this.destroyQueries))
-        .subscribe((val: any) => {
-  
-          if (!!val && !!val.data && !!val.data.member) {
-            let queryMember = val.data.member;
+    // this.destroyQueries.next()
+    // const member = this.graphqlService
+    //     .watchMember(this.dapp.signerAddress!)
+    //     .pipe(takeUntil(this.destroyQueries))
+    //     .subscribe((val: any) => {
+    //       val = { data: { member: mockMember1}}
+    //       console.log(val)
+    //       if (!!val && !!val.data && !!val.data.member) {
+    //         let queryMember = val.data.member;
+    //         this.member =  {
+    //             deposit:queryMember.deposit,
+    //             flow:queryMember.flow,
+    //             creditsRequested : queryMember.creditsRequested,
+    //             creditsDelegated: queryMember.creditsDelegated.map((map:any)=> map.credit)
+    //         }
+    //            console.log(JSON.stringify(this.member))
+    //       }
+    //     });
+    
+        let queryMember = mockMember2;
             this.member =  {
                 deposit:queryMember.deposit,
                 flow:queryMember.flow,
                 creditsRequested : queryMember.creditsRequested,
-                creditsDelegated: queryMember.creditsDelegated.map((map:any)=> map.credit)
+                creditsDelegated: queryMember.creditsDelegated
             }
-               console.log(JSON.stringify(this.member))
-          }
-        });
 
-     let val =   await  this.graphqlService
-        .getCredits()
-        console.log(val);
-          if (!!val && !!val.data ) {
-            console.log(val.data)
-          }
+            
+
+    //  let val =   await  this.graphqlService
+    //     .getCredits()
+    //     console.log(val);
+    //       if (!!val && !!val.data ) {
+    //         console.log(val.data)
+    //       }
     
 
   }

@@ -1,6 +1,6 @@
 export interface IMEMBER_QUERY {
-  deposit: number;
-  flow: number;
+  deposit: string;
+  flow: string;
   creditsRequested: Array<ICREDIT_REQUESTED>
   creditsDelegated: Array<ICREDIT_DELEGATED>;
 }
@@ -10,18 +10,16 @@ export interface ICREDIT_DELEGATED {
   amount: string;
   rate: string;
   status: string;
-  denyPeriodTimestamp:number,
-  delegatorsAmount:number,
-  initTimestamp: number,
+  denyPeriodTimestamp:string,
+  delegatorsAmount:string,
   requester: { member:string}
 
 }
 
 export interface ICREDIT_REQUESTED  {
-  denyPeriodTimestamp: number;
-  initTimestamp: number,
-  amount: number;
+  denyPeriodTimestamp: string;
+  amount: string;
   status: string;
-  rate: number;
-  delegatorsNr: number;
+  rate: string;
+  delegatorsNr: string;
 };
