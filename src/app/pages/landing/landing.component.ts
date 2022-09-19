@@ -9,10 +9,38 @@ import { AngularContract, DappBaseComponent, DappInjector, Web3Actions } from 'a
   styleUrls: ['./landing.component.scss'],
 })
 export class LandingComponent extends DappBaseComponent {
-
+  pieData:any;
+  pieOptions: any;
   constructor(private router: Router, store: Store, dapp: DappInjector) {
     super(dapp, store);
     this.store.dispatch(Web3Actions.chainBusy({ status: false }));
+    this.pieData = {
+      labels: ['STAKING','DELEGATING'],
+      datasets: [
+          {
+              data: [ 33, 66],
+              backgroundColor: [
+                  "#37c5f4",
+                  "#9d63a2",
+                
+              ],
+              hoverBackgroundColor: [
+                  "#37c5f4",
+                  "#9d63a2",
+               
+              ]
+          }
+      ]
+  };
+  this.pieOptions = {
+    plugins: {
+        legend: {
+            labels: {
+                color: "#37c5f4"
+            }
+        }
+    }
+};
 
    
   }

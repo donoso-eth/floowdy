@@ -5,7 +5,7 @@ import { LandingRoutingModule } from './landing-routing.module';
 import { LandingComponent } from './landing.component';
 import { ButtonModule } from 'primeng/button';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-
+import { ChartModule } from 'primeng/chart';
 
 
 @NgModule({
@@ -16,7 +16,8 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
     CommonModule,
     LandingRoutingModule,
     ButtonModule,
-    ProgressSpinnerModule
+    ProgressSpinnerModule,
+    ChartModule
     
   ],
 

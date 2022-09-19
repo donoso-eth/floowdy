@@ -69,6 +69,8 @@ export interface FloowdyInterface extends utils.Interface {
     "creditIdByAddresse(address)": FunctionFragment;
     "creditsById(uint256)": FunctionFragment;
     "delegatorsStatus(uint256,address)": FunctionFragment;
+    "epnsChannel()": FunctionFragment;
+    "epnsComm()": FunctionFragment;
     "gelato()": FunctionFragment;
     "getMaxAmount()": FunctionFragment;
     "host()": FunctionFragment;
@@ -167,6 +169,11 @@ export interface FloowdyInterface extends utils.Interface {
     functionFragment: "delegatorsStatus",
     values: [BigNumberish, string]
   ): string;
+  encodeFunctionData(
+    functionFragment: "epnsChannel",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "epnsComm", values?: undefined): string;
   encodeFunctionData(functionFragment: "gelato", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getMaxAmount",
@@ -312,6 +319,11 @@ export interface FloowdyInterface extends utils.Interface {
     functionFragment: "delegatorsStatus",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "epnsChannel",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "epnsComm", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "gelato", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getMaxAmount",
@@ -575,6 +587,10 @@ export interface Floowdy extends BaseContract {
       arg1: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    epnsChannel(overrides?: CallOverrides): Promise<[string]>;
+
+    epnsComm(overrides?: CallOverrides): Promise<[string]>;
 
     gelato(overrides?: CallOverrides): Promise<[string]>;
 
@@ -876,6 +892,10 @@ export interface Floowdy extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  epnsChannel(overrides?: CallOverrides): Promise<string>;
+
+  epnsComm(overrides?: CallOverrides): Promise<string>;
+
   gelato(overrides?: CallOverrides): Promise<string>;
 
   getMaxAmount(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1164,6 +1184,10 @@ export interface Floowdy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    epnsChannel(overrides?: CallOverrides): Promise<string>;
+
+    epnsComm(overrides?: CallOverrides): Promise<string>;
+
     gelato(overrides?: CallOverrides): Promise<string>;
 
     getMaxAmount(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1437,6 +1461,10 @@ export interface Floowdy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    epnsChannel(overrides?: CallOverrides): Promise<BigNumber>;
+
+    epnsComm(overrides?: CallOverrides): Promise<BigNumber>;
+
     gelato(overrides?: CallOverrides): Promise<BigNumber>;
 
     getMaxAmount(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1658,6 +1686,10 @@ export interface Floowdy extends BaseContract {
       arg1: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    epnsChannel(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    epnsComm(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     gelato(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
