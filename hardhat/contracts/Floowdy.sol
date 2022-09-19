@@ -124,7 +124,6 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
       TOKENS_RECIPIENT_INTERFACE_HASH,
       address(this)
     );
-
   }
 
   /**
@@ -336,12 +335,11 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
   function poolRebalance() external {
     _poolRebalance();
     emit Events.PoolUpdated(poolByTimestamp[poolTimestamp]);
-
   }
 
   function _calculateYield() public {}
 
-  function _poolRebalance() internal{
+  function _poolRebalance() internal {
     poolId++;
 
     DataTypes.Pool memory currentPool = DataTypes.Pool(
@@ -459,6 +457,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
   // ============= ============= Credit Delegation ============= ============= //
   // #region Credit Delegation
 
+
   function requestCredit(uint256 amount) external onlyMember onlyOneCredit {
     uint256 maxAmount = getMaxAmount();
     console.log(maxAmount);
@@ -489,6 +488,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
   function creditCheckIn(uint256 creditId) public onlyMember {
     uint256 balance = _getMemberAvailable(msg.sender);
     DataTypes.Credit storage credit = creditsById[creditId];
+    DataTypes.Member storage member = members[msg.sender];
     require(
       credit.status == DataTypes.CreditStatus.PENDING,
       "CREDIT_NOT_AVAILABLE"
@@ -502,11 +502,14 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
     credit.delegatorsNr++;
     credit.delegators.push(msg.sender);
     delegatorsStatus[creditId][msg.sender] = credit.delegatorsNr;
-    emit Events.CreditCheckIn(creditId,msg.sender);
+    
+    member.amountLocked += credit.delegatorsAmount;
+    emit Events.CreditCheckIn(creditId, msg.sender);
   }
 
   function creditCheckOut(uint256 creditId) public onlyMember {
     DataTypes.Credit storage credit = creditsById[creditId];
+     DataTypes.Member storage member = members[msg.sender];
     require(delegatorsStatus[creditId][msg.sender] != 0, "MEMBER_NOT_CHECK_IN");
 
     uint256 toDeleteDelegatorPosition = delegatorsStatus[creditId][msg.sender];
@@ -516,7 +519,8 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
     credit.delegators.pop();
     credit.delegatorsNr--;
     delegatorsStatus[creditId][msg.sender] = 0;
-    emit Events.CreditCheckOut(creditId,msg.sender);
+    member.amountLocked -= credit.delegatorsAmount;
+    emit Events.CreditCheckOut(creditId, msg.sender);
   }
 
   function rejectCredit(uint256 creditId) public onlyMember {
@@ -553,6 +557,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
     require(_member.id > 0, "NOT_MEMBER");
     _;
   }
+
 
   // #endregion Credit Delegation
 
@@ -794,17 +799,18 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
       credit.status = DataTypes.CreditStatus.APPROVED;
       // NOtify approve
 
-      for (uint256 i = 0; i < 5; i++) {
-        DataTypes.Member storage member = members[credit.delegators[0]];
-        member.amountLocked = credit.delegatorsAmount;
-      }
-       emit Events.CreditApproved(credit);
+     
+      emit Events.CreditApproved(credit);
       //do the dance
     } else {
+      for (uint256 i = 0; i < credit.delegatorsNr ; i++) {
+         DataTypes.Member storage member = members[credit.delegators[i]];
+         member.amountLocked -= credit.delegatorsAmount;
+      }
       credit.status = DataTypes.CreditStatus.REJECTED;
       // notify Rejected
       // clean
-       emit Events.CreditRejected(credit);
+      emit Events.CreditRejected(credit);
     }
 
     cancelTask(credit.gelatoTaskId);

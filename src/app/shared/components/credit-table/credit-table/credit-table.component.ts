@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ICREDIT_DELEGATED } from 'angular-web3';
+import { ICREDIT_DELEGATED, ICREDIT_REQUESTED } from 'angular-web3';
+import { blockTimeToTime, displayAdress } from 'src/app/shared/helpers/helpers';
 
 @Component({
   selector: 'credit-table',
@@ -15,8 +16,11 @@ export class CreditTableComponent implements OnInit {
   
    }
 
-   @Input() credits!:Array<ICREDIT_DELEGATED>
-    
+   displayAddress = displayAdress;
+   blockTimeToTime = blockTimeToTime;
+
+   @Input() credits!:Array<ICREDIT_DELEGATED> | Array<ICREDIT_REQUESTED> ;
+   @Input() creditType!: 'requested' | 'delegated'; 
 
    goToCredit(id:string){
 

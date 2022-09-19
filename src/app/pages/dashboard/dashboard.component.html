@@ -122,11 +122,11 @@
       <div class="col-12">
         <p-tabView orientation="center">
           <p-tabPanel
-            header="Credits Requested"
+            header="Your Credits"
             class="line-height-3 m-0 text-center"
           >
            
-          <credit-table *ngIf="member!= undefined" [credits]="member.creditsDelegated"  ></credit-table>
+          <credit-table *ngIf="member!= undefined" [creditType]="'requested'" [credits]="member.creditsRequested"  ></credit-table>
           <button
               pButton
               pRipple
@@ -144,6 +144,7 @@
        
           </p-tabPanel>
           <p-tabPanel header="Credits Delegated" class="line-height-3 m-0">
+            <credit-table *ngIf="member!= undefined"  [creditType]="'delegated'" [credits]="member.creditsDelegated"  ></credit-table>
           </p-tabPanel>
         </p-tabView>
       </div>

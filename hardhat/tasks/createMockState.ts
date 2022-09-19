@@ -28,9 +28,87 @@ const contract_config = JSON.parse(
   console.log(user.address, userBalance.toString())
 }
 
+
+const doAllFaucet= async (erc20Under:any, supertokenContract:any, network_params:any,deployer:any, user1:any, user2:any, user3:any, user4:any, user5:any, user6:any, user7:any, user8:any, user9:any, user10:any)  => {
+  await faucet(
+    deployer,
+    erc20Under,
+    network_params.superToken,
+    supertokenContract
+  );
+
+
+  await faucet(
+    user1,
+    erc20Under,
+    network_params.superToken,
+    supertokenContract
+  );
+
+  await faucet(
+    user2,
+    erc20Under,
+    network_params.superToken,
+    supertokenContract
+  );
+  await faucet(
+    user3,
+    erc20Under,
+    network_params.superToken,
+    supertokenContract
+  );
+  await faucet(
+    user4,
+    erc20Under,
+    network_params.superToken,
+    supertokenContract
+  );
+  await faucet(
+    user5,
+    erc20Under,
+    network_params.superToken,
+    supertokenContract
+  );
+  await faucet(
+    user6,
+    erc20Under,
+    network_params.superToken,
+  supertokenContract
+);
+
+await faucet(
+  user7,
+  erc20Under,
+  network_params.superToken,
+supertokenContract
+);
+
+await faucet(
+  user8,
+  erc20Under,
+  network_params.superToken,
+supertokenContract
+);
+
+await faucet(
+  user9,
+  erc20Under,
+  network_params.superToken,
+supertokenContract
+);
+await faucet(
+  user10,
+  erc20Under,
+  network_params.superToken,
+supertokenContract
+);
+}
+
 task('mockState', 'mock state').setAction(async ({}, hre) => {
- const  [deployer, user1, user2, user3, user4, user5, user6, user7, user8, user9, user10]= await initEnv(hre); console.log(user1.address);
- // throw new Error("");
+  // throw new Error("");
+  
+const  [deployer, user1, user2, user3, user4, user5, user6, user7, user8, user9, user10]= await initEnv(hre); console.log(user1.address);
+
  let deployContract = 'floowdy';
  let toDeployContract = contract_config[deployContract];
  const floodyJson = JSON.parse(
@@ -61,91 +139,26 @@ let erc20Under = new hre.ethers.Contract(
   deployer
 );
 
-//   await faucet(
-//     deployer,
-//     erc20Under,
-//     network_params.superToken,
-//     supertokenContract
-//   );
-
-
-//   await faucet(
-//     user1,
-//     erc20Under,
-//     network_params.superToken,
-//     supertokenContract
-//   );
-
-//   await faucet(
-//     user2,
-//     erc20Under,
-//     network_params.superToken,
-//     supertokenContract
-//   );
-//   await faucet(
-//     user3,
-//     erc20Under,
-//     network_params.superToken,
-//     supertokenContract
-//   );
-//   await faucet(
-//     user4,
-//     erc20Under,
-//     network_params.superToken,
-//     supertokenContract
-//   );
-//   await faucet(
-//     user5,
-//     erc20Under,
-//     network_params.superToken,
-//     supertokenContract
-//   );
-//   await faucet(
-//     user6,
-//     erc20Under,
-//     network_params.superToken,
-//   supertokenContract
-// );
-
-// await faucet(
-//   user7,
-//   erc20Under,
-//   network_params.superToken,
-// supertokenContract
-// );
-
-// await faucet(
-//   user8,
-//   erc20Under,
-//   network_params.superToken,
-// supertokenContract
-// );
-
-// await faucet(
-//   user9,
-//   erc20Under,
-//   network_params.superToken,
-// supertokenContract
-// );
-// await faucet(
-//   user10,
-//   erc20Under,
-//   network_params.superToken,
-// supertokenContract
-// );
-
-
 let creditNr = 3;
+
+if(creditNr == 1){
+//await doAllFaucet(erc20Under, supertokenContract, network_params,deployer, user1, user2, user3, user4, user5, user6, user7, user8, user9, user10)
+}
+
+
+
 
 await waitForTx(
 supertokenContract.connect(deployer).send(floowdyAddress, 20000, '0x')
 )
 
-await waitForTx(floowdy.connect(user5).requestCredit(10000));
+await waitForTx(floowdy.connect(deployer).requestCredit(10000));
 
 await waitForTx(
   supertokenContract.connect(user1).send(floowdyAddress, 20000, '0x')
 );
+
+
 await waitForTx(floowdy.connect(user1).creditCheckIn(creditNr));
 
 
@@ -160,10 +173,10 @@ await waitForTx(
 );
 await waitForTx(floowdy.connect(user3).creditCheckIn(creditNr));
 
-// await waitForTx(
-//   supertokenContract.connect(user4).send(floowdyAddress, 40000, '0x')
-// );
-// await waitForTx(floowdy.connect(deployer).creditCheckIn(creditNr));
+await waitForTx(
+  supertokenContract.connect(user4).send(floowdyAddress, 40000, '0x')
+);
+await waitForTx(floowdy.connect(user4).creditCheckIn(creditNr));
  
 // await waitForTx(
 //   supertokenContract.connect(user5).send(floowdyAddress, 40000, '0x')
