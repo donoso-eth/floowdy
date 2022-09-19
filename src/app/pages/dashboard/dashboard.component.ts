@@ -125,7 +125,7 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
         .watchMember(this.dapp.signerAddress!)
         .pipe(takeUntil(this.destroyQueries))
         .subscribe((val: any) => {
-          console.log(val);
+  
           if (!!val && !!val.data && !!val.data.member) {
             let queryMember = val.data.member;
             this.member =  {
@@ -134,7 +134,7 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
                 creditsRequested : queryMember.creditsRequested,
                 creditsDelegated: queryMember.creditsDelegated.map((map:any)=> map.credit)
             }
-               console.log(this.member)
+               console.log(JSON.stringify(this.member))
           }
         });
 

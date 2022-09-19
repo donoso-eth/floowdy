@@ -28,39 +28,8 @@ const contract_config = JSON.parse(
   console.log(user.address, userBalance.toString())
 }
 
-task('mockState', 'mock state').setAction(async ({}, hre) => {
- const  [deployer, user1, user2, user3, user4, user5, user6, user7, user8, user9, user10]= await initEnv(hre); console.log(user1.address);
- // throw new Error("");
- let deployContract = 'floowdy';
- let toDeployContract = contract_config[deployContract];
- const floodyJson = JSON.parse(
-   readFileSync(
-     `${contract_path}/${toDeployContract.jsonName}_metadata.json`,
-     'utf-8'
-   )
- );
 
- let floowdyAddress = floodyJson.address
-
- let floowdy:Floowdy = Floowdy__factory.connect(floowdyAddress, user1);
-
- let networks_config = JSON.parse(readFileSync( join(processDir,'networks.config.json'),'utf-8')) as INETWORK_CONFIG;
-
-let network_params = networks_config["goerli"];
- 
-
- let supertokenContract = await ISuperToken__factory.connect(
-  network_params.superToken,
-  deployer
-);
-
-
-let erc20Under = new hre.ethers.Contract(
-  network_params.token,
-  abi_erc20mint,
-  deployer
-);
-
+const doAllFaucet= async (erc20Under:any, supertokenContract:any, network_params:any,deployer:any, user1:any, user2:any, user3:any, user4:any, user5:any, user6:any, user7:any, user8:any, user9:any, user10:any)  => {
   await faucet(
     deployer,
     erc20Under,
@@ -133,23 +102,64 @@ await faucet(
   network_params.superToken,
 supertokenContract
 );
+}
+
+task('mockState', 'mock state').setAction(async ({}, hre) => {
+  // throw new Error("");
+  
+const  [deployer, user1, user2, user3, user4, user5, user6, user7, user8, user9, user10]= await initEnv(hre); console.log(user1.address);
+
+ let deployContract = 'floowdy';
+ let toDeployContract = contract_config[deployContract];
+ const floodyJson = JSON.parse(
+   readFileSync(
+     `${contract_path}/${toDeployContract.jsonName}_metadata.json`,
+     'utf-8'
+   )
+ );
+
+ let floowdyAddress = floodyJson.address
+
+ let floowdy:Floowdy = Floowdy__factory.connect(floowdyAddress, user1);
+
+ let networks_config = JSON.parse(readFileSync( join(processDir,'networks.config.json'),'utf-8')) as INETWORK_CONFIG;
+
+let network_params = networks_config["goerli"];
+ 
+
+ let supertokenContract = await ISuperToken__factory.connect(
+  network_params.superToken,
+  deployer
+);
 
 
-let creditNr = 1;
+let erc20Under = new hre.ethers.Contract(
+  network_params.token,
+  abi_erc20mint,
+  deployer
+);
+
+let creditNr = 3;
+
+if(creditNr == 1){
+//await doAllFaucet(erc20Under, supertokenContract, network_params,deployer, user1, user2, user3, user4, user5, user6, user7, user8, user9, user10)
+}
+
+
+
 
 await waitForTx(
 supertokenContract.connect(deployer).send(floowdyAddress, 20000, '0x')
 )
 
-
+await waitForTx(floowdy.connect(deployer).requestCredit(10000));
 
 await waitForTx(
   supertokenContract.connect(user1).send(floowdyAddress, 20000, '0x')
 );
 
-await waitForTx(floowdy.connect(user1).requestCredit(10000));
 
-await waitForTx(floowdy.connect(deployer).creditCheckIn(creditNr));
+await waitForTx(floowdy.connect(user1).creditCheckIn(creditNr));
 
 
 
@@ -168,12 +178,12 @@ await waitForTx(
 );
 await waitForTx(floowdy.connect(user4).creditCheckIn(creditNr));
  
-await waitForTx(
-  supertokenContract.connect(user5).send(floowdyAddress, 40000, '0x')
-);
-await waitForTx(floowdy.connect(user5).creditCheckIn(creditNr));
+// await waitForTx(
+//   supertokenContract.connect(user5).send(floowdyAddress, 40000, '0x')
+// );
+// await waitForTx(floowdy.connect(user5).creditCheckIn(creditNr));
  
-await  waitForTx(floowdy.stopCreditPeriodExec(creditNr));
+//await  waitForTx(floowdy.stopCreditPeriodExec(creditNr));
 
 
 });
