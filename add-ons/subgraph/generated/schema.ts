@@ -308,7 +308,6 @@ export class Credit extends Entity {
     this.set("amount", Value.fromBigInt(BigInt.zero()));
     this.set("rate", Value.fromBigInt(BigInt.zero()));
     this.set("delegatorsNr", Value.fromBigInt(BigInt.zero()));
-    this.set("delegatorsArray", Value.fromStringArray(new Array(0)));
     this.set("delegatorsAmount", Value.fromBigInt(BigInt.zero()));
     this.set("gelatoTaskId", Value.fromString(""));
   }
@@ -400,15 +399,6 @@ export class Credit extends Entity {
 
   set delegatorsNr(value: BigInt) {
     this.set("delegatorsNr", Value.fromBigInt(value));
-  }
-
-  get delegatorsArray(): Array<string> {
-    let value = this.get("delegatorsArray");
-    return value!.toStringArray();
-  }
-
-  set delegatorsArray(value: Array<string>) {
-    this.set("delegatorsArray", Value.fromStringArray(value));
   }
 
   get delegatorsAmount(): BigInt {

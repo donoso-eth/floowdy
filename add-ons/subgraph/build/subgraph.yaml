@@ -6,7 +6,7 @@ dataSources:
     name: Floowdy
     network: localhost
     source:
-      address: "0xFD4356404e9213CB7c776AcDc5fC9A77B72ef93c"
+      address: "0xE2E3d9Ad116768b4065ba6A7659B119C80aff0b4"
       abi: Floowdy
       startBlock: 7588383
     mapping:
@@ -21,16 +21,12 @@ dataSources:
       abis:
         - name: Floowdy
           file: Floowdy\abis\floowdy.json
-        - name: Floowdy
-          file: Floowdy\abis\floowdy.json
-        - name: Floowdy
-          file: Floowdy\abis\floowdy.json
       eventHandlers:
-        - event: CreditApproved((uint256,address,uint256,uint256,uint8,uint256,uint256,uint256,address[],uint256,bytes32))
+        - event: CreditApproved((uint256,address,uint256,uint256,uint8,uint256,uint256,uint256,uint256,address[],uint256,bytes32))
           handler: handleCreditApproved
-        - event: CreditRejected((uint256,address,uint256,uint256,uint8,uint256,uint256,uint256,address[],uint256,bytes32))
+        - event: CreditRejected((uint256,address,uint256,uint256,uint8,uint256,uint256,uint256,uint256,address[],uint256,bytes32))
           handler: handleCreditRejected
-        - event: CreditRequested((uint256,address,uint256,uint256,uint8,uint256,uint256,uint256,address[],uint256,bytes32))
+        - event: CreditRequested((uint256,address,uint256,uint256,uint8,uint256,uint256,uint256,uint256,address[],uint256,bytes32))
           handler: handleCreditRequested
         - event: MemberDeposit((uint256,address,int96,bytes32,uint256,uint256,uint256,uint256,uint256,uint256))
           handler: handleMemberDeposit

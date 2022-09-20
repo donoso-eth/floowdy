@@ -11,7 +11,9 @@ import { AngularContract, DappBaseComponent, DappInjector, Web3Actions } from 'a
 export class LandingComponent extends DappBaseComponent {
   pieData:any;
   pieOptions: any;
-  constructor(private router: Router, store: Store, dapp: DappInjector) {
+  constructor(private router: Router, store: Store, dapp: DappInjector
+    
+    ) {
     super(dapp, store);
     this.store.dispatch(Web3Actions.chainBusy({ status: false }));
     this.pieData = {

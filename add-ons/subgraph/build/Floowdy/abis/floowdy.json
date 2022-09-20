@@ -350,6 +350,19 @@
   {
     "inputs": [
       {
+        "internalType": "uint256",
+        "name": "creditId",
+        "type": "uint256"
+      }
+    ],
+    "name": "cancelCredit",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "bytes32",
         "name": "_taskId",
         "type": "bytes32"
@@ -518,6 +531,11 @@
       },
       {
         "internalType": "uint256",
+        "name": "delegatorsRequired",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
         "name": "delegatorsAmount",
         "type": "uint256"
       },
@@ -549,6 +567,32 @@
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "epnsChannel",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "epnsComm",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -844,6 +888,11 @@
         "internalType": "uint256",
         "name": "amount",
         "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "rate",
+        "type": "uint256"
       }
     ],
     "name": "requestCredit",
@@ -1069,6 +1118,11 @@
             "type": "uint256"
           },
           {
+            "internalType": "uint256",
+            "name": "delegatorsRequired",
+            "type": "uint256"
+          },
+          {
             "internalType": "address[]",
             "name": "delegators",
             "type": "address[]"
@@ -1139,6 +1193,11 @@
             "type": "uint256"
           },
           {
+            "internalType": "uint256",
+            "name": "delegatorsRequired",
+            "type": "uint256"
+          },
+          {
             "internalType": "address[]",
             "name": "delegators",
             "type": "address[]"
@@ -1161,6 +1220,81 @@
       }
     ],
     "name": "CreditApproved",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "id",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "requester",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "initTimestamp",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "denyPeriodTimestamp",
+            "type": "uint256"
+          },
+          {
+            "internalType": "enum DataTypes.CreditStatus",
+            "name": "status",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint256",
+            "name": "amount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "rate",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "delegatorsNr",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "delegatorsRequired",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address[]",
+            "name": "delegators",
+            "type": "address[]"
+          },
+          {
+            "internalType": "uint256",
+            "name": "delegatorsAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "gelatoTaskId",
+            "type": "bytes32"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct DataTypes.Credit",
+        "name": "credit",
+        "type": "tuple"
+      }
+    ],
+    "name": "CreditCancelled",
     "type": "event"
   },
   {
@@ -1247,6 +1381,86 @@
             "type": "uint256"
           },
           {
+            "internalType": "uint256",
+            "name": "delegatorsRequired",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address[]",
+            "name": "delegators",
+            "type": "address[]"
+          },
+          {
+            "internalType": "uint256",
+            "name": "delegatorsAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "gelatoTaskId",
+            "type": "bytes32"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct DataTypes.Credit",
+        "name": "credit",
+        "type": "tuple"
+      }
+    ],
+    "name": "CreditDiscarded",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "id",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "requester",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "initTimestamp",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "denyPeriodTimestamp",
+            "type": "uint256"
+          },
+          {
+            "internalType": "enum DataTypes.CreditStatus",
+            "name": "status",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint256",
+            "name": "amount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "rate",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "delegatorsNr",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "delegatorsRequired",
+            "type": "uint256"
+          },
+          {
             "internalType": "address[]",
             "name": "delegators",
             "type": "address[]"
@@ -1314,6 +1528,11 @@
           {
             "internalType": "uint256",
             "name": "delegatorsNr",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "delegatorsRequired",
             "type": "uint256"
           },
           {

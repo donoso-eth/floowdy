@@ -244,6 +244,8 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
 
             uint256 yieldMember = totalYieldEarnedMember(_member);
 
+            console.log( poolByTimestamp[block.timestamp].totalDepositFlow );
+
             if (member.flow > 0) {
                 poolByTimestamp[block.timestamp].totalDepositFlow =
                     poolByTimestamp[block.timestamp].totalDepositFlow -
@@ -266,7 +268,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
     ) internal {
         DataTypes.Member storage member = members[_member];
         require(_inFlow >= 0, "ONLY_STREAM_IN_POSITIONS");
-
+        _poolRebalance();
         _memberUpdate(_member);
 
         if (member.flowGelatoId != bytes32(0)) {
@@ -283,7 +285,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
         member.flow = _inFlow;
 
         console.log("updateMemberFlow");
-        emit Events.MemberDeposit(member);
+        emit Events.MemberStream(member);
         emit Events.PoolUpdated(poolByTimestamp[poolTimestamp]);
     }
 
@@ -622,7 +624,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
             taskId = createStopStreamTask(sender, duration);
         }
         _updateFlow(sender, inFlowRate, taskId, duration);
-        console.log("juanito");
+
         return newCtx;
     }
 

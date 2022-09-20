@@ -103,38 +103,38 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
   }
 
   async getCredits() {
-    // this.destroyQueries.next()
-    // const member = this.graphqlService
-    //     .watchMember(this.dapp.signerAddress!)
-    //     .pipe(takeUntil(this.destroyQueries))
-    //     .subscribe((val: any) => {
-    //       val = { data: { member: mockMember1}}
-    //       console.log(val)
-    //       if (!!val && !!val.data && !!val.data.member) {
-    //         let queryMember = val.data.member;
-    //         this.member =  {
-    //             deposit:queryMember.deposit,
-    //             flow:queryMember.flow,
-    //             creditsRequested : queryMember.creditsRequested,
-    //             creditsDelegated: queryMember.creditsDelegated.map((map:any)=> map.credit)
-    //         }
-    //            console.log(JSON.stringify(this.member))
-    //       }
-    //     });
-    
-        let queryMember = mockMember1;
-
-
-
+    console.log('getCredits');
+    this.destroyQueries.next()
+   this.graphqlService
+        .watchMember(this.dapp.signerAddress!)
+        .pipe(takeUntil(this.destroyQueries))
+        .subscribe((val: any) => {
+          console.log(val)
+          if (!!val && !!val.data && !!val.data.member) {
+            let queryMember = val.data.member;
             this.member =  {
                 deposit:queryMember.deposit,
-                flow:queryMember.flow,
                 timestamp: queryMember.timestamp,
+                flow:queryMember.flow,
                 creditsRequested : queryMember.creditsRequested,
-                creditsDelegated: queryMember.creditsDelegated
+                creditsDelegated: queryMember.creditsDelegated.map((map:any)=> map.credit)
             }
+               console.log(JSON.stringify(this.member))
+       
+    
+        // let queryMember = mockMember1;
+
+
+
+        //     this.member =  {
+        //         deposit:queryMember.deposit,
+        //         flow:queryMember.flow,
+        //         timestamp: queryMember.timestamp,
+        //         creditsRequested : queryMember.creditsRequested,
+        //         creditsDelegated: queryMember.creditsDelegated
+        //     }
         
-            console.log(this.member)
+            console.log(+this.member.flow)
 
         this.memberDisplay = {
 
@@ -164,6 +164,8 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
             this.fourDec = formated.fourDec;
           });
         }
+      }
+    });
 
 
     //  let val =   await  this.graphqlService

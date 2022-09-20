@@ -1,15 +1,10 @@
-export const GET_DEMANDS = `
+export const GET_POOL = `
     {
-      loanDemands(first: 5, where: {status:"0"}, orderBy: id, orderDirection: asc) {
+      pools(first: 5, orderBy: id, orderDirection: desc) {
         id
-        loanAmount
-        fee
-        superToken
-        collateralShare
-        duration
-        loanTaker
-        status
-   
+        totalFlow
+        totalDeposit
+        timestamp
       }
     }
   `;
