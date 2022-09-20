@@ -18,6 +18,7 @@ dataSources:
         - Pool
         - Credit
         - MemberCredit
+        - ChartMonth
       abis:
         - name: Floowdy
           file: ./abis/floowdy.json

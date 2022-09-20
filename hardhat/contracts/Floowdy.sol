@@ -444,6 +444,15 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
     // ============= ============= Aave ============= ============= //
     // #region Aave
 
+    function getAaveData() public{
+    ( uint256 totalCollateralBase,uint256 totalDebtBase,uint256 availableBorrowsBase,
+      uint256 currentLiquidationThreshold, uint256 ltv, uint256 healthFactor) = pool.getUserAccountData(address(this));
+
+    }
+
+
+     
+
     function aaveSupply() public {
         uint256 poolSuperTokenBalance = (superToken.balanceOf(address(this)))
             .div(10**12);

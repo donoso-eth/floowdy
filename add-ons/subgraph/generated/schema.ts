@@ -186,6 +186,7 @@ export class Pool extends Entity {
     this.set("depositIndex", Value.fromBigInt(BigInt.zero()));
     this.set("flowIndex", Value.fromBigInt(BigInt.zero()));
     this.set("totalMembers", Value.fromBigInt(BigInt.zero()));
+    this.set("date", Value.fromString(""));
   }
 
   save(): void {
@@ -293,6 +294,15 @@ export class Pool extends Entity {
 
   set totalMembers(value: BigInt) {
     this.set("totalMembers", Value.fromBigInt(value));
+  }
+
+  get date(): string {
+    let value = this.get("date");
+    return value!.toString();
+  }
+
+  set date(value: string) {
+    this.set("date", Value.fromString(value));
   }
 }
 
@@ -480,5 +490,89 @@ export class MemberCredit extends Entity {
 
   set credit(value: string) {
     this.set("credit", Value.fromString(value));
+  }
+}
+
+export class ChartMonth extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("month", Value.fromI32(0));
+    this.set("year", Value.fromI32(0));
+    this.set("timestamp", Value.fromBigInt(BigInt.zero()));
+    this.set("balance", Value.fromBigInt(BigInt.zero()));
+    this.set("staked", Value.fromBigInt(BigInt.zero()));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save ChartMonth entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save ChartMonth entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("ChartMonth", id.toString(), this);
+    }
+  }
+
+  static load(id: string): ChartMonth | null {
+    return changetype<ChartMonth | null>(store.get("ChartMonth", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get month(): i32 {
+    let value = this.get("month");
+    return value!.toI32();
+  }
+
+  set month(value: i32) {
+    this.set("month", Value.fromI32(value));
+  }
+
+  get year(): i32 {
+    let value = this.get("year");
+    return value!.toI32();
+  }
+
+  set year(value: i32) {
+    this.set("year", Value.fromI32(value));
+  }
+
+  get timestamp(): BigInt {
+    let value = this.get("timestamp");
+    return value!.toBigInt();
+  }
+
+  set timestamp(value: BigInt) {
+    this.set("timestamp", Value.fromBigInt(value));
+  }
+
+  get balance(): BigInt {
+    let value = this.get("balance");
+    return value!.toBigInt();
+  }
+
+  set balance(value: BigInt) {
+    this.set("balance", Value.fromBigInt(value));
+  }
+
+  get staked(): BigInt {
+    let value = this.get("staked");
+    return value!.toBigInt();
+  }
+
+  set staked(value: BigInt) {
+    this.set("staked", Value.fromBigInt(value));
   }
 }

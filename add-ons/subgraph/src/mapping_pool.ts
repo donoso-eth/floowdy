@@ -1,8 +1,8 @@
 // #region =========== MEMBER =================
 
 import {  PoolUpdated } from "../generated/Floowdy/Floowdy";
-import { Pool } from "../generated/schema";
-
+import { ChartMonth, Pool } from "../generated/schema";
+import { BigDecimal, BigInt } from '@graphprotocol/graph-ts';
 
 export function handlePoolUpdated(event:PoolUpdated):void {
     _updatePool(event)
@@ -22,6 +22,20 @@ export function handlePoolUpdated(event:PoolUpdated):void {
     pool.depositIndex =  event.params.pool.depositIndex;
     pool.flowIndex =  event.params.pool.flowIndex
     pool.totalMembers= event.params.pool.totalMembers
+
+    let date = (new Date(event.params.pool.timestamp.toI32() * 1000))
+ 
+    let monthString =  ("0" + date.getUTCMonth().toString());
+    let month  = monthString.substring(monthString.length -2, monthString.length);
+    let year= (date.getUTCFullYear()).toString();
+    let chartMonthId =  month.toString().concat(year);
+    //pool.date = date;
+    let chartMonth= _getChartMonth(chartMonthId, pool.timestamp, month, year);
+
+    chartMonth.staked = pool.totalDeposit;
+    chartMonth.balance = pool.totalFlow;
+    
+
     pool.save()
   }
   
@@ -36,6 +50,22 @@ export function handlePoolUpdated(event:PoolUpdated):void {
       return pool;
     }
   
+
+  
+    function _getChartMonth( id:string, timestamp:BigInt,month:string, year:string): ChartMonth {
+  
+      let chartMonth = ChartMonth.load(id);
+      if (chartMonth === null) {
+        chartMonth = new ChartMonth(id);
+        chartMonth.month = month;
+        chartMonth.timestamp = timestamp;
+        chartMonth.year = year;
+        chartMonth.save();
+      }
+      return chartMonth;
+    }
+
+
     
   // #endregion =========== MEMBER =================
   

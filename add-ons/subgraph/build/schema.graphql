@@ -25,6 +25,7 @@ type Pool @entity {
   depositIndex: BigInt!
   flowIndex: BigInt!
   totalMembers: BigInt!
+  date:String!
 }
 
 type Credit @entity {
@@ -45,4 +46,14 @@ type MemberCredit @entity {
   id: ID! 
   member: Member!
   credit: Credit!
+}
+
+type ChartMonth @entity {
+id:ID!
+month: Int!
+year: Int!
+timestamp: BigInt!
+balance: BigInt!
+staked: BigInt!
+
 }
