@@ -664,7 +664,7 @@ export const faucet = async (user:SignerWithAddress,erc20Under:any,superToken:st
 
 export const printUser = async (floowdy: Floowdy, userAddress: string): Promise<any> => {
   let user = await floowdy.members(userAddress) as MemberStructOutput;
-
+  console.log(user);
   console.log('\x1b[32m%s\x1b[0m', 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX');
   console.log(`Id ${user.id.toString()} `);
   console.log(`User ${user.member.toString()} `);

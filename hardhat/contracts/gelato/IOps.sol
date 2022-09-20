@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import {LibDataTypes} from "./LibDataTypes.sol";
+
 interface IOps {
 
   struct Time {
@@ -71,46 +73,46 @@ interface IOps {
   /// @param _taskCreator Address who created the task
   function getTaskIdsByUser(address _taskCreator) external view returns (bytes32[] memory);
 
-  /// @notice Returns TaskId of a task Creator
-  /// @param _taskCreator Address of the task creator
-  /// @param _execAddress Address of the contract to be executed by Gelato
-  /// @param _selector Function on the _execAddress which should be executed
-  /// @param _useTaskTreasuryFunds If msg.sender's balance on TaskTreasury should pay for the tx
-  /// @param _feeToken FeeToken to use, address 0 if task treasury is used
-  /// @param _resolverHash hash of resolver address and data
-  function getTaskId(
-    address _taskCreator,
-    address _execAddress,
-    bytes4 _selector,
-    bool _useTaskTreasuryFunds,
-    address _feeToken,
-    bytes32 _resolverHash
-  ) external pure returns (bytes32);
+    /**
+     * @notice Execution API called by Gelato.
+     *
+     * @param taskCreator The address which created the task.
+     * @param execAddress Address of contract that should be called by Gelato.
+     * @param execData Execution data to be called with / function selector if execution data is yet to be determined.
+     * @param moduleData Conditional modules that will be used. {See LibDataTypes-ModuleData}
+     * @param txFee Fee paid to Gelato for execution, deducted on the TaskTreasury or transfered to Gelato.
+     * @param feeToken Token used to pay for the execution. ETH = 0xeeeeee...
+     * @param useTaskTreasuryFunds If taskCreator's balance on TaskTreasury should pay for the tx.
+     * @param revertOnFailure To revert or not if call to execAddress fails. (Used for off-chain simulations)
+     */
+   function exec(
+        address taskCreator,
+        address execAddress,
+        bytes memory execData,
+        LibDataTypes.ModuleData calldata moduleData,
+        uint256 txFee,
+        address feeToken,
+        bool useTaskTreasuryFunds,
+        bool revertOnFailure
+    ) external;
 
-  /// @notice Helper func to query the _selector of a function you want to automate
-  /// @param _func String of the function you want the selector from
-  /// @dev Example: "transferFrom(address,address,uint256)" => 0x23b872dd
-  function getSelector(string calldata _func) external pure returns (bytes4);
 
-    /// @notice Execution API called by Gelato
-  /// @param _txFee Fee paid to Gelato for execution, deducted on the TaskTreasury
-  /// @param _feeToken Token used to pay for the execution. ETH = 0xeeeeee...
-  /// @param _taskCreator On which contract should Gelato check when to execute the tx
-  /// @param _useTaskTreasuryFunds If msg.sender's balance on TaskTreasury should pay for the tx
-  /// @param _revertOnFailure To revert or not if call to execAddress fails
-  /// @param _execAddress On which contract should Gelato execute the tx
-  /// @param _execData Data used to execute the tx, queried from the Resolver by Gelato
-  function exec(
-    uint256 _txFee,
-    address _feeToken,
-    address _taskCreator,
-    bool _useTaskTreasuryFunds,
-    bool _revertOnFailure,
-    bytes32 _resolverHash,
-    address _execAddress,
-    bytes calldata _execData
-  ) external;
-
+   /**
+     * @notice Initiates a task with conditions which Gelato will monitor and execute when conditions are met.
+     *
+     * @param execAddress Address of contract that should be called by Gelato.
+     * @param execData Execution data to be called with / function selector if execution data is yet to be determined.
+     * @param moduleData Conditional modules that will be used. {See LibDataTypes-ModuleData}
+     * @param feeToken Address of token to be used as payment. Use address(0) if TaskTreasury is being used, 0xeeeeee... for ETH or native tokens.
+     *
+     * @return taskId Unique hash of the task created.
+     */
+    function createTask(
+        address execAddress,
+        bytes calldata execData,
+        LibDataTypes.ModuleData calldata moduleData,
+        address feeToken
+    ) external returns (bytes32 taskId);
 
   function timedTask(bytes32) external view returns (Time memory) ;
 

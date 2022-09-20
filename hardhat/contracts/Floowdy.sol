@@ -100,6 +100,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
                 )
             )
         );
+        _cfaLib = CFAv1Library.InitData(host, cfa);
         uint256 configWord = SuperAppDefinitions.APP_LEVEL_FINAL |
             SuperAppDefinitions.BEFORE_AGREEMENT_CREATED_NOOP |
             SuperAppDefinitions.BEFORE_AGREEMENT_UPDATED_NOOP |
@@ -158,11 +159,10 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
         _poolRebalance();
 
         _memberUpdate(_member);
+        DataTypes.Member storage member = members[_member];
 
         // poolByTimestamp[block.timestamp].totalShares = poolByTimestamp[block.timestamp].totalShares + inDeposit - outDeposit;
         poolByTimestamp[block.timestamp].totalDeposit += amount;
-
-        DataTypes.Member storage member = _getMember(_member);
 
         member.deposit += amount;
 
@@ -186,13 +186,15 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
         returns (DataTypes.Member storage)
     {
         DataTypes.Member storage member = members[_member];
-
+        console.log(190, member.id);
         if (member.id == 0) {
             totalMembers++;
             member.member = _member;
             member.initTimestamp = block.timestamp;
             member.id = totalMembers;
+
             memberAdressById[member.id] = _member;
+            console.log(198, member.member);
         }
 
         return member;
@@ -231,7 +233,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
     }
 
     function _memberUpdate(address _member) internal {
-        DataTypes.Member storage member = members[_member];
+        DataTypes.Member storage member = _getMember(_member);
 
         if (member.timestamp < block.timestamp) {
             uint256 memberBalance = _getMemberBalance(_member);
@@ -244,7 +246,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
 
             uint256 yieldMember = totalYieldEarnedMember(_member);
 
-            console.log( poolByTimestamp[block.timestamp].totalDepositFlow );
+            console.log(poolByTimestamp[block.timestamp].totalDepositFlow);
 
             if (member.flow > 0) {
                 poolByTimestamp[block.timestamp].totalDepositFlow =
@@ -464,8 +466,12 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
     // ============= ============= Credit Delegation ============= ============= //
     // #region Credit Delegation
 
-    function requestCredit(uint256 amount, uint256 rate) external onlyMember onlyOneCredit {
-        require(rate >= CREDIT_FEE, 'RATE_TOO_LOW');
+    function requestCredit(uint256 amount, uint256 rate)
+        external
+        onlyMember
+        onlyOneCredit
+    {
+        require(rate >= CREDIT_FEE, "RATE_TOO_LOW");
         uint256 maxAmount = getMaxAmount();
         console.log(maxAmount);
         console.log(amount * 100);
@@ -482,12 +488,9 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
         credit.status = DataTypes.CreditStatus.PENDING;
         credit.amount = amount;
         credit.delegatorsRequired = 5;
-        credit.rate = rate ;
+        credit.rate = rate;
         credit.delegatorsAmount = delegatorsAmount;
-        credit.gelatoTaskId = createCreditPeriodTask(
-            credit.id,
-            VOTING_PERIOD
-        );
+        credit.gelatoTaskId = createCreditPeriodTask(credit.id, VOTING_PERIOD);
 
         /// notify
         emit Events.CreditRequested(credit);
@@ -501,7 +504,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
             DataTypes.Member storage member = members[credit.delegators[i]];
             member.amountLocked -= credit.delegatorsAmount;
         }
-         emit Events.CreditCancelled(credit);
+        emit Events.CreditCancelled(credit);
     }
 
     function creditCheckIn(uint256 creditId) public onlyMember {
@@ -618,7 +621,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
 
         uint256 duration = 0;
         bytes32 taskId = bytes32(0);
-        console.log(decodedContext.userData.length);
+
         if (decodedContext.userData.length > 0) {
             duration = parseLoanData(host.decodeCtx(_ctx).userData);
             taskId = createStopStreamTask(sender, duration);
@@ -680,6 +683,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
             (address, address)
         );
         newCtx = _ctx;
+        console.log(683);
         _updateFlow(sender, 0, 0, 0);
         return newCtx;
     }
@@ -723,12 +727,13 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
     // ============= =============  Gelato TASKS  ============= ============= //
     // #region Gelato Tasks
 
-    // #region Task1 push erc20 to aave
+    // #region Task1
 
     function createStopStreamTask(address _member, uint256 _duration)
         internal
         returns (bytes32 taskId)
     {
+        console.log(733, block.timestamp + _duration);
         taskId = IOps(ops).createTimedTask(
             uint128(block.timestamp + _duration),
             600,
@@ -759,7 +764,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
     function stopStreamExec(address _receiver) external onlyOps {
         //// check if
 
-        _poolRebalance();
+        //  _poolRebalance();
 
         //// every task will be payed with a transfer, therefore receive(), we have to fund the contract
         uint256 fee;
@@ -777,6 +782,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
 
         if (inFlowRate > 0) {
             _cfaLib.deleteFlow(_receiver, address(this), superToken);
+            console.log(786, _receiver);
             _updateFlow(_receiver, 0, 0, 0);
         }
     }
@@ -831,20 +837,23 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
 
         if (
             (credit.status == DataTypes.CreditStatus.PENDING &&
-            credit.delegatorsNr == 5 &&
-            credit.delegators.length == 5)  
+                credit.delegatorsNr == 5 &&
+                credit.delegators.length == 5)
         ) {
             credit.status = DataTypes.CreditStatus.APPROVED;
             // NOtify approve
-             cancelTask(credit.gelatoTaskId);
+            cancelTask(credit.gelatoTaskId);
             emit Events.CreditApproved(credit);
             //do the dance
-        } else if(credit.status == DataTypes.CreditStatus.REJECTED && credit.delegatorsNr == 10 &&
-            credit.delegators.length == 10){
+        } else if (
+            credit.status == DataTypes.CreditStatus.REJECTED &&
+            credit.delegatorsNr == 10 &&
+            credit.delegators.length == 10
+        ) {
             credit.status = DataTypes.CreditStatus.APPROVED;
             cancelTask(credit.gelatoTaskId);
             emit Events.CreditApproved(credit);
-            } else  {
+        } else {
             for (uint256 i = 0; i < credit.delegatorsNr; i++) {
                 DataTypes.Member storage member = members[credit.delegators[i]];
                 member.amountLocked -= credit.delegatorsAmount;
@@ -854,8 +863,6 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
             // clean
             emit Events.CreditDiscarded(credit);
         }
-
-       
     }
 
     // #endregion Task N close creditVotingmembera

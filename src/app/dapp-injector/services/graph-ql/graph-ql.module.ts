@@ -9,7 +9,8 @@ import {InMemoryCache} from '@apollo/client/core';
 @NgModule({
   declarations: [],
   imports: [
-    CommonModule
+    CommonModule,
+    ApolloModule
   ]
 })
 export class GraphQlModule {
@@ -17,7 +18,7 @@ export class GraphQlModule {
     console.log(config.uri);
     return {
       ngModule: GraphQlModule,
-      providers: [GraphQlService,Apollo,
+      providers: [GraphQlService,
         {
           provide: APOLLO_NAMED_OPTIONS, // <-- Different from standard initialization
           useFactory(httpLink: HttpLink): NamedOptions {

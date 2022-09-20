@@ -46,13 +46,14 @@ import {
   SFError,
 } from '@superfluid-finance/sdk-core';
 
-import { from } from 'rxjs';
+import { from, interval } from 'rxjs';
 import { ethers } from 'hardhat';
 import { readFileSync } from 'fs-extra';
 import { join } from 'path';
 import { FloowdyInitStruct } from '../typechain-types/Floowdy';
 import { INETWORK_CONFIG } from '../helpers/models';
 import { abi_erc20mint } from '../helpers/abis/ERC20Mint';
+import { encodeResolverArgs, encodeTimeArgs, Module, ModuleData } from './helpers/module';
 
 let floowdy: Floowdy;
 
@@ -109,7 +110,7 @@ let networks_config = JSON.parse(
 
 let network_params = networks_config['goerli'];
 
-describe('credit delegation tests', function () {
+describe.only('credit delegation tests', function () {
   beforeEach(async () => {
     await hre.network.provider.request({
       method: 'hardhat_reset',
@@ -164,6 +165,8 @@ describe('credit delegation tests', function () {
       value: initialPoolEth,
     });
     balance = await provider.getBalance(floowdyAddress);
+
+    console.log(balance)
 
 
     erc20Under = new hre.ethers.Contract(
@@ -220,98 +223,81 @@ describe('credit delegation tests', function () {
       network_params.superToken,
       supertokenContract
     );
-    await faucet(
-      user2,
-      erc20Under,
-      network_params.superToken,
-      supertokenContract
-    );
-    await faucet(
-      user3,
-      erc20Under,
-      network_params.superToken,
-      supertokenContract
-    );
-    await faucet(
-      user4,
-      erc20Under,
-      network_params.superToken,
-      supertokenContract
-    );
-    await faucet(
-      user5,
-      erc20Under,
-      network_params.superToken,
-      supertokenContract
-    );
-    await faucet(
-      user6,
-      erc20Under,
-      network_params.superToken,
-      supertokenContract
-    );
-
-    poolBalance = +(await tokenContract.balanceOf(floowdyAddress)).toString();
-    //expect(poolBalance).to.equal(50 * 10 ** 18);
-
+   
 
   });
 
+
   it('should be successfull', async function () {
+
+    t0 = +(await getTimestamp());
+    console.log(t0)
     // #region ================= FIRST PERIOD ============================= //
 
     console.log('\x1b[36m%s\x1b[0m', '#1--- User1 provides 20 units at t0 ');
 
-    await expect(
-      waitForTx(floowdy.connect(user1).requestCredit(20000000))
-    ).to.be.revertedWith('NOT_MEMBER');
 
-    await waitForTx(
-      supertokenContract.connect(user1).send(floowdyAddress, 20000, '0x')
+    console.log(
+      '\x1b[36m%s\x1b[0m',
+      '#2--- User2 provides starts a stream at t0 + 10 '
     );
 
-    await printUser(floowdy, user1.address);
+    user1Balance = await tokenContract.balanceOf(user1.address);
 
-    t0 = +(await floowdy.poolTimestamp());
+    let data = utils.defaultAbiCoder.encode(
+      ['uint256'],
+      [3600]
+    );
+      
+    let createFlowOperation = sf.cfaV1.createFlow({
+      receiver: floowdyAddress,
+      flowRate: '3858024691358',
+      superToken: network_params.superToken,
+      userData:data,
+      overrides: {
+        gasPrice: utils.parseUnits('100', 'gwei'),
+        gasLimit: 2000000,
+      },
+    });
+    await createFlowOperation.exec(user1);
 
-    let expedtedPoolBalance = utils.parseEther('50').add(BigNumber.from(20000));
+    fromUser2Stream = await sf.cfaV1.getFlow({
+      superToken: network_params.superToken,
+      sender: user1.address,
+      receiver: floowdyAddress,
+      providerOrSigner: user1,
+    });
 
-    await expect(
-      waitForTx(floowdy.connect(user1).requestCredit(20000000))
-    ).to.be.revertedWith('NOT_ENOUGH_COLLATERAL');
+    console.log(fromUser2Stream)
 
-    user2Balance = await tokenContract.balanceOf(user2.address);
+  await printUser(floowdy, user1.address);
 
-    await waitForTx(floowdy.connect(user1).requestCredit(30000));
-
-    console.log('\x1b[36m%s\x1b[0m', '#1--- Period Tested #######');
+    console.log('\x1b[36m%s\x1b[0m', '#2--- Period Tests passed ');
     console.log('');
 
-    // #endregion FIST PERIOD
+    // #endregion SECOND PERIOD
 
-    await setNextBlockTimestamp(hre, t0 + 10);
+    await printUser(floowdy, user1.address);
+    console.log(t0)
 
-    await expect(
-      waitForTx(floowdy.connect(user2).creditCheckIn(1))
-    ).to.be.revertedWith('NOT_MEMBER');
+    await setNextBlockTimestamp(hre, t0 + 3610);
 
-    await waitForTx(
-      supertokenContract.connect(user2).send(floowdyAddress, 40000, '0x')
-    );
-    await waitForTx(floowdy.connect(user2).creditCheckIn(1));
 
-    await prinCredit(floowdy, 1);
-    execData = floowdy.interface.encodeFunctionData('stopCreditPeriodExec', [
-      1,
+
+    //// GELATO stop stream
+
+
+    execData = floowdy.interface.encodeFunctionData('stopStreamExec', [
+     user1.address
     ]);
     execSelector = floowdy.interface.getSighash(
-      'stopCreditPeriodExec(uint256)'
+      'stopStreamExec(address)'
     );
 
     resolverAddress = floowdyAddress;
     resolverData = await floowdy.interface.encodeFunctionData(
-      'checkCreditPeriod',
-      [1]
+      'checkStopStream',
+      [user1.address]
     );
     // bytes4(utils.keccak256(bytes('stopCreditPeriodExec(uint256)')));
 
@@ -330,61 +316,24 @@ describe('credit delegation tests', function () {
         [floowdyAddress, floowdyAddress, execSelector, false, ETH, resolverHash]
       )
     );
-  
 
-    await  waitForTx(floowdy.stopCreditPeriodExec(1));
-
-    await waitForTx(
-      supertokenContract.connect(user3).send(floowdyAddress, 60000, '0x')
-    );
-    await expect(waitForTx(floowdy.connect(user3).creditCheckIn(1))).to.be.revertedWith("CREDIT_NOT_AVAILABLE");
-
- 
-    await waitForTx(floowdy.connect(user1).requestCredit(40000));
-
-    await waitForTx(floowdy.connect(user2).creditCheckIn(2));
-    await waitForTx(floowdy.connect(user3).creditCheckIn(2));
-    
-    await waitForTx(
-      supertokenContract.connect(user4).send(floowdyAddress, 60000, '0x')
-    );
-    await waitForTx(floowdy.connect(user4).creditCheckIn(2));
-    
-    await waitForTx(
-      supertokenContract.connect(user5).send(floowdyAddress, 60000, '0x')
-    );
-    await waitForTx(floowdy.connect(user5).creditCheckIn(2));
-    
-    await waitForTx(
-      supertokenContract.connect(user6).send(floowdyAddress, 60000, '0x')
-    );
-    await waitForTx(floowdy.connect(user6).creditCheckIn(2));
-
-    await  waitForTx(floowdy.stopCreditPeriodExec(2));
-    await prinCredit(floowdy,2)
+    console.log(id)
+    console.log(t0+3600);
+      let fee = utils.parseEther("0.1")
+      const moduleData: ModuleData = {
+        modules: [Module.RESOLVER, Module.TIME],
+        args: [
+          encodeResolverArgs(floowdyAddress, resolverData),
+          encodeTimeArgs(1663412276, 600),
+        ],
+      };
 
 
-    throw new Error('');
+  //    await waitForTx(floowdy.connect(user1).stopStream({gasLimit:100000}))
 
-    // #region ================= SECOND PERIOD ============================= //
+   await   ops.connect(executor).exec(floowdyAddress,floowdyAddress,execData,moduleData,fee,ETH,false,true)
 
-    console.log(
-      '\x1b[36m%s\x1b[0m',
-      '#2--- User2 provides starts a stream at t0 + 10 '
-    );
 
-    user1Balance = await tokenContract.balanceOf(user1.address);
-
-    let createFlowOperation = sf.cfaV1.createFlow({
-      receiver: floowdyAddress,
-      flowRate: '3858024691358',
-      superToken: network_params.superToken,
-      overrides: {
-        gasPrice: utils.parseUnits('100', 'gwei'),
-        gasLimit: 2000000,
-      },
-    });
-    await createFlowOperation.exec(user1);
 
     fromUser2Stream = await sf.cfaV1.getFlow({
       superToken: network_params.superToken,
@@ -393,15 +342,9 @@ describe('credit delegation tests', function () {
       providerOrSigner: user1,
     });
 
-    expedtedPoolBalance = utils.parseEther('50').add(BigNumber.from(20000));
-
-    console.log('\x1b[36m%s\x1b[0m', '#2--- Period Tests passed ');
-    console.log('');
-
-    // #endregion SECOND PERIOD
+    console.log(fromUser2Stream)
 
     await printUser(floowdy, user1.address);
 
-    await setNextBlockTimestamp(hre, t0 + 20);
   });
 });
