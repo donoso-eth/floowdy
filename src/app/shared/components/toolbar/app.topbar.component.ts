@@ -12,6 +12,7 @@ import { ethers, utils } from 'ethers';
 @Component({
   selector: 'app-topbar',
   templateUrl: './app.topbar.component.html',
+  styleUrls:['./app.topbar.component.scss']
 })
 export class AppTopBarComponent extends DappBaseComponent {
   items!: MenuItem[];
