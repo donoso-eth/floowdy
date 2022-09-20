@@ -11,13 +11,15 @@ import { AngularContract, DappBaseComponent, DappInjector, Web3Actions } from 'a
 export class LandingComponent extends DappBaseComponent {
   pieData:any;
   pieOptions: any;
+  barData:any;
+  barOptions:any;
   constructor(private router: Router, store: Store, dapp: DappInjector
     
     ) {
     super(dapp, store);
     this.store.dispatch(Web3Actions.chainBusy({ status: false }));
     this.pieData = {
-      labels: ['STAKING','DELEGATING'],
+      labels: ['aave','credit'],
       datasets: [
           {
               data: [ 33, 66],
@@ -44,7 +46,53 @@ export class LandingComponent extends DappBaseComponent {
     }
 };
 
-   
+this.barData = {
+  labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+  datasets: [
+      {
+          label: 'pool balance',
+          backgroundColor: '#2f4860',
+          data: [65, 59, 80, 81, 56, 70, 40]
+      },
+      {
+          label: 'staked',
+          backgroundColor: '#00bb7e',
+          data: [28, 48, 40, 19, 30, 37, 25]
+      }
+  ]
+};
+
+
+
+this.barOptions = {
+
+  plugins: {
+      legend: {
+          labels: {
+              color: '#495057'
+          }
+      }
+  },
+  scales: {
+      x: {
+          ticks: {
+              color: 'white'
+          },
+          grid: {
+              color:  '#1d3351',
+          }
+      },
+      y: {
+          ticks: {
+              color: 'white'
+          },
+          grid: {
+              color:  '#1d3351',
+          }
+      },
+  }
+};
+
   }
 
 
