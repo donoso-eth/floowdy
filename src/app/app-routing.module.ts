@@ -8,6 +8,7 @@ const routes: Routes = [
   { path: 'start-flow', loadChildren: () => import('./pages/start-flow/start-flow.module').then(m => m.StartFlowModule) },
   { path: 'request-credit', loadChildren: () => import('./pages/request-credit/request-credit.module').then(m => m.RequestCreditModule) },
   { path: 'details-credit', loadChildren: () => import('./pages/details-credit/details-credit.module').then(m => m.DetailsCreditModule) },
+  { path: 'credit-marketplace', loadChildren: () => import('./pages/credit-marketplace/credit-marketplace.module').then(m => m.CreditMarketplaceModule) },
  
 ];
 

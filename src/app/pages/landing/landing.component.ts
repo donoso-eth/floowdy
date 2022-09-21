@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { AngularContract, DappBaseComponent, DappInjector, Web3Actions } from 'angular-web3';
+import { GraphQlService } from 'src/app/dapp-injector/services/graph-ql/graph-ql.service';
 
 @Component({
   selector: 'app-landing',
@@ -13,7 +14,7 @@ export class LandingComponent extends DappBaseComponent {
   pieOptions: any;
   barData:any;
   barOptions:any;
-  constructor(private router: Router, store: Store, dapp: DappInjector
+  constructor(private router: Router, store: Store, dapp: DappInjector, public graphqlService:GraphQlService
     
     ) {
     super(dapp, store);
@@ -110,6 +111,7 @@ this.barOptions = {
     //     console.log(args1, args2)
     // })
    // this.router.navigate(['home'])
+  
 
   }
 }

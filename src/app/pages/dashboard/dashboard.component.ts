@@ -140,8 +140,10 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
 
 
         } 
-            
+            console.log(this.member.flow)
+            console.log(this.member.timestamp)
         let value = +this.member.flow * ( (new Date().getTime() / 1000)- +this.member.timestamp);
+        console.log(value)
         let formated = this.global.prepareNumbers(
           +this.member.deposit + value
         );
@@ -168,13 +170,7 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
     });
 
 
-    //  let val =   await  this.graphqlService
-    //     .getCredits()
-    //     console.log(val);
-    //       if (!!val && !!val.data ) {
-    //         console.log(val.data)
-    //       }
-    
+
 
   }
 

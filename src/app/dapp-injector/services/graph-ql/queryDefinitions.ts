@@ -13,7 +13,7 @@ export const GET_POOL = `
 
 export const GET_CREDITS = `
     {
-      credits(first: 5) {
+      credits(first: 5,  where: {status_in:["1","2","3","4"]}, orderBy: initTimestamp, orderDirection: desc) {
         id
         initTimestamp
         finishPhaseTimestamp
@@ -47,6 +47,7 @@ export const GET_CREDITS = `
     
        deposit,
        flow,
+       timestamp,
        creditsRequested {
         id
         status
@@ -62,6 +63,7 @@ export const GET_CREDITS = `
               amount
               delegatorsAmount
               delegatorsNr
+              delegatorsRequired
               rate
               status
               requester {
