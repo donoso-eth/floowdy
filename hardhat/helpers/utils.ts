@@ -27,24 +27,32 @@ export async function initEnv(hre: HardhatRuntimeEnvironment): Promise<any[]> {
     const deployer_wallet = new Wallet(privKeyDEPLOYER);
     const deployer = await deployer_wallet.connect(deployer_provider);
 
-    // const privKeyUSER = process.env['USER1_KEY'] as BytesLike;
-    // const user_wallet = new Wallet(privKeyUSER);
-    // const user1 = await user_wallet.connect(deployer_provider);
+    const privKeyUSER = process.env['USER1_KEY'] as BytesLike;
+    const user_wallet = new Wallet(privKeyUSER);
+    const user1 = await user_wallet.connect(deployer_provider);
 
-    // const privKeyUS,ER2 = process.env['USER2_KEY'] as BytesLike;
-    // const user2_wallet = new Wallet(privKeyUSER2);
-    // const user2 = await user2_wallet.connect(deployer_provider);
+    const privKeyUSER2 = process.env['USER2_KEY'] as BytesLike;
+    const user2_wallet = new Wallet(privKeyUSER2);
+    const user2 = await user2_wallet.connect(deployer_provider);
 
-    // const privKeyUSER3 = process.env['USER3_KEY'] as BytesLike;
-    // const user3_wallet = new Wallet(privKeyUSER3);
-    // const user3 = await user3_wallet.connect(deployer_provider);
+    const privKeyUSER3 = process.env['USER3_KEY'] as BytesLike;
+    const user3_wallet = new Wallet(privKeyUSER3);
+    const user3 = await user3_wallet.connect(deployer_provider);
 
-    // const privKeyUSER4 = process.env['USER4_KEY'] as BytesLike;
-    // const user4_wallet = new Wallet(privKeyUSER4);
-    // const user4 = await user4_wallet.connect(deployer_provider);
+    const privKeyUSER4 = process.env['USER4_KEY'] as BytesLike;
+    const user4_wallet = new Wallet(privKeyUSER4);
+    const user4 = await user4_wallet.connect(deployer_provider);
+
+    const privKeyUSER5 = process.env['USER5_KEY'] as BytesLike;
+    const user5_wallet = new Wallet(privKeyUSER5);
+    const user5 = await user5_wallet.connect(deployer_provider);
+
+    const privKeyUSER6 = process.env['USER6_KEY'] as BytesLike;
+    const user6_wallet = new Wallet(privKeyUSER6);
+    const user6 = await user6_wallet.connect(deployer_provider);
 
   
-    return [deployer];
+    return [deployer,user1,user2,user3,user4,user5,user6];
   }
 }
 
