@@ -11,14 +11,14 @@ export interface ICREDIT_DELEGATED {
   amount: string;
   rate: string;
   status: string;
-  denyPeriodTimestamp:string,
+  finishPhaseTimestamp:string,
   delegatorsAmount:string,
   requester: { member:string}
 
 }
 
 export interface ICREDIT_REQUESTED  {
-  denyPeriodTimestamp: string;
+  finishPhaseTimestamp: string;
   amount: string;
   status: string;
   rate: string;

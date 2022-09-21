@@ -181,11 +181,11 @@ export class Pool extends Entity {
     this.set("timestamp", Value.fromBigInt(BigInt.zero()));
     this.set("totalDeposit", Value.fromBigInt(BigInt.zero()));
     this.set("totalFlow", Value.fromBigInt(BigInt.zero()));
-    this.set("totalYield", Value.fromBigInt(BigInt.zero()));
+    this.set("totalYieldStake", Value.fromBigInt(BigInt.zero()));
     this.set("totalDelegated", Value.fromBigInt(BigInt.zero()));
     this.set("depositIndex", Value.fromBigInt(BigInt.zero()));
     this.set("flowIndex", Value.fromBigInt(BigInt.zero()));
-    this.set("totalMembers", Value.fromBigInt(BigInt.zero()));
+    this.set("nrMembers", Value.fromBigInt(BigInt.zero()));
     this.set("date", Value.fromString(""));
   }
 
@@ -251,13 +251,13 @@ export class Pool extends Entity {
     this.set("totalFlow", Value.fromBigInt(value));
   }
 
-  get totalYield(): BigInt {
-    let value = this.get("totalYield");
+  get totalYieldStake(): BigInt {
+    let value = this.get("totalYieldStake");
     return value!.toBigInt();
   }
 
-  set totalYield(value: BigInt) {
-    this.set("totalYield", Value.fromBigInt(value));
+  set totalYieldStake(value: BigInt) {
+    this.set("totalYieldStake", Value.fromBigInt(value));
   }
 
   get totalDelegated(): BigInt {
@@ -287,13 +287,13 @@ export class Pool extends Entity {
     this.set("flowIndex", Value.fromBigInt(value));
   }
 
-  get totalMembers(): BigInt {
-    let value = this.get("totalMembers");
+  get nrMembers(): BigInt {
+    let value = this.get("nrMembers");
     return value!.toBigInt();
   }
 
-  set totalMembers(value: BigInt) {
-    this.set("totalMembers", Value.fromBigInt(value));
+  set nrMembers(value: BigInt) {
+    this.set("nrMembers", Value.fromBigInt(value));
   }
 
   get date(): string {
@@ -313,7 +313,7 @@ export class Credit extends Entity {
 
     this.set("requester", Value.fromString(""));
     this.set("initTimestamp", Value.fromBigInt(BigInt.zero()));
-    this.set("denyPeriodTimestamp", Value.fromBigInt(BigInt.zero()));
+    this.set("finishPhaseTimestamp", Value.fromBigInt(BigInt.zero()));
     this.set("status", Value.fromBigInt(BigInt.zero()));
     this.set("amount", Value.fromBigInt(BigInt.zero()));
     this.set("rate", Value.fromBigInt(BigInt.zero()));
@@ -366,13 +366,13 @@ export class Credit extends Entity {
     this.set("initTimestamp", Value.fromBigInt(value));
   }
 
-  get denyPeriodTimestamp(): BigInt {
-    let value = this.get("denyPeriodTimestamp");
+  get finishPhaseTimestamp(): BigInt {
+    let value = this.get("finishPhaseTimestamp");
     return value!.toBigInt();
   }
 
-  set denyPeriodTimestamp(value: BigInt) {
-    this.set("denyPeriodTimestamp", Value.fromBigInt(value));
+  set finishPhaseTimestamp(value: BigInt) {
+    this.set("finishPhaseTimestamp", Value.fromBigInt(value));
   }
 
   get status(): BigInt {

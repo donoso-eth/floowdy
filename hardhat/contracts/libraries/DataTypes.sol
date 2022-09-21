@@ -5,6 +5,7 @@ import {ISuperToken} from "@superfluid-finance/ethereum-contracts/contracts/inte
 import {ISuperfluid, ISuperToken} from "@superfluid-finance/ethereum-contracts/contracts/interfaces/superfluid/ISuperfluid.sol";
 import {SafeERC20, IERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {IPool} from "../aave/IPool.sol";
+import {IAToken} from "../aave/IAToken.sol";
 
 /**
  * @title DataTypes
@@ -13,68 +14,92 @@ import {IPool} from "../aave/IPool.sol";
  * @notice A standard library of data types used throughout.
  */
 library DataTypes {
-  struct Floowdy_Init {
-    ISuperfluid host;
-    ISuperToken superToken;
-    IERC20 token;
-    IPool pool;
-    IERC20 aToken;
-    address ops;
-    address epnsComm;
-    address epnsChannel;
-  }
+    struct Floowdy_Init {
+        ISuperfluid host;
+        ISuperToken superToken;
+        IERC20 token;
+        IPool pool;
+        IAToken aToken;
+        address ops;
+        address epnsComm;
+        address epnsChannel;
+    }
 
-  struct Member {
-    uint256 id;
-    address member;
-    int96 flow;
-    bytes32 flowGelatoId;
-    uint256 flowDuration;
-    uint256 deposit;
-    uint256 timestamp;
-    uint256 initTimestamp;
-    uint256 yieldAccrued;
-    uint256 amountLocked;
-  }
+    struct Member {
+        uint256 id;
+        address member;
+        int96 flow;
+        bytes32 flowGelatoId;
+        uint256 flowDuration;
+        uint256 deposit;
+        uint256 timestamp;
+        uint256 initTimestamp;
+        uint256 yieldAccrued;
+        uint256 amountLocked;
+    }
 
-  struct Pool {
-    uint256 id;
-    uint256 timestamp;
-    int96 totalFlow;
-    uint256 totalDeposit;
-    uint256 totalDepositFlow;
-    uint256 totalYield;
-    uint256 depositIndex;
-    uint256 flowIndex;
-    uint256 totalDelegated;
-    uint256 totalMembers;
-  }
+    struct POOL_DELEGATION {
+        uint256 totalDelegated;
+        uint256 percentageLocked;
+        uint256 totalYieldCredit;
+        uint256 liquidatedIndex;
+        uint256 totalLiquidated;
+    }
 
+    struct Pool {
+        uint256 id;
+        uint256 timestamp;
+        int96 totalFlow;
+        uint256 totalDeposit;
+        uint256 totalDepositFlow;
+        uint256 depositIndex;
+        uint256 flowIndex;
+        uint256 totalYieldStake;
+        uint256 totalStaked;
+        POOL_DELEGATION delegation;
+        uint256 nrMembers;
+    }
 
-  enum CreditStatus {
-    NONE,
-    PENDING,
-    APPROVED,
-    REJECTED,
-    PENDING_REJECTED,
-    DISCARDED,
-    REPAYED,
-    LIQUIDATED,
-    CANCELLED
-  }
+    enum CreditStatus {
+        NONE,
+        PHASE1,
+        PHASE2,
+        PHASE3,
+        PHASE4,
+        APPROVED,
+        REJECTED,
+        CANCELLED,
+        REPAYED,
+        LIQUIDATED
+    }
 
-  struct Credit {
-    uint256 id;
-    address requester;
-    uint256 initTimestamp;
-    uint256 denyPeriodTimestamp;
-    CreditStatus status;
-    uint256 amount;
-    uint256 rate;
-    uint256 delegatorsNr;
-    uint256 delegatorsRequired;
-    address[] delegators;
-    uint256 delegatorsAmount;
-    bytes32 gelatoTaskId;
-  }
+    struct CreditRepaymentOptions {
+        uint256 nrInstallments;
+        uint256 interval;
+        uint256 installment;
+        uint256 amount;
+        uint256 rate;
+        uint256 totalYield;
+        uint256 alreadyPayed;
+        bytes32 GelatoRepaymentTaskId;
+    }
+
+    struct CreditDelegatorsOptions {
+        uint256 delegatorsNr;
+        uint256 delegatorsRequired;
+        address[] delegators;
+        uint256 delegatorsAmount;
+        uint256 delegatorsGlobalFee;
+    }
+
+    struct Credit {
+        uint256 id;
+        address requester;
+        uint256 initTimestamp;
+        uint256 finishPhaseTimestamp;
+        CreditStatus status;
+        bytes32 gelatoTaskId;
+        CreditDelegatorsOptions delegatorsOptions;
+        CreditRepaymentOptions repaymentOptions;
+    }
 }

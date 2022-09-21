@@ -30,8 +30,6 @@ library Events {
 
     event CreditCancelled(DataTypes.Credit credit);
 
-    event CreditDiscarded(DataTypes.Credit credit);
-
     event CreditCheckIn(uint256 creditId, address delegator);
 
     event CreditCheckOut(uint256 creditId, address delegator);

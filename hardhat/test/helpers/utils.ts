@@ -693,7 +693,7 @@ export const prinCredit = async (floowdy: Floowdy, id: number): Promise<any> => 
   console.log(`Rate ${credit.rate}`);
   console.log(`Gelato Task Id ${credit.gelatoTaskId.toString()}`);
   console.log(`Created TimeStamp ${credit.initTimestamp.toString()}`);
-  console.log(`Deny TimeStamp ${credit.denyPeriodTimestamp.toString()}`);
+  console.log(`Deny TimeStamp ${credit.finishPhaseTimestamp.toString()}`);
   console.log(`Delegators: ${credit.delegators.toString()}`);
   console.log(`Delegators Amount: ${credit.delegatorsAmount.toString()}`);
 

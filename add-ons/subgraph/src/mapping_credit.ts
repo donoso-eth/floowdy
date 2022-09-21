@@ -72,7 +72,7 @@ export function handleCreditRequested(event:CreditRequested):void {
     let credit = _getCredit(id);
     credit.requester = eventObject.requester.toHexString();
     credit.initTimestamp = eventObject.initTimestamp;
-    credit.denyPeriodTimestamp = eventObject.denyPeriodTimestamp;
+    credit.finishPhaseTimestamp = eventObject.finishPhaseTimestamp;
     credit.status = BigInt.fromI32(eventObject.status);
     credit.rate = eventObject.rate;
     credit.amount = eventObject.amount;

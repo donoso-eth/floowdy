@@ -65,7 +65,7 @@ export class CreditActionCreditStruct extends ethereum.Tuple {
     return this[2].toBigInt();
   }
 
-  get denyPeriodTimestamp(): BigInt {
+  get finishPhaseTimestamp(): BigInt {
     return this[3].toBigInt();
   }
 
@@ -135,7 +135,7 @@ export class CreditApprovedCreditStruct extends ethereum.Tuple {
     return this[2].toBigInt();
   }
 
-  get denyPeriodTimestamp(): BigInt {
+  get finishPhaseTimestamp(): BigInt {
     return this[3].toBigInt();
   }
 
@@ -205,7 +205,7 @@ export class CreditCancelledCreditStruct extends ethereum.Tuple {
     return this[2].toBigInt();
   }
 
-  get denyPeriodTimestamp(): BigInt {
+  get finishPhaseTimestamp(): BigInt {
     return this[3].toBigInt();
   }
 
@@ -319,7 +319,7 @@ export class CreditDiscardedCreditStruct extends ethereum.Tuple {
     return this[2].toBigInt();
   }
 
-  get denyPeriodTimestamp(): BigInt {
+  get finishPhaseTimestamp(): BigInt {
     return this[3].toBigInt();
   }
 
@@ -389,7 +389,7 @@ export class CreditRejectedCreditStruct extends ethereum.Tuple {
     return this[2].toBigInt();
   }
 
-  get denyPeriodTimestamp(): BigInt {
+  get finishPhaseTimestamp(): BigInt {
     return this[3].toBigInt();
   }
 
@@ -459,7 +459,7 @@ export class CreditRequestedCreditStruct extends ethereum.Tuple {
     return this[2].toBigInt();
   }
 
-  get denyPeriodTimestamp(): BigInt {
+  get finishPhaseTimestamp(): BigInt {
     return this[3].toBigInt();
   }
 
@@ -687,7 +687,7 @@ export class PoolUpdatedPoolStruct extends ethereum.Tuple {
     return this[4].toBigInt();
   }
 
-  get totalYield(): BigInt {
+  get totalYieldStake(): BigInt {
     return this[5].toBigInt();
   }
 
@@ -703,7 +703,7 @@ export class PoolUpdatedPoolStruct extends ethereum.Tuple {
     return this[8].toBigInt();
   }
 
-  get totalMembers(): BigInt {
+  get nrMembers(): BigInt {
     return this[9].toBigInt();
   }
 }
@@ -1700,20 +1700,20 @@ export class Floowdy extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  totalYieldEarnedMember(_member: Address): BigInt {
+  totalYieldStakeEarnedMember(_member: Address): BigInt {
     let result = super.call(
-      "totalYieldEarnedMember",
-      "totalYieldEarnedMember(address):(uint256)",
+      "totalYieldStakeEarnedMember",
+      "totalYieldStakeEarnedMember(address):(uint256)",
       [ethereum.Value.fromAddress(_member)]
     );
 
     return result[0].toBigInt();
   }
 
-  try_totalYieldEarnedMember(_member: Address): ethereum.CallResult<BigInt> {
+  try_totalYieldStakeEarnedMember(_member: Address): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
-      "totalYieldEarnedMember",
-      "totalYieldEarnedMember(address):(uint256)",
+      "totalYieldStakeEarnedMember",
+      "totalYieldStakeEarnedMember(address):(uint256)",
       [ethereum.Value.fromAddress(_member)]
     );
     if (result.reverted) {

@@ -506,7 +506,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "denyPeriodTimestamp",
+        "name": "finishPhaseTimestamp",
         "type": "uint256"
       },
       {
@@ -802,7 +802,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "totalYield",
+        "name": "totalYieldStake",
         "type": "uint256"
       },
       {
@@ -822,7 +822,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "totalMembers",
+        "name": "nrMembers",
         "type": "uint256"
       }
     ],
@@ -1031,7 +1031,7 @@
         "type": "address"
       }
     ],
-    "name": "totalYieldEarnedMember",
+    "name": "totalYieldStakeEarnedMember",
     "outputs": [
       {
         "internalType": "uint256",
@@ -1094,7 +1094,7 @@
           },
           {
             "internalType": "uint256",
-            "name": "denyPeriodTimestamp",
+            "name": "finishPhaseTimestamp",
             "type": "uint256"
           },
           {
@@ -1169,7 +1169,7 @@
           },
           {
             "internalType": "uint256",
-            "name": "denyPeriodTimestamp",
+            "name": "finishPhaseTimestamp",
             "type": "uint256"
           },
           {
@@ -1244,7 +1244,7 @@
           },
           {
             "internalType": "uint256",
-            "name": "denyPeriodTimestamp",
+            "name": "finishPhaseTimestamp",
             "type": "uint256"
           },
           {
@@ -1357,7 +1357,7 @@
           },
           {
             "internalType": "uint256",
-            "name": "denyPeriodTimestamp",
+            "name": "finishPhaseTimestamp",
             "type": "uint256"
           },
           {
@@ -1432,7 +1432,7 @@
           },
           {
             "internalType": "uint256",
-            "name": "denyPeriodTimestamp",
+            "name": "finishPhaseTimestamp",
             "type": "uint256"
           },
           {
@@ -1507,7 +1507,7 @@
           },
           {
             "internalType": "uint256",
-            "name": "denyPeriodTimestamp",
+            "name": "finishPhaseTimestamp",
             "type": "uint256"
           },
           {
@@ -1747,7 +1747,7 @@
           },
           {
             "internalType": "uint256",
-            "name": "totalYield",
+            "name": "totalYieldStake",
             "type": "uint256"
           },
           {
@@ -1767,7 +1767,7 @@
           },
           {
             "internalType": "uint256",
-            "name": "totalMembers",
+            "name": "nrMembers",
             "type": "uint256"
           }
         ],

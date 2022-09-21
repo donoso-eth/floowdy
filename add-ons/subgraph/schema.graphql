@@ -20,11 +20,11 @@ type Pool @entity {
   timestamp: BigInt!
   totalDeposit: BigInt!
   totalFlow: BigInt!
-  totalYield: BigInt!
+  totalYieldStake: BigInt!
   totalDelegated: BigInt!
   depositIndex: BigInt!
   flowIndex: BigInt!
-  totalMembers: BigInt!
+  nrMembers: BigInt!
   date:String!
 }
 
@@ -32,7 +32,7 @@ type Credit @entity {
   id: ID!
   requester: Member!
   initTimestamp: BigInt!
-  denyPeriodTimestamp: BigInt!
+  finishPhaseTimestamp: BigInt!
   status: BigInt!
   amount: BigInt!
   rate: BigInt!

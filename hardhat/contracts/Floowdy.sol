@@ -17,11 +17,11 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 import {IPoolAddressesProvider} from "./aave/IPoolAddressesProvider.sol";
 import {IPool} from "./aave/IPool.sol";
+import {IAToken} from "./aave/IAToken.sol";
 
 import {ISuperfluid, ISuperAgreement, ISuperToken, ISuperApp, SuperAppDefinitions} from "@superfluid-finance/ethereum-contracts/contracts/interfaces/superfluid/ISuperfluid.sol";
 import {IConstantFlowAgreementV1} from "@superfluid-finance/ethereum-contracts/contracts/interfaces/agreements/IConstantFlowAgreementV1.sol";
 import {SuperAppBase} from "@superfluid-finance/ethereum-contracts/contracts/apps/SuperAppBase.sol";
-
 import {CFAv1Library} from "@superfluid-finance/ethereum-contracts/contracts/apps/CFAv1Library.sol";
 
 import {OpsReady} from "./gelato/OpsReady.sol";
@@ -42,7 +42,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
     ISuperToken superToken;
 
     IERC20 token;
-    IERC20 aToken;
+    IAToken aToken;
 
     IPool pool;
 
@@ -52,7 +52,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
     mapping(address => DataTypes.Member) public members;
     mapping(uint256 => address) public memberAdressById;
 
-    uint256 totalMembers;
+    uint256 nrMembers;
     mapping(uint256 => DataTypes.Pool) public poolByTimestamp;
     uint256 public poolId;
     uint256 public poolTimestamp;
@@ -65,7 +65,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
 
     uint256 MAX_ALLOWANCE = 50;
     uint256 CREDIT_FEE = 3;
-    uint256 VOTING_PERIOD = 600;
+    uint256 CREDIT_PHASES_INTERVAL = 600;
 
     address public ops;
     address payable public gelato;
@@ -188,10 +188,10 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
         DataTypes.Member storage member = members[_member];
         console.log(190, member.id);
         if (member.id == 0) {
-            totalMembers++;
+            nrMembers++;
             member.member = _member;
             member.initTimestamp = block.timestamp;
-            member.id = totalMembers;
+            member.id = nrMembers;
 
             memberAdressById[member.id] = _member;
             console.log(198, member.member);
@@ -212,7 +212,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
     {
         DataTypes.Member storage member = members[_member];
 
-        uint256 yieldMember = totalYieldEarnedMember(_member);
+        uint256 yieldMember = totalYieldStakeEarnedMember(_member);
 
         realtimeBalance =
             yieldMember +
@@ -244,7 +244,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
             int256 memberDepositUpdate = int256(memberBalance) -
                 int256(member.deposit);
 
-            uint256 yieldMember = totalYieldEarnedMember(_member);
+            uint256 yieldMember = totalYieldStakeEarnedMember(_member);
 
             console.log(poolByTimestamp[block.timestamp].totalDepositFlow);
 
@@ -317,14 +317,18 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
         }
     }
 
-    function totalYieldEarnedMember(address _member)
+    function totalYieldStakeEarnedMember(address _member)
         public
         view
         returns (uint256 yieldMember)
     {
         uint256 yieldEarned = _calculateYieldMember(_member);
 
-        (uint256 yieldDepositNew, uint256 yieldFlowNew) = _calculateIndexes();
+        (
+            uint256 yieldDepositNew,
+            uint256 yieldFlowNew,
+            uint256 yieldPool
+        ) = _calculateIndexes();
 
         DataTypes.Member storage member = members[_member];
 
@@ -349,18 +353,8 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
     function _poolRebalance() internal {
         poolId++;
 
-        DataTypes.Pool memory currentPool = DataTypes.Pool(
-            poolId++,
-            block.timestamp,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-        );
+        DataTypes.Pool memory currentPool = poolByTimestamp[block.timestamp];
+        currentPool.id = poolId;
 
         DataTypes.Pool memory lastPool = poolByTimestamp[poolTimestamp];
 
@@ -372,7 +366,15 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
             lastPool.totalDepositFlow;
 
         currentPool.totalFlow = lastPool.totalFlow;
-        (currentPool.depositIndex, currentPool.flowIndex) = _calculateIndexes();
+        uint256 yieldPool;
+        (
+            currentPool.depositIndex,
+            currentPool.flowIndex,
+            yieldPool
+        ) = _calculateIndexes();
+
+        currentPool.totalYieldStake += yieldPool;
+        currentPool.totalStaked += yieldPool;
 
         currentPool.depositIndex =
             currentPool.depositIndex +
@@ -381,7 +383,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
 
         currentPool.totalFlow = lastPool.totalFlow;
 
-        currentPool.totalMembers = totalMembers;
+        currentPool.nrMembers = nrMembers;
 
         currentPool.timestamp = block.timestamp;
 
@@ -397,9 +399,13 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
     function _calculateIndexes()
         internal
         view
-        returns (uint256 depositIndex, uint256 depositFlow)
+        returns (
+            uint256 depositIndex,
+            uint256 flowIndex,
+            uint256 yieldPool
+        )
     {
-        DataTypes.Pool storage lastPool = poolByTimestamp[poolTimestamp];
+        DataTypes.Pool memory lastPool = poolByTimestamp[poolTimestamp];
 
         uint256 poolSpan = block.timestamp - lastPool.timestamp;
 
@@ -410,11 +416,11 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
         uint256 totalDepositToYield = averageFlowDeposit +
             lastPool.totalDeposit;
 
-        uint256 yieldPool = _calculatePoolYield();
+        yieldPool = _calculatePoolYield(lastPool.totalStaked);
 
         if (totalDepositToYield == 0 || yieldPool == 0) {
             depositIndex = 0;
-            depositFlow = 0;
+            flowIndex = 0;
         } else {
             if (lastPool.totalDeposit != 0) {
                 depositIndex = (
@@ -424,7 +430,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
                 );
             }
             if (lastPool.totalFlow != 0) {
-                depositFlow = (
+                flowIndex = (
                     (averageFlowDeposit * yieldPool).div(
                         uint96(lastPool.totalFlow) * totalDepositToYield
                     )
@@ -433,10 +439,12 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
         }
     }
 
-    function _calculatePoolYield() internal view returns (uint256 yield) {
-        uint256 randomYield = 1000 + (block.timestamp % 1000);
-
-        yield = (block.timestamp - poolTimestamp) * randomYield;
+    function _calculatePoolYield(uint256 staked)
+        internal
+        view
+        returns (uint256 yield)
+    {
+        yield = IAToken(aToken).balanceOf(address(this)) - staked;
     }
 
     // #endregion Pool
@@ -444,14 +452,16 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
     // ============= ============= Aave ============= ============= //
     // #region Aave
 
-    function getAaveData() public{
-    ( uint256 totalCollateralBase,uint256 totalDebtBase,uint256 availableBorrowsBase,
-      uint256 currentLiquidationThreshold, uint256 ltv, uint256 healthFactor) = pool.getUserAccountData(address(this));
-
+    function getAaveData() public {
+        (
+            uint256 totalCollateralBase,
+            uint256 totalDebtBase,
+            uint256 availableBorrowsBase,
+            uint256 currentLiquidationThreshold,
+            uint256 ltv,
+            uint256 healthFactor
+        ) = pool.getUserAccountData(address(this));
     }
-
-
-     
 
     function aaveSupply() public {
         uint256 poolSuperTokenBalance = (superToken.balanceOf(address(this)))
@@ -475,31 +485,53 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
     // ============= ============= Credit Delegation ============= ============= //
     // #region Credit Delegation
 
-    function requestCredit(uint256 amount, uint256 rate)
-        external
-        onlyMember
-        onlyOneCredit
-    {
+    function requestCredit(
+        uint256 amount,
+        uint256 rate,
+        uint256 interval,
+        uint256 nrInstallments
+    ) external onlyMember onlyOneCredit {
         require(rate >= CREDIT_FEE, "RATE_TOO_LOW");
         uint256 maxAmount = getMaxAmount();
-        console.log(maxAmount);
-        console.log(amount * 100);
+
         require(amount <= maxAmount, "NOT_ENOUGH_COLLATERAL");
 
-        uint256 delegatorsAmount = amount.div(5);
         totalCredits++;
         DataTypes.Credit storage credit = creditsById[totalCredits];
 
         credit.id = totalCredits;
         credit.requester = msg.sender;
         credit.initTimestamp = block.timestamp;
-        credit.denyPeriodTimestamp = block.timestamp + VOTING_PERIOD;
-        credit.status = DataTypes.CreditStatus.PENDING;
-        credit.amount = amount;
-        credit.delegatorsRequired = 5;
-        credit.rate = rate;
-        credit.delegatorsAmount = delegatorsAmount;
-        credit.gelatoTaskId = createCreditPeriodTask(credit.id, VOTING_PERIOD);
+        credit.finishPhaseTimestamp = block.timestamp + CREDIT_PHASES_INTERVAL;
+        credit.status = DataTypes.CreditStatus.PHASE1;
+
+        credit.delegatorsOptions.delegatorsRequired = 1;
+        credit.delegatorsOptions.delegatorsAmount = amount;
+
+        credit.gelatoTaskId = createCreditPhasesTask(
+            credit.id,
+            CREDIT_PHASES_INTERVAL
+        );
+
+        //// Repayment Options
+        uint256 totalYield = (
+            amount.mul(interval * nrInstallments.div(365 * 24 * 3600))
+        ).div(100);
+        uint256 installment = (amount.add(totalYield)).div(nrInstallments);
+
+        DataTypes.CreditRepaymentOptions memory options = DataTypes
+            .CreditRepaymentOptions(
+                nrInstallments,
+                interval,
+                installment,
+                amount,
+                rate,
+                totalYield,
+                0,
+                bytes32(0)
+            );
+
+        credit.repaymentOptions = options;
 
         /// notify
         emit Events.CreditRequested(credit);
@@ -509,9 +541,9 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
         DataTypes.Credit storage credit = creditsById[creditId];
         require(credit.requester == msg.sender, "NOT_CREDIT_OWNER");
         credit.status = DataTypes.CreditStatus.CANCELLED;
-        for (uint256 i = 0; i < credit.delegatorsNr; i++) {
-            DataTypes.Member storage member = members[credit.delegators[i]];
-            member.amountLocked -= credit.delegatorsAmount;
+        for (uint256 i = 0; i < credit.delegatorsOptions.delegatorsNr; i++) {
+            DataTypes.Member storage member = members[credit.delegatorsOptions.delegators[i]];
+            member.amountLocked -= credit.delegatorsOptions.delegatorsAmount;
         }
         emit Events.CreditCancelled(credit);
     }
@@ -521,20 +553,22 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
         DataTypes.Credit storage credit = creditsById[creditId];
         DataTypes.Member storage member = members[msg.sender];
         require(
-            credit.status == DataTypes.CreditStatus.PENDING,
+            credit.status == DataTypes.CreditStatus.PHASE1 ||
+                credit.status == DataTypes.CreditStatus.PHASE2 ||
+                credit.status == DataTypes.CreditStatus.PHASE3,
             "CREDIT_NOT_AVAILABLE"
         );
-        require(balance > credit.delegatorsAmount, "NOT_ENOUGH_COLLATERAL");
+        require(balance > credit.delegatorsOptions.delegatorsAmount, "NOT_ENOUGH_COLLATERAL");
         require(
             delegatorsStatus[creditId][msg.sender] == 0,
             "MEMBER_ALREADY_CHECK_IN"
         );
-        require(credit.delegatorsNr < 5, "ALREADY_ENOUGH_DELEGATORS");
-        credit.delegatorsNr++;
-        credit.delegators.push(msg.sender);
-        delegatorsStatus[creditId][msg.sender] = credit.delegatorsNr;
+        require(credit.delegatorsOptions.delegatorsNr < 5, "ALREADY_ENOUGH_DELEGATORS");
+        credit.delegatorsOptions.delegatorsNr++;
+        credit.delegatorsOptions.delegators.push(msg.sender);
+        delegatorsStatus[creditId][msg.sender] = credit.delegatorsOptions.delegatorsNr;
 
-        member.amountLocked += credit.delegatorsAmount;
+        member.amountLocked += credit.delegatorsOptions.delegatorsAmount;
         emit Events.CreditCheckIn(creditId, msg.sender);
     }
 
@@ -545,29 +579,48 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
             delegatorsStatus[creditId][msg.sender] != 0,
             "MEMBER_NOT_CHECK_IN"
         );
+        require(
+            credit.status == DataTypes.CreditStatus.PHASE1 ||
+                credit.status == DataTypes.CreditStatus.PHASE2 ||
+                credit.status == DataTypes.CreditStatus.PHASE3,
+            "NOT_POSSIBLE"
+        );
 
         uint256 toDeleteDelegatorPosition = delegatorsStatus[creditId][
             msg.sender
         ];
-        address lastDelegator = credit.delegators[credit.delegatorsNr - 1];
-        credit.delegators[toDeleteDelegatorPosition - 1] = lastDelegator;
+        address lastDelegator = credit.delegatorsOptions.delegators[credit.delegatorsOptions.delegatorsNr - 1];
+        credit.delegatorsOptions.delegators[toDeleteDelegatorPosition - 1] = lastDelegator;
         delegatorsStatus[creditId][lastDelegator] = toDeleteDelegatorPosition;
-        credit.delegators.pop();
-        credit.delegatorsNr--;
+        credit.delegatorsOptions.delegators.pop();
+        credit.delegatorsOptions.delegatorsNr--;
         delegatorsStatus[creditId][msg.sender] = 0;
-        member.amountLocked -= credit.delegatorsAmount;
+        member.amountLocked -= credit.delegatorsOptions.delegatorsAmount;
         emit Events.CreditCheckOut(creditId, msg.sender);
+    }
+
+    function creditApproved(uint256 creditId) public onlyRequester {
+        DataTypes.Credit storage credit = creditsById[creditId];
+        require(
+            credit.status == DataTypes.CreditStatus.PHASE4,
+            "NOT_COLLAERAL_AVAILABLE"
+        );
+        credit.status = DataTypes.CreditStatus.APPROVED;
+        cancelTask(credit.gelatoTaskId);
+        credit.repaymentOptions.GelatoRepaymentTaskId = _launchCreditAndRepayment(credit.id, credit.repaymentOptions.interval);
+
+        emit Events.CreditApproved(credit);
     }
 
     function rejectCredit(uint256 creditId) public onlyMember {
         DataTypes.Credit storage credit = creditsById[creditId];
         require(
-            credit.status == DataTypes.CreditStatus.PENDING,
+            credit.status == DataTypes.CreditStatus.PHASE3,
             "CREDIT_NOT_AVAILABLE"
         );
         credit.status = DataTypes.CreditStatus.REJECTED;
         credit.delegatorsRequired = 10;
-        credit.denyPeriodTimestamp += VOTING_PERIOD;
+        credit.finishPhaseTimestamp += CREDIT_PHASES_INTERVAL;
         //// Notify
         cancelTask(credit.gelatoTaskId);
         emit Events.CreditRejected(credit);
@@ -582,11 +635,23 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
     modifier onlyOneCredit() {
         uint256 id = creditIdByAddresse[msg.sender];
         DataTypes.Credit storage credit = creditsById[id];
-        console.log(492, uint256(credit.status));
+
         require(
-            credit.status != DataTypes.CreditStatus.PENDING,
+            credit.status == DataTypes.CreditStatus.NONE ||
+                credit.status == DataTypes.CreditStatus.REJECTED ||
+                credit.status == DataTypes.CreditStatus.CANCELLED ||
+                credit.status == DataTypes.CreditStatus.REPAYED ||
+                credit.status == DataTypes.CreditStatus.LIQUIDATED,
             "ALREADY_CREDIT_REQUEST"
         );
+        _;
+    }
+
+    modifier onlyRequester() {
+        uint256 id = creditIdByAddresse[msg.sender];
+        DataTypes.Credit storage credit = creditsById[id];
+
+        require(credit.requester == msg.sender, "NOT_cREDIT_OWNER");
         _;
     }
 
@@ -596,7 +661,175 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
         _;
     }
 
+    // #region Task GElATO CREDIT PHASE PERIOD
+    function createCreditPhasesTask(uint256 _creditId, uint256 _dennyPeriod)
+        internal
+        returns (bytes32 taskId)
+    {
+        taskId = IOps(ops).createTimedTask(
+            uint128(block.timestamp) + uint128(_dennyPeriod),
+            uint128(_dennyPeriod),
+            address(this),
+            this.stopCreditPeriodExec.selector,
+            address(this),
+            abi.encodeWithSelector(this.checkCreditPeriod.selector, _creditId),
+            ETH,
+            false
+        );
+    }
+
+    // called by Gelato Execs
+    function checkCreditPeriod(uint256 _creditId)
+        external
+        pure
+        returns (bool canExec, bytes memory execPayload)
+    {
+        canExec = true;
+
+        execPayload = abi.encodeWithSelector(
+            this.stopCreditPeriodExec.selector,
+            _creditId
+        );
+    }
+
+    /// called by Gelato
+    function stopCreditPeriodExec(uint256 creditId) external {
+        //// check if
+
+        DataTypes.Credit storage credit = creditsById[creditId];
+
+        //// every task will be payed with a transfer, therefore receive(), we have to fund the contract
+        uint256 fee;
+        address feeToken;
+
+        // (fee, feeToken) = IOps(ops).getFeeDetails();
+
+        // _transfer(fee, feeToken);
+
+        if (credit.status == DataTypes.CreditStatus.PHASE1) {
+            if (credit.delegatorsOptions.delegatorsNr == 1 && credit.delegatorsOptions.delegators.length == 1) {
+                credit.status = DataTypes.CreditStatus.PHASE4;
+            } else {
+                credit.status = DataTypes.CreditStatus.PHASE2;
+                credit.delegatorsRequired = 10;
+                credit.delegatorsOptions.delegatorsAmount = credit.repaymentOptions.amount.div(10);
+            }
+
+            //do the dance
+        } else if (credit.status == DataTypes.CreditStatus.PHASE2) {
+            if (credit.delegatorsOptions.delegatorsNr == 10 && credit.delegatorsOptions.delegators.length == 10) {
+                credit.status = DataTypes.CreditStatus.PHASE4;
+            } else {
+                credit.status = DataTypes.CreditStatus.PHASE3;
+                credit.delegatorsRequired = 5;
+                credit.delegatorsOptions.delegatorsAmount = credit.repaymentOptions.amount.div(5);
+            }
+
+            //do the dance
+        } else if (credit.status == DataTypes.CreditStatus.PHASE3) {
+            if (credit.delegatorsOptions.delegatorsNr == 5 && credit.delegatorsOptions.delegators.length == 5) {
+                credit.status = DataTypes.CreditStatus.PHASE4;
+            } else {
+                credit.status = DataTypes.CreditStatus.REJECTED;
+            }
+
+            //do the dance
+        } else if (credit.status == DataTypes.CreditStatus.PHASE4) {
+            credit.status = DataTypes.CreditStatus.REJECTED;
+        }
+
+        if (credit.status == DataTypes.CreditStatus.REJECTED) {
+            for (uint256 i = 0; i < credit.delegatorsOptions.delegatorsNr; i++) {
+                DataTypes.Member storage member = members[credit.delegatorsOptions.delegators[i]];
+                member.amountLocked -= credit.delegatorsOptions.delegatorsAmount;
+            }
+            cancelTask(credit.gelatoTaskId);
+            emit Events.CreditRejected(credit);
+        }
+    }
+
+    // #endregion Task GElato CREDIT PHASE PERIOD
+
     // #endregion Credit Delegation
+
+    // ============= ============= Credit OPS by Gelato ============= ============= //
+    // #region Credit OPS
+
+    // #region GELAT TO
+
+    function _launchCreditAndRepayment(uint256 creditId, uint256 interval)
+        internal
+        returns (bytes32 taskId)
+    {
+        taskId = IOps(ops).createTimedTask(
+            uint128(block.timestamp + interval),
+            interval,
+            address(this),
+            this.stopStreamExec.selector,
+            address(this),
+            abi.encodeWithSelector(this.checkRepayment.selector, creditId),
+            ETH,
+            false
+        );
+    }
+
+    // called by Gelato Execs
+    function checkRepayment(uint256 creditId)
+        external
+        pure
+        returns (bool canExec, bytes memory execPayload)
+    {
+        canExec = true;
+
+        execPayload = abi.encodeWithSelector(
+            this.triggerRepayment.selector,
+            creditId
+        );
+    }
+
+    /// called by Gelato
+    function triggerRepayment(uint256 creditId) external onlyOps {
+        DataTypes.Credit storage credit = creditsById[creditId];
+
+        uint256 fee;
+        address feeToken;
+
+        (fee, feeToken) = IOps(ops).getFeeDetails();
+
+        _transfer(fee, feeToken);
+
+        if (
+            credit.repaymentOptions.alreadyPayed <=
+            credit.repaymentOptions.nrInstallments
+        ) {
+            try
+                token.transferFrom(
+                    credit.requester,
+                    address(this),
+                    credit.repaymentOptions.installment
+                )
+            returns (bool success) {
+                // pool.repay(, amount, interestRateMode, address(this));
+                //recalculate credit conditions
+            } catch {
+                credit.status = DataTypes.CreditStatus.LIQUIDATED;
+                /// Liquidate the credit
+            }
+        }
+
+        if (
+            credit.repaymentOptions.alreadyPayed ==
+            credit.repaymentOptions.nrInstallments &&
+            credit.status == DataTypes.CreditStatus.APPROVED
+        ) {
+            credit.status = DataTypes.CreditStatus.REPAYED;
+            //credit done
+        }
+    }
+
+    // #endregion GELATO TASK REPAY
+
+    // endregion CREDIT OPS
 
     // ============= ============= Super App Calbacks ============= ============= //
     // #region Super App Calbacks
@@ -798,84 +1031,6 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
 
     // #endregion Task1 push erc20 to aave
 
-    // #region Task N close creditVoting
-
-    function createCreditPeriodTask(uint256 _creditId, uint256 _dennyPeriod)
-        internal
-        returns (bytes32 taskId)
-    {
-        taskId = IOps(ops).createTimedTask(
-            uint128(block.timestamp) + uint128(_dennyPeriod),
-            uint128(_dennyPeriod),
-            address(this),
-            this.stopCreditPeriodExec.selector,
-            address(this),
-            abi.encodeWithSelector(this.checkCreditPeriod.selector, _creditId),
-            ETH,
-            false
-        );
-    }
-
-    // called by Gelato Execs
-    function checkCreditPeriod(uint256 _creditId)
-        external
-        pure
-        returns (bool canExec, bytes memory execPayload)
-    {
-        canExec = true;
-
-        execPayload = abi.encodeWithSelector(
-            this.stopCreditPeriodExec.selector,
-            _creditId
-        );
-    }
-
-    /// called by Gelato
-    function stopCreditPeriodExec(uint256 creditId) external {
-        //// check if
-
-        DataTypes.Credit storage credit = creditsById[creditId];
-
-        //// every task will be payed with a transfer, therefore receive(), we have to fund the contract
-        uint256 fee;
-        address feeToken;
-
-        // (fee, feeToken) = IOps(ops).getFeeDetails();
-
-        // _transfer(fee, feeToken);
-
-        if (
-            (credit.status == DataTypes.CreditStatus.PENDING &&
-                credit.delegatorsNr == 5 &&
-                credit.delegators.length == 5)
-        ) {
-            credit.status = DataTypes.CreditStatus.APPROVED;
-            // NOtify approve
-            cancelTask(credit.gelatoTaskId);
-            emit Events.CreditApproved(credit);
-            //do the dance
-        } else if (
-            credit.status == DataTypes.CreditStatus.REJECTED &&
-            credit.delegatorsNr == 10 &&
-            credit.delegators.length == 10
-        ) {
-            credit.status = DataTypes.CreditStatus.APPROVED;
-            cancelTask(credit.gelatoTaskId);
-            emit Events.CreditApproved(credit);
-        } else {
-            for (uint256 i = 0; i < credit.delegatorsNr; i++) {
-                DataTypes.Member storage member = members[credit.delegators[i]];
-                member.amountLocked -= credit.delegatorsAmount;
-            }
-            credit.status = DataTypes.CreditStatus.REJECTED;
-            // notify Rejected
-            // clean
-            emit Events.CreditDiscarded(credit);
-        }
-    }
-
-    // #endregion Task N close creditVotingmembera
-
     modifier onlyOps() {
         require(msg.sender == ops, "OpsReady: onlyOps");
         _;
@@ -950,9 +1105,15 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
         MAX_ALLOWANCE = _MAX_ALLOWANCE;
     }
 
-    function setVotingPeriod(uint256 _VOTING_PERIOD) external onlyOwner {
-        require(_VOTING_PERIOD > 600, "VOTING_PERIODE_GREATER_THAN_10_MINUTS");
-        VOTING_PERIOD = _VOTING_PERIOD;
+    function setVotingPeriod(uint256 _CREDIT_PHASES_INTERVAL)
+        external
+        onlyOwner
+    {
+        require(
+            _CREDIT_PHASES_INTERVAL > 600,
+            "CREDIT_PHASES_INTERVALE_GREATER_THAN_10_MINUTS"
+        );
+        CREDIT_PHASES_INTERVAL = _CREDIT_PHASES_INTERVAL;
     }
 
     // #endregion

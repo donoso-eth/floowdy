@@ -8,7 +8,7 @@ export const mockMember1 = {
     {
       __typename: 'Credit',
       id: '1',
-      denyPeriodTimestamp: '1663410064',
+      finishPhaseTimestamp: '1663410064',
       amount: '10000',
       rate: '3',
       delegatorsNr: '5',
@@ -24,7 +24,7 @@ export const mockMember1 = {
       __typename: 'Credit',
       id: '2',
       status: '3',
-      denyPeriodTimestamp: '1663410132',
+      finishPhaseTimestamp: '1663410132',
       amount: '10000',
       rate: '3',
       delegatorsNr: '4',
@@ -38,7 +38,7 @@ export const mockMember1 = {
       __typename: 'Credit',
       id: '3',
       status: '1',
-      denyPeriodTimestamp: '1663410178',
+      finishPhaseTimestamp: '1663410178',
       amount: '10000',
       rate: '3',
       delegatorsNr: '4',
@@ -67,7 +67,7 @@ export const mockMember2 = {
         __typename: 'Member',
         member: '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266',
       },
-      denyPeriodTimestamp: '1663410064',
+      finishPhaseTimestamp: '1663410064',
       initTimestamp: '1663409464',
       delegatorsAmount:'3000'
     },
@@ -81,7 +81,7 @@ export const mockMember2 = {
         __typename: 'Member',
         member: '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266',
       },
-      denyPeriodTimestamp: '1663410132',
+      finishPhaseTimestamp: '1663410132',
       initTimestamp: '1663409532',
       delegatorsAmount:'7000'
     },
@@ -95,7 +95,7 @@ export const mockMember2 = {
         __typename: 'Member',
         member: '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266',
       },
-      denyPeriodTimestamp: '1663410178',
+      finishPhaseTimestamp: '1663410178',
       initTimestamp: '1663409578',
       delegatorsAmount:'9000'
     },

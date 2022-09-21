@@ -17,11 +17,11 @@ export function handlePoolUpdated(event:PoolUpdated):void {
     pool.totalDeposit = event.params.pool.totalDeposit;
     pool.timestamp = event.params.pool.timestamp;
     pool.totalFlow = event.params.pool.totalFlow;
-    pool.totalYield=  event.params.pool.totalYield;
+    pool.totalYieldStake=  event.params.pool.totalYieldStake;
     pool.totalDelegated =  event.params.pool.totalDelegated;
     pool.depositIndex =  event.params.pool.depositIndex;
     pool.flowIndex =  event.params.pool.flowIndex
-    pool.totalMembers= event.params.pool.totalMembers
+    pool.nrMembers= event.params.pool.nrMembers
 
     let date = (new Date(event.params.pool.timestamp.toI32() * 1000))
  

@@ -16,7 +16,7 @@ export const GET_CREDITS = `
       credits(first: 5) {
         id
         initTimestamp
-        denyPeriodTimestamp
+        finishPhaseTimestamp
         amount
         status
         rate
@@ -50,7 +50,7 @@ export const GET_CREDITS = `
        creditsRequested {
         id
         status
-        denyPeriodTimestamp
+        finishPhaseTimestamp
         amount
         rate
         delegatorsNr
@@ -67,7 +67,7 @@ export const GET_CREDITS = `
               requester {
                 member
               }
-              denyPeriodTimestamp
+              finishPhaseTimestamp
               initTimestamp
           }
        }
