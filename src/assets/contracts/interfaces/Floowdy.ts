@@ -48,6 +48,81 @@ export type FloowdyInitStructOutput = [
   epnsChannel: string;
 };
 
+export type CreditDelegatorsOptionsStruct = {
+  delegatorsNr: BigNumberish;
+  delegatorsRequired: BigNumberish;
+  delegators: string[];
+  delegatorsAmount: BigNumberish;
+  delegatorsGlobalFee: BigNumberish;
+};
+
+export type CreditDelegatorsOptionsStructOutput = [
+  BigNumber,
+  BigNumber,
+  string[],
+  BigNumber,
+  BigNumber
+] & {
+  delegatorsNr: BigNumber;
+  delegatorsRequired: BigNumber;
+  delegators: string[];
+  delegatorsAmount: BigNumber;
+  delegatorsGlobalFee: BigNumber;
+};
+
+export type CreditRepaymentOptionsStruct = {
+  nrInstallments: BigNumberish;
+  interval: BigNumberish;
+  installment: BigNumberish;
+  amount: BigNumberish;
+  rate: BigNumberish;
+  totalYield: BigNumberish;
+  alreadyPayed: BigNumberish;
+  GelatoRepaymentTaskId: BytesLike;
+};
+
+export type CreditRepaymentOptionsStructOutput = [
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  string
+] & {
+  nrInstallments: BigNumber;
+  interval: BigNumber;
+  installment: BigNumber;
+  amount: BigNumber;
+  rate: BigNumber;
+  totalYield: BigNumber;
+  alreadyPayed: BigNumber;
+  GelatoRepaymentTaskId: string;
+};
+
+export type POOLDELEGATIONStruct = {
+  totalDelegated: BigNumberish;
+  percentageLocked: BigNumberish;
+  totalYieldCredit: BigNumberish;
+  liquidatedIndex: BigNumberish;
+  totalLiquidated: BigNumberish;
+};
+
+export type POOLDELEGATIONStructOutput = [
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber
+] & {
+  totalDelegated: BigNumber;
+  percentageLocked: BigNumber;
+  totalYieldCredit: BigNumber;
+  liquidatedIndex: BigNumber;
+  totalLiquidated: BigNumber;
+};
+
 export interface FloowdyInterface extends utils.Interface {
   functions: {
     "ETH()": FunctionFragment;
@@ -63,8 +138,10 @@ export interface FloowdyInterface extends utils.Interface {
     "cancelTask(bytes32)": FunctionFragment;
     "cfa()": FunctionFragment;
     "checkCreditPeriod(uint256)": FunctionFragment;
+    "checkRepayment(uint256)": FunctionFragment;
+    "checkStakeAvailable()": FunctionFragment;
     "checkStopStream(address)": FunctionFragment;
-    "creditApprove(uint256)": FunctionFragment;
+    "creditApproved(uint256)": FunctionFragment;
     "creditCheckIn(uint256)": FunctionFragment;
     "creditCheckOut(uint256)": FunctionFragment;
     "creditIdByAddresse(address)": FunctionFragment;
@@ -87,17 +164,19 @@ export interface FloowdyInterface extends utils.Interface {
     "poolTimestamp()": FunctionFragment;
     "rejectCredit(uint256)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
-    "requestCredit(uint256,uint256)": FunctionFragment;
+    "requestCredit(uint256,uint256,uint256,uint256)": FunctionFragment;
     "sendNotif()": FunctionFragment;
     "setCreditFee(uint256)": FunctionFragment;
     "setMaxAllowance(uint256)": FunctionFragment;
     "setVotingPeriod(uint256)": FunctionFragment;
     "stopCreditPeriodExec(uint256)": FunctionFragment;
     "stopStreamExec(address)": FunctionFragment;
+    "supplyStakeToAave()": FunctionFragment;
     "tokensReceived(address,address,address,uint256,bytes,bytes)": FunctionFragment;
     "totalCredits()": FunctionFragment;
     "totalYieldStakeEarnedMember(address)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
+    "triggerRepayment(uint256)": FunctionFragment;
     "withdraw()": FunctionFragment;
   };
 
@@ -148,11 +227,19 @@ export interface FloowdyInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "checkRepayment",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "checkStakeAvailable",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "checkStopStream",
     values: [string]
   ): string;
   encodeFunctionData(
-    functionFragment: "creditApprove",
+    functionFragment: "creditApproved",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
@@ -224,7 +311,7 @@ export interface FloowdyInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "requestCredit",
-    values: [BigNumberish, BigNumberish]
+    values: [BigNumberish, BigNumberish, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "sendNotif", values?: undefined): string;
   encodeFunctionData(
@@ -248,6 +335,10 @@ export interface FloowdyInterface extends utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
+    functionFragment: "supplyStakeToAave",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "tokensReceived",
     values: [string, string, string, BigNumberish, BytesLike, BytesLike]
   ): string;
@@ -262,6 +353,10 @@ export interface FloowdyInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "triggerRepayment",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "withdraw", values?: undefined): string;
 
@@ -306,11 +401,19 @@ export interface FloowdyInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "checkRepayment",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "checkStakeAvailable",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "checkStopStream",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "creditApprove",
+    functionFragment: "creditApproved",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -406,6 +509,10 @@ export interface FloowdyInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "supplyStakeToAave",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "tokensReceived",
     data: BytesLike
   ): Result;
@@ -419,6 +526,10 @@ export interface FloowdyInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "triggerRepayment",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
@@ -549,12 +660,21 @@ export interface Floowdy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean, string] & { canExec: boolean; execPayload: string }>;
 
+    checkRepayment(
+      creditId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[boolean, string] & { canExec: boolean; execPayload: string }>;
+
+    checkStakeAvailable(
+      overrides?: CallOverrides
+    ): Promise<[boolean, string] & { canExec: boolean; execPayload: string }>;
+
     checkStopStream(
       _receiver: string,
       overrides?: CallOverrides
     ): Promise<[boolean, string] & { canExec: boolean; execPayload: string }>;
 
-    creditApprove(
+    creditApproved(
       creditId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -584,24 +704,18 @@ export interface Floowdy extends BaseContract {
         BigNumber,
         BigNumber,
         number,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        string
+        string,
+        CreditDelegatorsOptionsStructOutput,
+        CreditRepaymentOptionsStructOutput
       ] & {
         id: BigNumber;
         requester: string;
         initTimestamp: BigNumber;
         finishPhaseTimestamp: BigNumber;
         status: number;
-        amount: BigNumber;
-        rate: BigNumber;
-        delegatorsNr: BigNumber;
-        delegatorsRequired: BigNumber;
-        delegatorsAmount: BigNumber;
         gelatoTaskId: string;
+        delegatorsOptions: CreditDelegatorsOptionsStructOutput;
+        repaymentOptions: CreditRepaymentOptionsStructOutput;
       }
     >;
 
@@ -684,6 +798,7 @@ export interface Floowdy extends BaseContract {
         BigNumber,
         BigNumber,
         BigNumber,
+        POOLDELEGATIONStructOutput,
         BigNumber
       ] & {
         id: BigNumber;
@@ -695,6 +810,7 @@ export interface Floowdy extends BaseContract {
         flowIndex: BigNumber;
         totalYieldStake: BigNumber;
         totalStaked: BigNumber;
+        delegation: POOLDELEGATIONStructOutput;
         nrMembers: BigNumber;
       }
     >;
@@ -719,6 +835,8 @@ export interface Floowdy extends BaseContract {
     requestCredit(
       amount: BigNumberish,
       rate: BigNumberish,
+      interval: BigNumberish,
+      nrInstallments: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -737,7 +855,7 @@ export interface Floowdy extends BaseContract {
     ): Promise<ContractTransaction>;
 
     setVotingPeriod(
-      _VOTING_PERIOD: BigNumberish,
+      _CREDIT_PHASES_INTERVAL: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -748,6 +866,10 @@ export interface Floowdy extends BaseContract {
 
     stopStreamExec(
       _receiver: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    supplyStakeToAave(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -770,6 +892,11 @@ export interface Floowdy extends BaseContract {
 
     transferOwnership(
       newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    triggerRepayment(
+      creditId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -862,12 +989,21 @@ export interface Floowdy extends BaseContract {
     overrides?: CallOverrides
   ): Promise<[boolean, string] & { canExec: boolean; execPayload: string }>;
 
+  checkRepayment(
+    creditId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<[boolean, string] & { canExec: boolean; execPayload: string }>;
+
+  checkStakeAvailable(
+    overrides?: CallOverrides
+  ): Promise<[boolean, string] & { canExec: boolean; execPayload: string }>;
+
   checkStopStream(
     _receiver: string,
     overrides?: CallOverrides
   ): Promise<[boolean, string] & { canExec: boolean; execPayload: string }>;
 
-  creditApprove(
+  creditApproved(
     creditId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -897,24 +1033,18 @@ export interface Floowdy extends BaseContract {
       BigNumber,
       BigNumber,
       number,
-      BigNumber,
-      BigNumber,
-      BigNumber,
-      BigNumber,
-      BigNumber,
-      string
+      string,
+      CreditDelegatorsOptionsStructOutput,
+      CreditRepaymentOptionsStructOutput
     ] & {
       id: BigNumber;
       requester: string;
       initTimestamp: BigNumber;
       finishPhaseTimestamp: BigNumber;
       status: number;
-      amount: BigNumber;
-      rate: BigNumber;
-      delegatorsNr: BigNumber;
-      delegatorsRequired: BigNumber;
-      delegatorsAmount: BigNumber;
       gelatoTaskId: string;
+      delegatorsOptions: CreditDelegatorsOptionsStructOutput;
+      repaymentOptions: CreditRepaymentOptionsStructOutput;
     }
   >;
 
@@ -992,6 +1122,7 @@ export interface Floowdy extends BaseContract {
       BigNumber,
       BigNumber,
       BigNumber,
+      POOLDELEGATIONStructOutput,
       BigNumber
     ] & {
       id: BigNumber;
@@ -1003,6 +1134,7 @@ export interface Floowdy extends BaseContract {
       flowIndex: BigNumber;
       totalYieldStake: BigNumber;
       totalStaked: BigNumber;
+      delegation: POOLDELEGATIONStructOutput;
       nrMembers: BigNumber;
     }
   >;
@@ -1027,6 +1159,8 @@ export interface Floowdy extends BaseContract {
   requestCredit(
     amount: BigNumberish,
     rate: BigNumberish,
+    interval: BigNumberish,
+    nrInstallments: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1045,7 +1179,7 @@ export interface Floowdy extends BaseContract {
   ): Promise<ContractTransaction>;
 
   setVotingPeriod(
-    _VOTING_PERIOD: BigNumberish,
+    _CREDIT_PHASES_INTERVAL: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1056,6 +1190,10 @@ export interface Floowdy extends BaseContract {
 
   stopStreamExec(
     _receiver: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  supplyStakeToAave(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1078,6 +1216,11 @@ export interface Floowdy extends BaseContract {
 
   transferOwnership(
     newOwner: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  triggerRepayment(
+    creditId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1163,12 +1306,21 @@ export interface Floowdy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean, string] & { canExec: boolean; execPayload: string }>;
 
+    checkRepayment(
+      creditId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[boolean, string] & { canExec: boolean; execPayload: string }>;
+
+    checkStakeAvailable(
+      overrides?: CallOverrides
+    ): Promise<[boolean, string] & { canExec: boolean; execPayload: string }>;
+
     checkStopStream(
       _receiver: string,
       overrides?: CallOverrides
     ): Promise<[boolean, string] & { canExec: boolean; execPayload: string }>;
 
-    creditApprove(
+    creditApproved(
       creditId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1198,24 +1350,18 @@ export interface Floowdy extends BaseContract {
         BigNumber,
         BigNumber,
         number,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        string
+        string,
+        CreditDelegatorsOptionsStructOutput,
+        CreditRepaymentOptionsStructOutput
       ] & {
         id: BigNumber;
         requester: string;
         initTimestamp: BigNumber;
         finishPhaseTimestamp: BigNumber;
         status: number;
-        amount: BigNumber;
-        rate: BigNumber;
-        delegatorsNr: BigNumber;
-        delegatorsRequired: BigNumber;
-        delegatorsAmount: BigNumber;
         gelatoTaskId: string;
+        delegatorsOptions: CreditDelegatorsOptionsStructOutput;
+        repaymentOptions: CreditRepaymentOptionsStructOutput;
       }
     >;
 
@@ -1294,6 +1440,7 @@ export interface Floowdy extends BaseContract {
         BigNumber,
         BigNumber,
         BigNumber,
+        POOLDELEGATIONStructOutput,
         BigNumber
       ] & {
         id: BigNumber;
@@ -1305,6 +1452,7 @@ export interface Floowdy extends BaseContract {
         flowIndex: BigNumber;
         totalYieldStake: BigNumber;
         totalStaked: BigNumber;
+        delegation: POOLDELEGATIONStructOutput;
         nrMembers: BigNumber;
       }
     >;
@@ -1325,6 +1473,8 @@ export interface Floowdy extends BaseContract {
     requestCredit(
       amount: BigNumberish,
       rate: BigNumberish,
+      interval: BigNumberish,
+      nrInstallments: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1341,7 +1491,7 @@ export interface Floowdy extends BaseContract {
     ): Promise<void>;
 
     setVotingPeriod(
-      _VOTING_PERIOD: BigNumberish,
+      _CREDIT_PHASES_INTERVAL: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1351,6 +1501,8 @@ export interface Floowdy extends BaseContract {
     ): Promise<void>;
 
     stopStreamExec(_receiver: string, overrides?: CallOverrides): Promise<void>;
+
+    supplyStakeToAave(overrides?: CallOverrides): Promise<void>;
 
     tokensReceived(
       operator: string,
@@ -1371,6 +1523,11 @@ export interface Floowdy extends BaseContract {
 
     transferOwnership(
       newOwner: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    triggerRepayment(
+      creditId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1473,12 +1630,19 @@ export interface Floowdy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    checkRepayment(
+      creditId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    checkStakeAvailable(overrides?: CallOverrides): Promise<BigNumber>;
+
     checkStopStream(
       _receiver: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    creditApprove(
+    creditApproved(
       creditId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -1564,6 +1728,8 @@ export interface Floowdy extends BaseContract {
     requestCredit(
       amount: BigNumberish,
       rate: BigNumberish,
+      interval: BigNumberish,
+      nrInstallments: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1582,7 +1748,7 @@ export interface Floowdy extends BaseContract {
     ): Promise<BigNumber>;
 
     setVotingPeriod(
-      _VOTING_PERIOD: BigNumberish,
+      _CREDIT_PHASES_INTERVAL: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1593,6 +1759,10 @@ export interface Floowdy extends BaseContract {
 
     stopStreamExec(
       _receiver: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    supplyStakeToAave(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1615,6 +1785,11 @@ export interface Floowdy extends BaseContract {
 
     transferOwnership(
       newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    triggerRepayment(
+      creditId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1708,12 +1883,21 @@ export interface Floowdy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    checkRepayment(
+      creditId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    checkStakeAvailable(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     checkStopStream(
       _receiver: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    creditApprove(
+    creditApproved(
       creditId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
@@ -1802,6 +1986,8 @@ export interface Floowdy extends BaseContract {
     requestCredit(
       amount: BigNumberish,
       rate: BigNumberish,
+      interval: BigNumberish,
+      nrInstallments: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1820,7 +2006,7 @@ export interface Floowdy extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     setVotingPeriod(
-      _VOTING_PERIOD: BigNumberish,
+      _CREDIT_PHASES_INTERVAL: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1831,6 +2017,10 @@ export interface Floowdy extends BaseContract {
 
     stopStreamExec(
       _receiver: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    supplyStakeToAave(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1853,6 +2043,11 @@ export interface Floowdy extends BaseContract {
 
     transferOwnership(
       newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    triggerRepayment(
+      creditId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -74,10 +74,20 @@ export function handleCreditRequested(event:CreditRequested):void {
     credit.initTimestamp = eventObject.initTimestamp;
     credit.finishPhaseTimestamp = eventObject.finishPhaseTimestamp;
     credit.status = BigInt.fromI32(eventObject.status);
-    credit.rate = eventObject.rate;
-    credit.amount = eventObject.amount;
-    credit.delegatorsNr = eventObject.delegatorsNr;
-    credit.delegatorsAmount = eventObject.delegatorsAmount;
+    
+    credit.nrInstallments = eventObject.repaymentOptions.nrInstallments;
+    credit.interval = eventObject.repaymentOptions.interval;
+    credit.amount = eventObject.repaymentOptions.amount;
+    credit.rate = eventObject.repaymentOptions.rate;
+    credit.totalYield = eventObject.repaymentOptions.totalYield;
+    credit.alreadyPayed = eventObject.repaymentOptions.alreadyPayed;
+
+   
+
+    credit.delegatorsNr = eventObject.delegatorsOptions.delegatorsNr;
+    credit.delegatorsRequired = eventObject.delegatorsOptions.delegatorsRequired;
+    credit.delegatorsAmount = eventObject.delegatorsOptions.delegatorsAmount;
+    credit.delegatorsGlobalFee = eventObject.delegatorsOptions.delegatorsGlobalFee;
     credit.save()
     return credit
   }

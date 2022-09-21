@@ -2,7 +2,27 @@
     <div class="col-5">
       <span>'hola'</span>
 
-
+      
+    <p-steps class="col-12" [model]="stepItems" (activeIndexChange)="activeStep = 0" [(activeIndex)]="activeStep" styleClass="mt-5" [readonly]="false"></p-steps>
+    <div style="min-height: 100px; width: 100%; text-align: center" class="flex justify-content-center flex-column">
+      <div *ngIf="activeStep == 0">
+        <div *ngIf="display_step == 0">
+          <p [ngStyle]="{ lineHeight: '2.5rem' }"> Current Amount </p>
+          <button
+          pButton
+          pRipple
+          style="margin: auto"
+          (click)="checkInPhase1()"
+          type="button"
+          label="Start"
+          class="p-button-rounded mr-2 mb-2"
+        ></button>
+        </div>
+        <div *ngIf="display_step > 0">
+          <p [ngStyle]="{ lineHeight: '2.5rem' }"></p>
+        </div>
+      </div>
+      </div>
     
 
     </div>

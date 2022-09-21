@@ -44,7 +44,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
     IERC20 token;
     IAToken aToken;
 
-    IPool pool;
+    IPool aavePool;
 
     using CFAv1Library for CFAv1Library.InitData;
     CFAv1Library.InitData internal _cfaLib;
@@ -86,7 +86,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
         host = floowdy_init.host;
         superToken = floowdy_init.superToken;
         token = floowdy_init.token;
-        pool = floowdy_init.pool;
+        aavePool = floowdy_init.pool;
         aToken = floowdy_init.aToken;
         epnsComm = floowdy_init.epnsComm;
         epnsChannel = floowdy_init.epnsChannel;
@@ -109,7 +109,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
         host.registerApp(configWord);
 
         MAX_INT = 2**256 - 1;
-        token.approve(address(pool), MAX_INT);
+        token.approve(address(aavePool), MAX_INT);
 
         //// tokens receie implementation
         ops = floowdy_init.ops;
@@ -128,6 +128,8 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
             TOKENS_RECIPIENT_INTERFACE_HASH,
             address(this)
         );
+
+        _launchStakeToAaveTask();
     }
 
     /**
@@ -176,6 +178,68 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
         emit Events.MemberDeposit(member);
         emit Events.PoolUpdated(poolByTimestamp[poolTimestamp]);
     }
+
+    // #region Task Close Stream scdellued by member
+
+    function createStopStreamTask(address _member, uint256 _duration)
+        internal
+        returns (bytes32 taskId)
+    {
+        console.log(733, block.timestamp + _duration);
+        taskId = IOps(ops).createTimedTask(
+            uint128(block.timestamp + _duration),
+            600,
+            address(this),
+            this.stopStreamExec.selector,
+            address(this),
+            abi.encodeWithSelector(this.checkStopStream.selector, _member),
+            ETH,
+            false
+        );
+    }
+
+    // called by Gelato Execs
+    function checkStopStream(address _receiver)
+        external
+        pure
+        returns (bool canExec, bytes memory execPayload)
+    {
+        canExec = true;
+
+        execPayload = abi.encodeWithSelector(
+            this.stopStreamExec.selector,
+            address(_receiver)
+        );
+    }
+
+    /// called by Gelato
+    function stopStreamExec(address _receiver) external onlyOps {
+        //// check if
+
+        //  _poolRebalance();
+
+        //// every task will be payed with a transfer, therefore receive(), we have to fund the contract
+        uint256 fee;
+        address feeToken;
+
+        (fee, feeToken) = IOps(ops).getFeeDetails();
+
+        _transfer(fee, feeToken);
+
+        (, int96 inFlowRate, , ) = cfa.getFlow(
+            superToken,
+            _receiver,
+            address(this)
+        );
+
+        if (inFlowRate > 0) {
+            _cfaLib.deleteFlow(_receiver, address(this), superToken);
+            console.log(786, _receiver);
+            _updateFlow(_receiver, 0, 0, 0);
+        }
+    }
+
+    // #endregion #region Task Close Stream
 
     // #endregion
 
@@ -452,6 +516,66 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
     // ============= ============= Aave ============= ============= //
     // #region Aave
 
+
+
+    // #region Task GElATO CREDIT PHASE PERIOD
+    function _launchStakeToAaveTask() internal returns (bytes32 taskId) {
+
+        taskId = IOps(ops).createTaskNoPrepayment(
+                address(this),
+                this.supplyStakeToAave.selector,
+                address(this),
+                abi.encodeWithSelector(this.checkStakeAvailable.selector),
+                ETH
+                );
+    }
+
+    // called by Gelato Execs
+    function checkStakeAvailable()
+        external
+        view
+        returns (bool canExec, bytes memory execPayload)
+    {
+        canExec = token.balanceOf(address(this)) > 5 * 10 ** 6;
+
+        execPayload = abi.encodeWithSelector(
+            this.supplyStakeToAave.selector
+        );
+    }
+
+    /// called by Gelato
+    function supplyStakeToAave() onlyOps external {
+        //// check if
+
+         uint256 balanceToStake = token.balanceOf(address(this)) ;
+
+        require( balanceToStake  > 5 * 10 ** 6, 'NOT_ENOUGH_AMOUNT_TO_STAKE');
+
+        //// every task will be payed with a transfer, therefore receive(), we have to fund the contract
+        uint256 fee;
+        address feeToken;
+
+        (fee, feeToken) = IOps(ops).getFeeDetails();
+
+         _transfer(fee, feeToken);
+
+        uint256 poolSuperTokenBalance = (superToken.balanceOf(address(this))).div(10**12);
+
+        superToken.downgrade(poolSuperTokenBalance);
+
+        uint256 poolTokenBalance = token.balanceOf(address(this));
+
+        aavePool.supply(address(token), poolTokenBalance, address(this), 0);
+
+        _poolRebalance();
+        DataTypes.Pool storage pool =  poolByTimestamp[poolTimestamp];
+        pool.totalStaked +=poolTokenBalance;
+
+
+    }
+
+    // #endregion Task GElato CREDIT PHASE PERIOD
+
     function getAaveData() public {
         (
             uint256 totalCollateralBase,
@@ -460,7 +584,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
             uint256 currentLiquidationThreshold,
             uint256 ltv,
             uint256 healthFactor
-        ) = pool.getUserAccountData(address(this));
+        ) = aavePool.getUserAccountData(address(this));
     }
 
     function aaveSupply() public {
@@ -475,7 +599,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
             poolTokenBalance = 10000000000000;
         }
 
-        pool.supply(address(token), poolTokenBalance, address(this), 0);
+        aavePool.supply(address(token), poolTokenBalance, address(this), 0);
     }
 
     function delegateCreditToMember(uint256 _amount, address _to) internal {}
@@ -542,7 +666,9 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
         require(credit.requester == msg.sender, "NOT_CREDIT_OWNER");
         credit.status = DataTypes.CreditStatus.CANCELLED;
         for (uint256 i = 0; i < credit.delegatorsOptions.delegatorsNr; i++) {
-            DataTypes.Member storage member = members[credit.delegatorsOptions.delegators[i]];
+            DataTypes.Member storage member = members[
+                credit.delegatorsOptions.delegators[i]
+            ];
             member.amountLocked -= credit.delegatorsOptions.delegatorsAmount;
         }
         emit Events.CreditCancelled(credit);
@@ -558,15 +684,23 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
                 credit.status == DataTypes.CreditStatus.PHASE3,
             "CREDIT_NOT_AVAILABLE"
         );
-        require(balance > credit.delegatorsOptions.delegatorsAmount, "NOT_ENOUGH_COLLATERAL");
+        require(
+            balance > credit.delegatorsOptions.delegatorsAmount,
+            "NOT_ENOUGH_COLLATERAL"
+        );
         require(
             delegatorsStatus[creditId][msg.sender] == 0,
             "MEMBER_ALREADY_CHECK_IN"
         );
-        require(credit.delegatorsOptions.delegatorsNr < 5, "ALREADY_ENOUGH_DELEGATORS");
+        require(
+            credit.delegatorsOptions.delegatorsNr < 5,
+            "ALREADY_ENOUGH_DELEGATORS"
+        );
         credit.delegatorsOptions.delegatorsNr++;
         credit.delegatorsOptions.delegators.push(msg.sender);
-        delegatorsStatus[creditId][msg.sender] = credit.delegatorsOptions.delegatorsNr;
+        delegatorsStatus[creditId][msg.sender] = credit
+            .delegatorsOptions
+            .delegatorsNr;
 
         member.amountLocked += credit.delegatorsOptions.delegatorsAmount;
         emit Events.CreditCheckIn(creditId, msg.sender);
@@ -589,8 +723,12 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
         uint256 toDeleteDelegatorPosition = delegatorsStatus[creditId][
             msg.sender
         ];
-        address lastDelegator = credit.delegatorsOptions.delegators[credit.delegatorsOptions.delegatorsNr - 1];
-        credit.delegatorsOptions.delegators[toDeleteDelegatorPosition - 1] = lastDelegator;
+        address lastDelegator = credit.delegatorsOptions.delegators[
+            credit.delegatorsOptions.delegatorsNr - 1
+        ];
+        credit.delegatorsOptions.delegators[
+            toDeleteDelegatorPosition - 1
+        ] = lastDelegator;
         delegatorsStatus[creditId][lastDelegator] = toDeleteDelegatorPosition;
         credit.delegatorsOptions.delegators.pop();
         credit.delegatorsOptions.delegatorsNr--;
@@ -607,7 +745,12 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
         );
         credit.status = DataTypes.CreditStatus.APPROVED;
         cancelTask(credit.gelatoTaskId);
-        credit.repaymentOptions.GelatoRepaymentTaskId = _launchCreditAndRepayment(credit.id, credit.repaymentOptions.interval);
+        credit
+            .repaymentOptions
+            .GelatoRepaymentTaskId = _launchCreditAndRepayment(
+            credit.id,
+            credit.repaymentOptions.interval
+        );
 
         emit Events.CreditApproved(credit);
     }
@@ -619,7 +762,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
             "CREDIT_NOT_AVAILABLE"
         );
         credit.status = DataTypes.CreditStatus.REJECTED;
-        credit.delegatorsRequired = 10;
+        credit.delegatorsOptions.delegatorsRequired = 10;
         credit.finishPhaseTimestamp += CREDIT_PHASES_INTERVAL;
         //// Notify
         cancelTask(credit.gelatoTaskId);
@@ -702,32 +845,47 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
         uint256 fee;
         address feeToken;
 
-        // (fee, feeToken) = IOps(ops).getFeeDetails();
+         (fee, feeToken) = IOps(ops).getFeeDetails();
 
-        // _transfer(fee, feeToken);
+         _transfer(fee, feeToken);
 
         if (credit.status == DataTypes.CreditStatus.PHASE1) {
-            if (credit.delegatorsOptions.delegatorsNr == 1 && credit.delegatorsOptions.delegators.length == 1) {
+            if (
+                credit.delegatorsOptions.delegatorsNr == 1 &&
+                credit.delegatorsOptions.delegators.length == 1
+            ) {
                 credit.status = DataTypes.CreditStatus.PHASE4;
             } else {
                 credit.status = DataTypes.CreditStatus.PHASE2;
-                credit.delegatorsRequired = 10;
-                credit.delegatorsOptions.delegatorsAmount = credit.repaymentOptions.amount.div(10);
+                credit.delegatorsOptions.delegatorsRequired = 10;
+                credit.delegatorsOptions.delegatorsAmount = credit
+                    .repaymentOptions
+                    .amount
+                    .div(10);
             }
 
             //do the dance
         } else if (credit.status == DataTypes.CreditStatus.PHASE2) {
-            if (credit.delegatorsOptions.delegatorsNr == 10 && credit.delegatorsOptions.delegators.length == 10) {
+            if (
+                credit.delegatorsOptions.delegatorsNr == 10 &&
+                credit.delegatorsOptions.delegators.length == 10
+            ) {
                 credit.status = DataTypes.CreditStatus.PHASE4;
             } else {
                 credit.status = DataTypes.CreditStatus.PHASE3;
-                credit.delegatorsRequired = 5;
-                credit.delegatorsOptions.delegatorsAmount = credit.repaymentOptions.amount.div(5);
+                credit.delegatorsOptions.delegatorsRequired = 5;
+                credit.delegatorsOptions.delegatorsAmount = credit
+                    .repaymentOptions
+                    .amount
+                    .div(5);
             }
 
             //do the dance
         } else if (credit.status == DataTypes.CreditStatus.PHASE3) {
-            if (credit.delegatorsOptions.delegatorsNr == 5 && credit.delegatorsOptions.delegators.length == 5) {
+            if (
+                credit.delegatorsOptions.delegatorsNr == 5 &&
+                credit.delegatorsOptions.delegators.length == 5
+            ) {
                 credit.status = DataTypes.CreditStatus.PHASE4;
             } else {
                 credit.status = DataTypes.CreditStatus.REJECTED;
@@ -739,9 +897,17 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
         }
 
         if (credit.status == DataTypes.CreditStatus.REJECTED) {
-            for (uint256 i = 0; i < credit.delegatorsOptions.delegatorsNr; i++) {
-                DataTypes.Member storage member = members[credit.delegatorsOptions.delegators[i]];
-                member.amountLocked -= credit.delegatorsOptions.delegatorsAmount;
+            for (
+                uint256 i = 0;
+                i < credit.delegatorsOptions.delegatorsNr;
+                i++
+            ) {
+                DataTypes.Member storage member = members[
+                    credit.delegatorsOptions.delegators[i]
+                ];
+                member.amountLocked -= credit
+                    .delegatorsOptions
+                    .delegatorsAmount;
             }
             cancelTask(credit.gelatoTaskId);
             emit Events.CreditRejected(credit);
@@ -763,7 +929,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
     {
         taskId = IOps(ops).createTimedTask(
             uint128(block.timestamp + interval),
-            interval,
+            uint128(interval),
             address(this),
             this.stopStreamExec.selector,
             address(this),
@@ -966,70 +1132,8 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
 
     // endregion Super App Calbacks
 
-    // ============= =============  Gelato TASKS  ============= ============= //
+    // ============= =============  Gelato ============= ============= //
     // #region Gelato Tasks
-
-    // #region Task1
-
-    function createStopStreamTask(address _member, uint256 _duration)
-        internal
-        returns (bytes32 taskId)
-    {
-        console.log(733, block.timestamp + _duration);
-        taskId = IOps(ops).createTimedTask(
-            uint128(block.timestamp + _duration),
-            600,
-            address(this),
-            this.stopStreamExec.selector,
-            address(this),
-            abi.encodeWithSelector(this.checkStopStream.selector, _member),
-            ETH,
-            false
-        );
-    }
-
-    // called by Gelato Execs
-    function checkStopStream(address _receiver)
-        external
-        pure
-        returns (bool canExec, bytes memory execPayload)
-    {
-        canExec = true;
-
-        execPayload = abi.encodeWithSelector(
-            this.stopStreamExec.selector,
-            address(_receiver)
-        );
-    }
-
-    /// called by Gelato
-    function stopStreamExec(address _receiver) external onlyOps {
-        //// check if
-
-        //  _poolRebalance();
-
-        //// every task will be payed with a transfer, therefore receive(), we have to fund the contract
-        uint256 fee;
-        address feeToken;
-
-        (fee, feeToken) = IOps(ops).getFeeDetails();
-
-        _transfer(fee, feeToken);
-
-        (, int96 inFlowRate, , ) = cfa.getFlow(
-            superToken,
-            _receiver,
-            address(this)
-        );
-
-        if (inFlowRate > 0) {
-            _cfaLib.deleteFlow(_receiver, address(this), superToken);
-            console.log(786, _receiver);
-            _updateFlow(_receiver, 0, 0, 0);
-        }
-    }
-
-    // #endregion Task1 push erc20 to aave
 
     modifier onlyOps() {
         require(msg.sender == ops, "OpsReady: onlyOps");

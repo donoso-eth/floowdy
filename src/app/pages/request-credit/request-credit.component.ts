@@ -20,7 +20,11 @@ export class RequestCreditComponent
   lensProfile = false;
   profiles:Array<ILENS_PROFILE> = [];
   requestCreditForm: FormGroup;
-
+  durations = [
+    { name: 'hours', id: 1, factor: 3600 },
+    { name: 'days', id: 2, factor: 86400 },
+    { name: 'months', id: 3, factor: 2592000 },
+  ];
   constructor(
     dapp: DappInjector,
     store: Store,
@@ -30,14 +34,18 @@ export class RequestCreditComponent
     super(dapp, store);
     this.requestCreditForm = this.formBuilder.group({
 
-      amountCtrl: [10],
-      rateTimeCtrl: [ 3,
-        [Validators.required, Validators.min(1)],
+      amountCtrl: [1000,[Validators.required, Validators.min(1)]],
+      rateCtrl: [ 3,
+        [Validators.required, Validators.min(3)],
       ],
-      flowRateConditionCtrl: [
-        { condition: 'No stop',  id: 0 },
+      durationInCtrl: [
+        { name: 'hours', id: 1, factor: 3600 },
         [Validators.required],
       ],
+      installementsCtrl: [ 10,
+        [Validators.required, Validators.min(1)],
+      ],   
+   
     })
   }
 
@@ -47,9 +55,15 @@ export class RequestCreditComponent
     
     let amount = this.requestCreditForm.controls.amountCtrl.value;
     let rate = this.requestCreditForm.controls.rateCtrl.value;
+    let interval = this.requestCreditForm.controls.durationInCtrl.value.factor;
+    let nrInstallments = this.requestCreditForm.controls.installementsCtrl.value;
+
+    console.log(nrInstallments);
+    console.log(interval)
+
     this.store.dispatch(Web3Actions.chainBusy({ status: true }));
 
-    await doSignerTransaction(this.dapp.defaultContract?.instance.requestCredit(amount, rate)!)
+    await doSignerTransaction(this.dapp.defaultContract?.instance.requestCredit(amount, rate,interval,nrInstallments)!)
 
     this.store.dispatch(Web3Actions.chainBusy({ status: false }));
   }

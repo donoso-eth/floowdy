@@ -4,7 +4,8 @@ import { CreditSummaryComponent } from './credit-summary/credit-summary.componen
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LensProfileModule } from '../lens-profile/lens-profile.module';
-
+import { StepsModule } from 'primeng/steps';
+import { DropdownModule } from 'primeng/dropdown';
 
 @NgModule({
   declarations: [
@@ -14,7 +15,8 @@ import { LensProfileModule } from '../lens-profile/lens-profile.module';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    LensProfileModule 
+    LensProfileModule,
+    StepsModule
   ],
   exports: [
     CreditSummaryComponent

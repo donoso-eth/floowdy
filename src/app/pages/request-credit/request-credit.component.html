@@ -53,15 +53,52 @@
                     Your Max Amount (leverage 50%): 221
                   </div>
 
+                    <h5>
+                    CreditAmount
+                  </h5>
+                    <p-inputNumber formControlName="amountCtrl" placeholder="Credit Amount" mode="decimal"
+                      [showButtons]="true" [min]="0">
+                    </p-inputNumber>
 
-                  <p-inputNumber formControlName="amountCtrl" placeholder="Credit Amount" mode="decimal"
-                    [showButtons]="true" [min]="0">
-                  </p-inputNumber>
+                    <h5>
+                      Proposed rate (>=3%)
+                    </h5>
+                      <p-inputNumber formControlName="rateCtrl" placeholder="Credit Amount" mode="decimal"
+                        [showButtons]="true" [min]="0">
+                      </p-inputNumber>
+                      <h5>
+                        Type of interval
+                    </h5>
 
+                    <p-dropdown
+                      [options]="durations"
+                      formControlName="durationInCtrl"
+                      placeholder="Stop Condition"
+                    >
+                      <ng-template pTemplate="selectedItem">
+                        <span>{{
+                          requestCreditForm.controls.durationInCtrl.value.name
+                        }}</span>
+                      </ng-template>
+                      <ng-template let-duration pTemplate="duration">
+                        <span>{{ duration.name }}</span>
+                      </ng-template>
+                    </p-dropdown>
+                    
+                      <h5>
+                        Nr of Installments
+                      </h5>
+                        <p-inputNumber formControlName="installementsCtrl" placeholder="Nr Installments" mode="decimal"
+                          [showButtons]="true" [min]="0">
+                        </p-inputNumber>
+
+
+  
 
                   <button
                   pButton
                   pRipple
+                  [disabled]="requestCreditForm.invalid"
                   style="
                     position: relative;
                     width: fit-content;

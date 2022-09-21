@@ -22,6 +22,24 @@ const contract_path_relative = '../src/assets/contracts/';
 const contract_path = join(processDir, contract_path_relative);
 ensureDir(contract_path);
 
+const recursiveTypes= (inputs:Array<any>):string => {
+  let typeString = "(";
+  for (const input of inputs) {
+  let newType = input.type;
+  if (newType == 'tuple') { 
+    let tupleCompo = recursiveTypes(input.components)
+    typeString = typeString +  tupleCompo 
+  } else {
+    typeString = typeString +  newType + ','
+  }
+
+
+}
+return typeString.substring( 0, typeString.length - 1)  + "),"
+}
+
+
+
 task('publish', 'publish subgraph')
   .addOptionalParam('reset', 'reset yaml file', false, types.boolean)
   .addOptionalParam('onlyAddress', 'only change address', false, types.boolean)
@@ -98,21 +116,16 @@ task('publish', 'publish subgraph')
             let yamlEvents = contractMapping.eventHandlers;
 
             for (const contractEvent of events) {
-              const inputsStringRaw = contractEvent.inputs
-                .map((input: any) => input.type)
-                .reduce(
-                  (prev: any, current: any) => (current = prev + current + ','),
-                  ''
-                ) as string;
+              const inputsStringRaw = recursiveTypes(contractEvent.inputs);
 
+   
+              
               yamlEvents.push({
-                event: `${contractEvent.name}(${inputsStringRaw.substring(
-                  0,
-                  inputsStringRaw.length - 1
-                )})`,
+                event: `${contractEvent.name}${inputsStringRaw.substring( 0, inputsStringRaw.length - 1) }`,
                 handler: `handle${contractEvent.name}`,
               });
             }
+            
 
             contractMapping.eventHandlers = yamlEvents;
 

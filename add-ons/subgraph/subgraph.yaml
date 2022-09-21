@@ -6,7 +6,7 @@ dataSources:
     name: Floowdy
     network: localhost
     source:
-      address: '0xE2E3d9Ad116768b4065ba6A7659B119C80aff0b4'
+      address: '0x072A13215d3F56e195B1E7803445C51ae8392407'
       abi: Floowdy
       startBlock: 7588383
     mapping:
@@ -24,25 +24,30 @@ dataSources:
           file: ./abis/floowdy.json
       eventHandlers:
         - event: >-
-            CreditApproved((uint256,address,uint256,uint256,uint8,uint256,uint256,uint256,uint256,address[],uint256,bytes32))
+            CreditApproved((uint256,address,uint256,uint256,uint8,bytes32,(uint256,uint256,address[],uint256,uint256),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,bytes32)))
           handler: handleCreditApproved
         - event: >-
-            CreditRejected((uint256,address,uint256,uint256,uint8,uint256,uint256,uint256,uint256,address[],uint256,bytes32))
+            CreditCancelled((uint256,address,uint256,uint256,uint8,bytes32,(uint256,uint256,address[],uint256,uint256),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,bytes32)))
+          handler: handleCreditCancelled
+        - event: CreditCheckIn(uint256,address)
+          handler: handleCreditCheckIn
+        - event: CreditCheckOut(uint256,address)
+          handler: handleCreditCheckOut
+        - event: >-
+            CreditRejected((uint256,address,uint256,uint256,uint8,bytes32,(uint256,uint256,address[],uint256,uint256),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,bytes32)))
           handler: handleCreditRejected
         - event: >-
-            CreditRequested((uint256,address,uint256,uint256,uint8,uint256,uint256,uint256,uint256,address[],uint256,bytes32))
+            CreditRequested((uint256,address,uint256,uint256,uint8,bytes32,(uint256,uint256,address[],uint256,uint256),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,bytes32)))
           handler: handleCreditRequested
+        - event: MemberDelegateCredit(uint256,address,uint256)
+          handler: handleMemberDelegateCredit
         - event: >-
             MemberDeposit((uint256,address,int96,bytes32,uint256,uint256,uint256,uint256,uint256,uint256))
           handler: handleMemberDeposit
         - event: >-
             MemberStream((uint256,address,int96,bytes32,uint256,uint256,uint256,uint256,uint256,uint256))
           handler: handleMemberStream
-        - event: CreditCheckIn(uint256,address)
-          handler: handleCreditCheckIn
-        - event: CreditCheckOut(uint256,address)
-          handler: handleCreditCheckOut
         - event: >-
-            PoolUpdated((uint256,uint256,int96,uint256,uint256,uint256,uint256,uint256,uint256,uint256))
+            PoolUpdated((uint256,uint256,int96,uint256,uint256,uint256,uint256,uint256,uint256,(uint256,uint256,uint256,uint256,uint256),uint256))
           handler: handlePoolUpdated
       file: ./src/mapping.ts

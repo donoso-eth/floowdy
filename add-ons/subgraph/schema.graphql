@@ -21,11 +21,15 @@ type Pool @entity {
   totalDeposit: BigInt!
   totalFlow: BigInt!
   totalYieldStake: BigInt!
-  totalDelegated: BigInt!
   depositIndex: BigInt!
   flowIndex: BigInt!
+  totalStaked:BigInt!
+  totalDelegated:BigInt!
+  percentageLocked:BigInt!
+  totalYieldCredit:BigInt!
+  liquidatedIndex:BigInt!
+  totalLiquidated:BigInt!
   nrMembers: BigInt!
-  date:String!
 }
 
 type Credit @entity {
@@ -33,13 +37,25 @@ type Credit @entity {
   requester: Member!
   initTimestamp: BigInt!
   finishPhaseTimestamp: BigInt!
-  status: BigInt!
-  amount: BigInt!
-  rate: BigInt!
-  delegatorsNr: BigInt!
-  delegatorsAmount: BigInt!
   gelatoTaskId: String!
+  status: BigInt!
+
+  nrInstallments:BigInt!
+  interval:BigInt!
+  installment:BigInt!
+  amount:BigInt!
+  rate:BigInt!
+  totalYield:BigInt!
+  alreadyPayed:BigInt!
+  GelatoRepaymentTaskId:String!
+
+  delegatorsNr: BigInt!
+  delegatorsRequired:BigInt!
   delegators: [MemberCredit!]! @derivedFrom(field: "credit")
+  delegatorsAmount: BigInt!
+  delegatorsGlobalFee:BigInt!
+
+ 
 }
 
 type MemberCredit @entity {
@@ -50,8 +66,8 @@ type MemberCredit @entity {
 
 type ChartMonth @entity {
 id:ID!
-month: Int!
-year: Int!
+month: String!
+year: String!
 timestamp: BigInt!
 balance: BigInt!
 staked: BigInt!

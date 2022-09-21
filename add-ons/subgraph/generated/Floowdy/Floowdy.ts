@@ -73,32 +73,76 @@ export class CreditActionCreditStruct extends ethereum.Tuple {
     return this[4].toI32();
   }
 
-  get amount(): BigInt {
-    return this[5].toBigInt();
+  get gelatoTaskId(): Bytes {
+    return this[5].toBytes();
   }
 
-  get rate(): BigInt {
-    return this[6].toBigInt();
+  get delegatorsOptions(): CreditActionCreditDelegatorsOptionsStruct {
+    return changetype<CreditActionCreditDelegatorsOptionsStruct>(
+      this[6].toTuple()
+    );
   }
 
+  get repaymentOptions(): CreditActionCreditRepaymentOptionsStruct {
+    return changetype<CreditActionCreditRepaymentOptionsStruct>(
+      this[7].toTuple()
+    );
+  }
+}
+
+export class CreditActionCreditDelegatorsOptionsStruct extends ethereum.Tuple {
   get delegatorsNr(): BigInt {
-    return this[7].toBigInt();
+    return this[0].toBigInt();
   }
 
   get delegatorsRequired(): BigInt {
-    return this[8].toBigInt();
+    return this[1].toBigInt();
   }
 
   get delegators(): Array<Address> {
-    return this[9].toAddressArray();
+    return this[2].toAddressArray();
   }
 
   get delegatorsAmount(): BigInt {
-    return this[10].toBigInt();
+    return this[3].toBigInt();
   }
 
-  get gelatoTaskId(): Bytes {
-    return this[11].toBytes();
+  get delegatorsGlobalFee(): BigInt {
+    return this[4].toBigInt();
+  }
+}
+
+export class CreditActionCreditRepaymentOptionsStruct extends ethereum.Tuple {
+  get nrInstallments(): BigInt {
+    return this[0].toBigInt();
+  }
+
+  get interval(): BigInt {
+    return this[1].toBigInt();
+  }
+
+  get installment(): BigInt {
+    return this[2].toBigInt();
+  }
+
+  get amount(): BigInt {
+    return this[3].toBigInt();
+  }
+
+  get rate(): BigInt {
+    return this[4].toBigInt();
+  }
+
+  get totalYield(): BigInt {
+    return this[5].toBigInt();
+  }
+
+  get alreadyPayed(): BigInt {
+    return this[6].toBigInt();
+  }
+
+  get GelatoRepaymentTaskId(): Bytes {
+    return this[7].toBytes();
   }
 }
 
@@ -143,32 +187,76 @@ export class CreditApprovedCreditStruct extends ethereum.Tuple {
     return this[4].toI32();
   }
 
-  get amount(): BigInt {
-    return this[5].toBigInt();
+  get gelatoTaskId(): Bytes {
+    return this[5].toBytes();
   }
 
-  get rate(): BigInt {
-    return this[6].toBigInt();
+  get delegatorsOptions(): CreditApprovedCreditDelegatorsOptionsStruct {
+    return changetype<CreditApprovedCreditDelegatorsOptionsStruct>(
+      this[6].toTuple()
+    );
   }
 
+  get repaymentOptions(): CreditApprovedCreditRepaymentOptionsStruct {
+    return changetype<CreditApprovedCreditRepaymentOptionsStruct>(
+      this[7].toTuple()
+    );
+  }
+}
+
+export class CreditApprovedCreditDelegatorsOptionsStruct extends ethereum.Tuple {
   get delegatorsNr(): BigInt {
-    return this[7].toBigInt();
+    return this[0].toBigInt();
   }
 
   get delegatorsRequired(): BigInt {
-    return this[8].toBigInt();
+    return this[1].toBigInt();
   }
 
   get delegators(): Array<Address> {
-    return this[9].toAddressArray();
+    return this[2].toAddressArray();
   }
 
   get delegatorsAmount(): BigInt {
-    return this[10].toBigInt();
+    return this[3].toBigInt();
   }
 
-  get gelatoTaskId(): Bytes {
-    return this[11].toBytes();
+  get delegatorsGlobalFee(): BigInt {
+    return this[4].toBigInt();
+  }
+}
+
+export class CreditApprovedCreditRepaymentOptionsStruct extends ethereum.Tuple {
+  get nrInstallments(): BigInt {
+    return this[0].toBigInt();
+  }
+
+  get interval(): BigInt {
+    return this[1].toBigInt();
+  }
+
+  get installment(): BigInt {
+    return this[2].toBigInt();
+  }
+
+  get amount(): BigInt {
+    return this[3].toBigInt();
+  }
+
+  get rate(): BigInt {
+    return this[4].toBigInt();
+  }
+
+  get totalYield(): BigInt {
+    return this[5].toBigInt();
+  }
+
+  get alreadyPayed(): BigInt {
+    return this[6].toBigInt();
+  }
+
+  get GelatoRepaymentTaskId(): Bytes {
+    return this[7].toBytes();
   }
 }
 
@@ -213,32 +301,76 @@ export class CreditCancelledCreditStruct extends ethereum.Tuple {
     return this[4].toI32();
   }
 
-  get amount(): BigInt {
-    return this[5].toBigInt();
+  get gelatoTaskId(): Bytes {
+    return this[5].toBytes();
   }
 
-  get rate(): BigInt {
-    return this[6].toBigInt();
+  get delegatorsOptions(): CreditCancelledCreditDelegatorsOptionsStruct {
+    return changetype<CreditCancelledCreditDelegatorsOptionsStruct>(
+      this[6].toTuple()
+    );
   }
 
+  get repaymentOptions(): CreditCancelledCreditRepaymentOptionsStruct {
+    return changetype<CreditCancelledCreditRepaymentOptionsStruct>(
+      this[7].toTuple()
+    );
+  }
+}
+
+export class CreditCancelledCreditDelegatorsOptionsStruct extends ethereum.Tuple {
   get delegatorsNr(): BigInt {
-    return this[7].toBigInt();
+    return this[0].toBigInt();
   }
 
   get delegatorsRequired(): BigInt {
-    return this[8].toBigInt();
+    return this[1].toBigInt();
   }
 
   get delegators(): Array<Address> {
-    return this[9].toAddressArray();
+    return this[2].toAddressArray();
   }
 
   get delegatorsAmount(): BigInt {
-    return this[10].toBigInt();
+    return this[3].toBigInt();
   }
 
-  get gelatoTaskId(): Bytes {
-    return this[11].toBytes();
+  get delegatorsGlobalFee(): BigInt {
+    return this[4].toBigInt();
+  }
+}
+
+export class CreditCancelledCreditRepaymentOptionsStruct extends ethereum.Tuple {
+  get nrInstallments(): BigInt {
+    return this[0].toBigInt();
+  }
+
+  get interval(): BigInt {
+    return this[1].toBigInt();
+  }
+
+  get installment(): BigInt {
+    return this[2].toBigInt();
+  }
+
+  get amount(): BigInt {
+    return this[3].toBigInt();
+  }
+
+  get rate(): BigInt {
+    return this[4].toBigInt();
+  }
+
+  get totalYield(): BigInt {
+    return this[5].toBigInt();
+  }
+
+  get alreadyPayed(): BigInt {
+    return this[6].toBigInt();
+  }
+
+  get GelatoRepaymentTaskId(): Bytes {
+    return this[7].toBytes();
   }
 }
 
@@ -286,76 +418,6 @@ export class CreditCheckOut__Params {
   }
 }
 
-export class CreditDiscarded extends ethereum.Event {
-  get params(): CreditDiscarded__Params {
-    return new CreditDiscarded__Params(this);
-  }
-}
-
-export class CreditDiscarded__Params {
-  _event: CreditDiscarded;
-
-  constructor(event: CreditDiscarded) {
-    this._event = event;
-  }
-
-  get credit(): CreditDiscardedCreditStruct {
-    return changetype<CreditDiscardedCreditStruct>(
-      this._event.parameters[0].value.toTuple()
-    );
-  }
-}
-
-export class CreditDiscardedCreditStruct extends ethereum.Tuple {
-  get id(): BigInt {
-    return this[0].toBigInt();
-  }
-
-  get requester(): Address {
-    return this[1].toAddress();
-  }
-
-  get initTimestamp(): BigInt {
-    return this[2].toBigInt();
-  }
-
-  get finishPhaseTimestamp(): BigInt {
-    return this[3].toBigInt();
-  }
-
-  get status(): i32 {
-    return this[4].toI32();
-  }
-
-  get amount(): BigInt {
-    return this[5].toBigInt();
-  }
-
-  get rate(): BigInt {
-    return this[6].toBigInt();
-  }
-
-  get delegatorsNr(): BigInt {
-    return this[7].toBigInt();
-  }
-
-  get delegatorsRequired(): BigInt {
-    return this[8].toBigInt();
-  }
-
-  get delegators(): Array<Address> {
-    return this[9].toAddressArray();
-  }
-
-  get delegatorsAmount(): BigInt {
-    return this[10].toBigInt();
-  }
-
-  get gelatoTaskId(): Bytes {
-    return this[11].toBytes();
-  }
-}
-
 export class CreditRejected extends ethereum.Event {
   get params(): CreditRejected__Params {
     return new CreditRejected__Params(this);
@@ -397,32 +459,76 @@ export class CreditRejectedCreditStruct extends ethereum.Tuple {
     return this[4].toI32();
   }
 
-  get amount(): BigInt {
-    return this[5].toBigInt();
+  get gelatoTaskId(): Bytes {
+    return this[5].toBytes();
   }
 
-  get rate(): BigInt {
-    return this[6].toBigInt();
+  get delegatorsOptions(): CreditRejectedCreditDelegatorsOptionsStruct {
+    return changetype<CreditRejectedCreditDelegatorsOptionsStruct>(
+      this[6].toTuple()
+    );
   }
 
+  get repaymentOptions(): CreditRejectedCreditRepaymentOptionsStruct {
+    return changetype<CreditRejectedCreditRepaymentOptionsStruct>(
+      this[7].toTuple()
+    );
+  }
+}
+
+export class CreditRejectedCreditDelegatorsOptionsStruct extends ethereum.Tuple {
   get delegatorsNr(): BigInt {
-    return this[7].toBigInt();
+    return this[0].toBigInt();
   }
 
   get delegatorsRequired(): BigInt {
-    return this[8].toBigInt();
+    return this[1].toBigInt();
   }
 
   get delegators(): Array<Address> {
-    return this[9].toAddressArray();
+    return this[2].toAddressArray();
   }
 
   get delegatorsAmount(): BigInt {
-    return this[10].toBigInt();
+    return this[3].toBigInt();
   }
 
-  get gelatoTaskId(): Bytes {
-    return this[11].toBytes();
+  get delegatorsGlobalFee(): BigInt {
+    return this[4].toBigInt();
+  }
+}
+
+export class CreditRejectedCreditRepaymentOptionsStruct extends ethereum.Tuple {
+  get nrInstallments(): BigInt {
+    return this[0].toBigInt();
+  }
+
+  get interval(): BigInt {
+    return this[1].toBigInt();
+  }
+
+  get installment(): BigInt {
+    return this[2].toBigInt();
+  }
+
+  get amount(): BigInt {
+    return this[3].toBigInt();
+  }
+
+  get rate(): BigInt {
+    return this[4].toBigInt();
+  }
+
+  get totalYield(): BigInt {
+    return this[5].toBigInt();
+  }
+
+  get alreadyPayed(): BigInt {
+    return this[6].toBigInt();
+  }
+
+  get GelatoRepaymentTaskId(): Bytes {
+    return this[7].toBytes();
   }
 }
 
@@ -467,32 +573,76 @@ export class CreditRequestedCreditStruct extends ethereum.Tuple {
     return this[4].toI32();
   }
 
-  get amount(): BigInt {
-    return this[5].toBigInt();
+  get gelatoTaskId(): Bytes {
+    return this[5].toBytes();
   }
 
-  get rate(): BigInt {
-    return this[6].toBigInt();
+  get delegatorsOptions(): CreditRequestedCreditDelegatorsOptionsStruct {
+    return changetype<CreditRequestedCreditDelegatorsOptionsStruct>(
+      this[6].toTuple()
+    );
   }
 
+  get repaymentOptions(): CreditRequestedCreditRepaymentOptionsStruct {
+    return changetype<CreditRequestedCreditRepaymentOptionsStruct>(
+      this[7].toTuple()
+    );
+  }
+}
+
+export class CreditRequestedCreditDelegatorsOptionsStruct extends ethereum.Tuple {
   get delegatorsNr(): BigInt {
-    return this[7].toBigInt();
+    return this[0].toBigInt();
   }
 
   get delegatorsRequired(): BigInt {
-    return this[8].toBigInt();
+    return this[1].toBigInt();
   }
 
   get delegators(): Array<Address> {
-    return this[9].toAddressArray();
+    return this[2].toAddressArray();
   }
 
   get delegatorsAmount(): BigInt {
-    return this[10].toBigInt();
+    return this[3].toBigInt();
   }
 
-  get gelatoTaskId(): Bytes {
-    return this[11].toBytes();
+  get delegatorsGlobalFee(): BigInt {
+    return this[4].toBigInt();
+  }
+}
+
+export class CreditRequestedCreditRepaymentOptionsStruct extends ethereum.Tuple {
+  get nrInstallments(): BigInt {
+    return this[0].toBigInt();
+  }
+
+  get interval(): BigInt {
+    return this[1].toBigInt();
+  }
+
+  get installment(): BigInt {
+    return this[2].toBigInt();
+  }
+
+  get amount(): BigInt {
+    return this[3].toBigInt();
+  }
+
+  get rate(): BigInt {
+    return this[4].toBigInt();
+  }
+
+  get totalYield(): BigInt {
+    return this[5].toBigInt();
+  }
+
+  get alreadyPayed(): BigInt {
+    return this[6].toBigInt();
+  }
+
+  get GelatoRepaymentTaskId(): Bytes {
+    return this[7].toBytes();
   }
 }
 
@@ -687,28 +837,88 @@ export class PoolUpdatedPoolStruct extends ethereum.Tuple {
     return this[4].toBigInt();
   }
 
-  get totalYieldStake(): BigInt {
+  get depositIndex(): BigInt {
     return this[5].toBigInt();
   }
 
-  get depositIndex(): BigInt {
+  get flowIndex(): BigInt {
     return this[6].toBigInt();
   }
 
-  get flowIndex(): BigInt {
+  get totalYieldStake(): BigInt {
     return this[7].toBigInt();
   }
 
-  get totalDelegated(): BigInt {
+  get totalStaked(): BigInt {
     return this[8].toBigInt();
   }
 
+  get delegation(): PoolUpdatedPoolDelegationStruct {
+    return changetype<PoolUpdatedPoolDelegationStruct>(this[9].toTuple());
+  }
+
   get nrMembers(): BigInt {
-    return this[9].toBigInt();
+    return this[10].toBigInt();
+  }
+}
+
+export class PoolUpdatedPoolDelegationStruct extends ethereum.Tuple {
+  get totalDelegated(): BigInt {
+    return this[0].toBigInt();
+  }
+
+  get percentageLocked(): BigInt {
+    return this[1].toBigInt();
+  }
+
+  get totalYieldCredit(): BigInt {
+    return this[2].toBigInt();
+  }
+
+  get liquidatedIndex(): BigInt {
+    return this[3].toBigInt();
+  }
+
+  get totalLiquidated(): BigInt {
+    return this[4].toBigInt();
   }
 }
 
 export class Floowdy__checkCreditPeriodResult {
+  value0: boolean;
+  value1: Bytes;
+
+  constructor(value0: boolean, value1: Bytes) {
+    this.value0 = value0;
+    this.value1 = value1;
+  }
+
+  toMap(): TypedMap<string, ethereum.Value> {
+    let map = new TypedMap<string, ethereum.Value>();
+    map.set("value0", ethereum.Value.fromBoolean(this.value0));
+    map.set("value1", ethereum.Value.fromBytes(this.value1));
+    return map;
+  }
+}
+
+export class Floowdy__checkRepaymentResult {
+  value0: boolean;
+  value1: Bytes;
+
+  constructor(value0: boolean, value1: Bytes) {
+    this.value0 = value0;
+    this.value1 = value1;
+  }
+
+  toMap(): TypedMap<string, ethereum.Value> {
+    let map = new TypedMap<string, ethereum.Value>();
+    map.set("value0", ethereum.Value.fromBoolean(this.value0));
+    map.set("value1", ethereum.Value.fromBytes(this.value1));
+    return map;
+  }
+}
+
+export class Floowdy__checkStakeAvailableResult {
   value0: boolean;
   value1: Bytes;
 
@@ -742,18 +952,71 @@ export class Floowdy__checkStopStreamResult {
   }
 }
 
+export class Floowdy__creditsByIdResultDelegatorsOptionsStruct extends ethereum.Tuple {
+  get delegatorsNr(): BigInt {
+    return this[0].toBigInt();
+  }
+
+  get delegatorsRequired(): BigInt {
+    return this[1].toBigInt();
+  }
+
+  get delegators(): Array<Address> {
+    return this[2].toAddressArray();
+  }
+
+  get delegatorsAmount(): BigInt {
+    return this[3].toBigInt();
+  }
+
+  get delegatorsGlobalFee(): BigInt {
+    return this[4].toBigInt();
+  }
+}
+
+export class Floowdy__creditsByIdResultRepaymentOptionsStruct extends ethereum.Tuple {
+  get nrInstallments(): BigInt {
+    return this[0].toBigInt();
+  }
+
+  get interval(): BigInt {
+    return this[1].toBigInt();
+  }
+
+  get installment(): BigInt {
+    return this[2].toBigInt();
+  }
+
+  get amount(): BigInt {
+    return this[3].toBigInt();
+  }
+
+  get rate(): BigInt {
+    return this[4].toBigInt();
+  }
+
+  get totalYield(): BigInt {
+    return this[5].toBigInt();
+  }
+
+  get alreadyPayed(): BigInt {
+    return this[6].toBigInt();
+  }
+
+  get GelatoRepaymentTaskId(): Bytes {
+    return this[7].toBytes();
+  }
+}
+
 export class Floowdy__creditsByIdResult {
   value0: BigInt;
   value1: Address;
   value2: BigInt;
   value3: BigInt;
   value4: i32;
-  value5: BigInt;
-  value6: BigInt;
-  value7: BigInt;
-  value8: BigInt;
-  value9: BigInt;
-  value10: Bytes;
+  value5: Bytes;
+  value6: Floowdy__creditsByIdResultDelegatorsOptionsStruct;
+  value7: Floowdy__creditsByIdResultRepaymentOptionsStruct;
 
   constructor(
     value0: BigInt,
@@ -761,12 +1024,9 @@ export class Floowdy__creditsByIdResult {
     value2: BigInt,
     value3: BigInt,
     value4: i32,
-    value5: BigInt,
-    value6: BigInt,
-    value7: BigInt,
-    value8: BigInt,
-    value9: BigInt,
-    value10: Bytes
+    value5: Bytes,
+    value6: Floowdy__creditsByIdResultDelegatorsOptionsStruct,
+    value7: Floowdy__creditsByIdResultRepaymentOptionsStruct
   ) {
     this.value0 = value0;
     this.value1 = value1;
@@ -776,9 +1036,6 @@ export class Floowdy__creditsByIdResult {
     this.value5 = value5;
     this.value6 = value6;
     this.value7 = value7;
-    this.value8 = value8;
-    this.value9 = value9;
-    this.value10 = value10;
   }
 
   toMap(): TypedMap<string, ethereum.Value> {
@@ -791,12 +1048,9 @@ export class Floowdy__creditsByIdResult {
       "value4",
       ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(this.value4))
     );
-    map.set("value5", ethereum.Value.fromUnsignedBigInt(this.value5));
-    map.set("value6", ethereum.Value.fromUnsignedBigInt(this.value6));
-    map.set("value7", ethereum.Value.fromUnsignedBigInt(this.value7));
-    map.set("value8", ethereum.Value.fromUnsignedBigInt(this.value8));
-    map.set("value9", ethereum.Value.fromUnsignedBigInt(this.value9));
-    map.set("value10", ethereum.Value.fromFixedBytes(this.value10));
+    map.set("value5", ethereum.Value.fromFixedBytes(this.value5));
+    map.set("value6", ethereum.Value.fromTuple(this.value6));
+    map.set("value7", ethereum.Value.fromTuple(this.value7));
     return map;
   }
 }
@@ -853,6 +1107,28 @@ export class Floowdy__membersResult {
   }
 }
 
+export class Floowdy__poolByTimestampResultDelegationStruct extends ethereum.Tuple {
+  get totalDelegated(): BigInt {
+    return this[0].toBigInt();
+  }
+
+  get percentageLocked(): BigInt {
+    return this[1].toBigInt();
+  }
+
+  get totalYieldCredit(): BigInt {
+    return this[2].toBigInt();
+  }
+
+  get liquidatedIndex(): BigInt {
+    return this[3].toBigInt();
+  }
+
+  get totalLiquidated(): BigInt {
+    return this[4].toBigInt();
+  }
+}
+
 export class Floowdy__poolByTimestampResult {
   value0: BigInt;
   value1: BigInt;
@@ -863,7 +1139,8 @@ export class Floowdy__poolByTimestampResult {
   value6: BigInt;
   value7: BigInt;
   value8: BigInt;
-  value9: BigInt;
+  value9: Floowdy__poolByTimestampResultDelegationStruct;
+  value10: BigInt;
 
   constructor(
     value0: BigInt,
@@ -875,7 +1152,8 @@ export class Floowdy__poolByTimestampResult {
     value6: BigInt,
     value7: BigInt,
     value8: BigInt,
-    value9: BigInt
+    value9: Floowdy__poolByTimestampResultDelegationStruct,
+    value10: BigInt
   ) {
     this.value0 = value0;
     this.value1 = value1;
@@ -887,6 +1165,7 @@ export class Floowdy__poolByTimestampResult {
     this.value7 = value7;
     this.value8 = value8;
     this.value9 = value9;
+    this.value10 = value10;
   }
 
   toMap(): TypedMap<string, ethereum.Value> {
@@ -900,7 +1179,8 @@ export class Floowdy__poolByTimestampResult {
     map.set("value6", ethereum.Value.fromUnsignedBigInt(this.value6));
     map.set("value7", ethereum.Value.fromUnsignedBigInt(this.value7));
     map.set("value8", ethereum.Value.fromUnsignedBigInt(this.value8));
-    map.set("value9", ethereum.Value.fromUnsignedBigInt(this.value9));
+    map.set("value9", ethereum.Value.fromTuple(this.value9));
+    map.set("value10", ethereum.Value.fromUnsignedBigInt(this.value10));
     return map;
   }
 }
@@ -1267,6 +1547,72 @@ export class Floowdy extends ethereum.SmartContract {
     );
   }
 
+  checkRepayment(creditId: BigInt): Floowdy__checkRepaymentResult {
+    let result = super.call(
+      "checkRepayment",
+      "checkRepayment(uint256):(bool,bytes)",
+      [ethereum.Value.fromUnsignedBigInt(creditId)]
+    );
+
+    return new Floowdy__checkRepaymentResult(
+      result[0].toBoolean(),
+      result[1].toBytes()
+    );
+  }
+
+  try_checkRepayment(
+    creditId: BigInt
+  ): ethereum.CallResult<Floowdy__checkRepaymentResult> {
+    let result = super.tryCall(
+      "checkRepayment",
+      "checkRepayment(uint256):(bool,bytes)",
+      [ethereum.Value.fromUnsignedBigInt(creditId)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(
+      new Floowdy__checkRepaymentResult(
+        value[0].toBoolean(),
+        value[1].toBytes()
+      )
+    );
+  }
+
+  checkStakeAvailable(): Floowdy__checkStakeAvailableResult {
+    let result = super.call(
+      "checkStakeAvailable",
+      "checkStakeAvailable():(bool,bytes)",
+      []
+    );
+
+    return new Floowdy__checkStakeAvailableResult(
+      result[0].toBoolean(),
+      result[1].toBytes()
+    );
+  }
+
+  try_checkStakeAvailable(): ethereum.CallResult<
+    Floowdy__checkStakeAvailableResult
+  > {
+    let result = super.tryCall(
+      "checkStakeAvailable",
+      "checkStakeAvailable():(bool,bytes)",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(
+      new Floowdy__checkStakeAvailableResult(
+        value[0].toBoolean(),
+        value[1].toBytes()
+      )
+    );
+  }
+
   checkStopStream(_receiver: Address): Floowdy__checkStopStreamResult {
     let result = super.call(
       "checkStopStream",
@@ -1326,7 +1672,7 @@ export class Floowdy extends ethereum.SmartContract {
   creditsById(param0: BigInt): Floowdy__creditsByIdResult {
     let result = super.call(
       "creditsById",
-      "creditsById(uint256):(uint256,address,uint256,uint256,uint8,uint256,uint256,uint256,uint256,uint256,bytes32)",
+      "creditsById(uint256):(uint256,address,uint256,uint256,uint8,bytes32,(uint256,uint256,address[],uint256,uint256),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,bytes32))",
       [ethereum.Value.fromUnsignedBigInt(param0)]
     );
 
@@ -1336,12 +1682,13 @@ export class Floowdy extends ethereum.SmartContract {
       result[2].toBigInt(),
       result[3].toBigInt(),
       result[4].toI32(),
-      result[5].toBigInt(),
-      result[6].toBigInt(),
-      result[7].toBigInt(),
-      result[8].toBigInt(),
-      result[9].toBigInt(),
-      result[10].toBytes()
+      result[5].toBytes(),
+      changetype<Floowdy__creditsByIdResultDelegatorsOptionsStruct>(
+        result[6].toTuple()
+      ),
+      changetype<Floowdy__creditsByIdResultRepaymentOptionsStruct>(
+        result[7].toTuple()
+      )
     );
   }
 
@@ -1350,7 +1697,7 @@ export class Floowdy extends ethereum.SmartContract {
   ): ethereum.CallResult<Floowdy__creditsByIdResult> {
     let result = super.tryCall(
       "creditsById",
-      "creditsById(uint256):(uint256,address,uint256,uint256,uint8,uint256,uint256,uint256,uint256,uint256,bytes32)",
+      "creditsById(uint256):(uint256,address,uint256,uint256,uint8,bytes32,(uint256,uint256,address[],uint256,uint256),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,bytes32))",
       [ethereum.Value.fromUnsignedBigInt(param0)]
     );
     if (result.reverted) {
@@ -1364,12 +1711,13 @@ export class Floowdy extends ethereum.SmartContract {
         value[2].toBigInt(),
         value[3].toBigInt(),
         value[4].toI32(),
-        value[5].toBigInt(),
-        value[6].toBigInt(),
-        value[7].toBigInt(),
-        value[8].toBigInt(),
-        value[9].toBigInt(),
-        value[10].toBytes()
+        value[5].toBytes(),
+        changetype<Floowdy__creditsByIdResultDelegatorsOptionsStruct>(
+          value[6].toTuple()
+        ),
+        changetype<Floowdy__creditsByIdResultRepaymentOptionsStruct>(
+          value[7].toTuple()
+        )
       )
     );
   }
@@ -1605,7 +1953,7 @@ export class Floowdy extends ethereum.SmartContract {
   poolByTimestamp(param0: BigInt): Floowdy__poolByTimestampResult {
     let result = super.call(
       "poolByTimestamp",
-      "poolByTimestamp(uint256):(uint256,uint256,int96,uint256,uint256,uint256,uint256,uint256,uint256,uint256)",
+      "poolByTimestamp(uint256):(uint256,uint256,int96,uint256,uint256,uint256,uint256,uint256,uint256,(uint256,uint256,uint256,uint256,uint256),uint256)",
       [ethereum.Value.fromUnsignedBigInt(param0)]
     );
 
@@ -1619,7 +1967,10 @@ export class Floowdy extends ethereum.SmartContract {
       result[6].toBigInt(),
       result[7].toBigInt(),
       result[8].toBigInt(),
-      result[9].toBigInt()
+      changetype<Floowdy__poolByTimestampResultDelegationStruct>(
+        result[9].toTuple()
+      ),
+      result[10].toBigInt()
     );
   }
 
@@ -1628,7 +1979,7 @@ export class Floowdy extends ethereum.SmartContract {
   ): ethereum.CallResult<Floowdy__poolByTimestampResult> {
     let result = super.tryCall(
       "poolByTimestamp",
-      "poolByTimestamp(uint256):(uint256,uint256,int96,uint256,uint256,uint256,uint256,uint256,uint256,uint256)",
+      "poolByTimestamp(uint256):(uint256,uint256,int96,uint256,uint256,uint256,uint256,uint256,uint256,(uint256,uint256,uint256,uint256,uint256),uint256)",
       [ethereum.Value.fromUnsignedBigInt(param0)]
     );
     if (result.reverted) {
@@ -1646,7 +1997,10 @@ export class Floowdy extends ethereum.SmartContract {
         value[6].toBigInt(),
         value[7].toBigInt(),
         value[8].toBigInt(),
-        value[9].toBigInt()
+        changetype<Floowdy__poolByTimestampResultDelegationStruct>(
+          value[9].toTuple()
+        ),
+        value[10].toBigInt()
       )
     );
   }
@@ -1710,7 +2064,9 @@ export class Floowdy extends ethereum.SmartContract {
     return result[0].toBigInt();
   }
 
-  try_totalYieldStakeEarnedMember(_member: Address): ethereum.CallResult<BigInt> {
+  try_totalYieldStakeEarnedMember(
+    _member: Address
+  ): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
       "totalYieldStakeEarnedMember",
       "totalYieldStakeEarnedMember(address):(uint256)",
@@ -2079,6 +2435,36 @@ export class CancelTaskCall__Outputs {
   }
 }
 
+export class CreditApprovedCall extends ethereum.Call {
+  get inputs(): CreditApprovedCall__Inputs {
+    return new CreditApprovedCall__Inputs(this);
+  }
+
+  get outputs(): CreditApprovedCall__Outputs {
+    return new CreditApprovedCall__Outputs(this);
+  }
+}
+
+export class CreditApprovedCall__Inputs {
+  _call: CreditApprovedCall;
+
+  constructor(call: CreditApprovedCall) {
+    this._call = call;
+  }
+
+  get creditId(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+}
+
+export class CreditApprovedCall__Outputs {
+  _call: CreditApprovedCall;
+
+  constructor(call: CreditApprovedCall) {
+    this._call = call;
+  }
+}
+
 export class CreditCheckInCall extends ethereum.Call {
   get inputs(): CreditCheckInCall__Inputs {
     return new CreditCheckInCall__Inputs(this);
@@ -2135,6 +2521,32 @@ export class CreditCheckOutCall__Outputs {
   _call: CreditCheckOutCall;
 
   constructor(call: CreditCheckOutCall) {
+    this._call = call;
+  }
+}
+
+export class GetAaveDataCall extends ethereum.Call {
+  get inputs(): GetAaveDataCall__Inputs {
+    return new GetAaveDataCall__Inputs(this);
+  }
+
+  get outputs(): GetAaveDataCall__Outputs {
+    return new GetAaveDataCall__Outputs(this);
+  }
+}
+
+export class GetAaveDataCall__Inputs {
+  _call: GetAaveDataCall;
+
+  constructor(call: GetAaveDataCall) {
+    this._call = call;
+  }
+}
+
+export class GetAaveDataCall__Outputs {
+  _call: GetAaveDataCall;
+
+  constructor(call: GetAaveDataCall) {
     this._call = call;
   }
 }
@@ -2244,6 +2656,14 @@ export class RequestCreditCall__Inputs {
 
   get rate(): BigInt {
     return this._call.inputValues[1].value.toBigInt();
+  }
+
+  get interval(): BigInt {
+    return this._call.inputValues[2].value.toBigInt();
+  }
+
+  get nrInstallments(): BigInt {
+    return this._call.inputValues[3].value.toBigInt();
   }
 }
 
@@ -2358,7 +2778,7 @@ export class SetVotingPeriodCall__Inputs {
     this._call = call;
   }
 
-  get _VOTING_PERIOD(): BigInt {
+  get _CREDIT_PHASES_INTERVAL(): BigInt {
     return this._call.inputValues[0].value.toBigInt();
   }
 }
@@ -2427,6 +2847,32 @@ export class StopStreamExecCall__Outputs {
   _call: StopStreamExecCall;
 
   constructor(call: StopStreamExecCall) {
+    this._call = call;
+  }
+}
+
+export class SupplyStakeToAaveCall extends ethereum.Call {
+  get inputs(): SupplyStakeToAaveCall__Inputs {
+    return new SupplyStakeToAaveCall__Inputs(this);
+  }
+
+  get outputs(): SupplyStakeToAaveCall__Outputs {
+    return new SupplyStakeToAaveCall__Outputs(this);
+  }
+}
+
+export class SupplyStakeToAaveCall__Inputs {
+  _call: SupplyStakeToAaveCall;
+
+  constructor(call: SupplyStakeToAaveCall) {
+    this._call = call;
+  }
+}
+
+export class SupplyStakeToAaveCall__Outputs {
+  _call: SupplyStakeToAaveCall;
+
+  constructor(call: SupplyStakeToAaveCall) {
     this._call = call;
   }
 }
@@ -2507,6 +2953,36 @@ export class TransferOwnershipCall__Outputs {
   _call: TransferOwnershipCall;
 
   constructor(call: TransferOwnershipCall) {
+    this._call = call;
+  }
+}
+
+export class TriggerRepaymentCall extends ethereum.Call {
+  get inputs(): TriggerRepaymentCall__Inputs {
+    return new TriggerRepaymentCall__Inputs(this);
+  }
+
+  get outputs(): TriggerRepaymentCall__Outputs {
+    return new TriggerRepaymentCall__Outputs(this);
+  }
+}
+
+export class TriggerRepaymentCall__Inputs {
+  _call: TriggerRepaymentCall;
+
+  constructor(call: TriggerRepaymentCall) {
+    this._call = call;
+  }
+
+  get creditId(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+}
+
+export class TriggerRepaymentCall__Outputs {
+  _call: TriggerRepaymentCall;
+
+  constructor(call: TriggerRepaymentCall) {
     this._call = call;
   }
 }

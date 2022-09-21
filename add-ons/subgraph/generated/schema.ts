@@ -182,11 +182,15 @@ export class Pool extends Entity {
     this.set("totalDeposit", Value.fromBigInt(BigInt.zero()));
     this.set("totalFlow", Value.fromBigInt(BigInt.zero()));
     this.set("totalYieldStake", Value.fromBigInt(BigInt.zero()));
-    this.set("totalDelegated", Value.fromBigInt(BigInt.zero()));
     this.set("depositIndex", Value.fromBigInt(BigInt.zero()));
     this.set("flowIndex", Value.fromBigInt(BigInt.zero()));
+    this.set("totalStaked", Value.fromBigInt(BigInt.zero()));
+    this.set("totalDelegated", Value.fromBigInt(BigInt.zero()));
+    this.set("percentageLocked", Value.fromBigInt(BigInt.zero()));
+    this.set("totalYieldCredit", Value.fromBigInt(BigInt.zero()));
+    this.set("liquidatedIndex", Value.fromBigInt(BigInt.zero()));
+    this.set("totalLiquidated", Value.fromBigInt(BigInt.zero()));
     this.set("nrMembers", Value.fromBigInt(BigInt.zero()));
-    this.set("date", Value.fromString(""));
   }
 
   save(): void {
@@ -260,15 +264,6 @@ export class Pool extends Entity {
     this.set("totalYieldStake", Value.fromBigInt(value));
   }
 
-  get totalDelegated(): BigInt {
-    let value = this.get("totalDelegated");
-    return value!.toBigInt();
-  }
-
-  set totalDelegated(value: BigInt) {
-    this.set("totalDelegated", Value.fromBigInt(value));
-  }
-
   get depositIndex(): BigInt {
     let value = this.get("depositIndex");
     return value!.toBigInt();
@@ -287,6 +282,60 @@ export class Pool extends Entity {
     this.set("flowIndex", Value.fromBigInt(value));
   }
 
+  get totalStaked(): BigInt {
+    let value = this.get("totalStaked");
+    return value!.toBigInt();
+  }
+
+  set totalStaked(value: BigInt) {
+    this.set("totalStaked", Value.fromBigInt(value));
+  }
+
+  get totalDelegated(): BigInt {
+    let value = this.get("totalDelegated");
+    return value!.toBigInt();
+  }
+
+  set totalDelegated(value: BigInt) {
+    this.set("totalDelegated", Value.fromBigInt(value));
+  }
+
+  get percentageLocked(): BigInt {
+    let value = this.get("percentageLocked");
+    return value!.toBigInt();
+  }
+
+  set percentageLocked(value: BigInt) {
+    this.set("percentageLocked", Value.fromBigInt(value));
+  }
+
+  get totalYieldCredit(): BigInt {
+    let value = this.get("totalYieldCredit");
+    return value!.toBigInt();
+  }
+
+  set totalYieldCredit(value: BigInt) {
+    this.set("totalYieldCredit", Value.fromBigInt(value));
+  }
+
+  get liquidatedIndex(): BigInt {
+    let value = this.get("liquidatedIndex");
+    return value!.toBigInt();
+  }
+
+  set liquidatedIndex(value: BigInt) {
+    this.set("liquidatedIndex", Value.fromBigInt(value));
+  }
+
+  get totalLiquidated(): BigInt {
+    let value = this.get("totalLiquidated");
+    return value!.toBigInt();
+  }
+
+  set totalLiquidated(value: BigInt) {
+    this.set("totalLiquidated", Value.fromBigInt(value));
+  }
+
   get nrMembers(): BigInt {
     let value = this.get("nrMembers");
     return value!.toBigInt();
@@ -294,15 +343,6 @@ export class Pool extends Entity {
 
   set nrMembers(value: BigInt) {
     this.set("nrMembers", Value.fromBigInt(value));
-  }
-
-  get date(): string {
-    let value = this.get("date");
-    return value!.toString();
-  }
-
-  set date(value: string) {
-    this.set("date", Value.fromString(value));
   }
 }
 
@@ -314,12 +354,20 @@ export class Credit extends Entity {
     this.set("requester", Value.fromString(""));
     this.set("initTimestamp", Value.fromBigInt(BigInt.zero()));
     this.set("finishPhaseTimestamp", Value.fromBigInt(BigInt.zero()));
+    this.set("gelatoTaskId", Value.fromString(""));
     this.set("status", Value.fromBigInt(BigInt.zero()));
+    this.set("nrInstallments", Value.fromBigInt(BigInt.zero()));
+    this.set("interval", Value.fromBigInt(BigInt.zero()));
+    this.set("installment", Value.fromBigInt(BigInt.zero()));
     this.set("amount", Value.fromBigInt(BigInt.zero()));
     this.set("rate", Value.fromBigInt(BigInt.zero()));
+    this.set("totalYield", Value.fromBigInt(BigInt.zero()));
+    this.set("alreadyPayed", Value.fromBigInt(BigInt.zero()));
+    this.set("GelatoRepaymentTaskId", Value.fromString(""));
     this.set("delegatorsNr", Value.fromBigInt(BigInt.zero()));
+    this.set("delegatorsRequired", Value.fromBigInt(BigInt.zero()));
     this.set("delegatorsAmount", Value.fromBigInt(BigInt.zero()));
-    this.set("gelatoTaskId", Value.fromString(""));
+    this.set("delegatorsGlobalFee", Value.fromBigInt(BigInt.zero()));
   }
 
   save(): void {
@@ -375,6 +423,15 @@ export class Credit extends Entity {
     this.set("finishPhaseTimestamp", Value.fromBigInt(value));
   }
 
+  get gelatoTaskId(): string {
+    let value = this.get("gelatoTaskId");
+    return value!.toString();
+  }
+
+  set gelatoTaskId(value: string) {
+    this.set("gelatoTaskId", Value.fromString(value));
+  }
+
   get status(): BigInt {
     let value = this.get("status");
     return value!.toBigInt();
@@ -382,6 +439,33 @@ export class Credit extends Entity {
 
   set status(value: BigInt) {
     this.set("status", Value.fromBigInt(value));
+  }
+
+  get nrInstallments(): BigInt {
+    let value = this.get("nrInstallments");
+    return value!.toBigInt();
+  }
+
+  set nrInstallments(value: BigInt) {
+    this.set("nrInstallments", Value.fromBigInt(value));
+  }
+
+  get interval(): BigInt {
+    let value = this.get("interval");
+    return value!.toBigInt();
+  }
+
+  set interval(value: BigInt) {
+    this.set("interval", Value.fromBigInt(value));
+  }
+
+  get installment(): BigInt {
+    let value = this.get("installment");
+    return value!.toBigInt();
+  }
+
+  set installment(value: BigInt) {
+    this.set("installment", Value.fromBigInt(value));
   }
 
   get amount(): BigInt {
@@ -402,6 +486,33 @@ export class Credit extends Entity {
     this.set("rate", Value.fromBigInt(value));
   }
 
+  get totalYield(): BigInt {
+    let value = this.get("totalYield");
+    return value!.toBigInt();
+  }
+
+  set totalYield(value: BigInt) {
+    this.set("totalYield", Value.fromBigInt(value));
+  }
+
+  get alreadyPayed(): BigInt {
+    let value = this.get("alreadyPayed");
+    return value!.toBigInt();
+  }
+
+  set alreadyPayed(value: BigInt) {
+    this.set("alreadyPayed", Value.fromBigInt(value));
+  }
+
+  get GelatoRepaymentTaskId(): string {
+    let value = this.get("GelatoRepaymentTaskId");
+    return value!.toString();
+  }
+
+  set GelatoRepaymentTaskId(value: string) {
+    this.set("GelatoRepaymentTaskId", Value.fromString(value));
+  }
+
   get delegatorsNr(): BigInt {
     let value = this.get("delegatorsNr");
     return value!.toBigInt();
@@ -409,6 +520,24 @@ export class Credit extends Entity {
 
   set delegatorsNr(value: BigInt) {
     this.set("delegatorsNr", Value.fromBigInt(value));
+  }
+
+  get delegatorsRequired(): BigInt {
+    let value = this.get("delegatorsRequired");
+    return value!.toBigInt();
+  }
+
+  set delegatorsRequired(value: BigInt) {
+    this.set("delegatorsRequired", Value.fromBigInt(value));
+  }
+
+  get delegators(): Array<string> {
+    let value = this.get("delegators");
+    return value!.toStringArray();
+  }
+
+  set delegators(value: Array<string>) {
+    this.set("delegators", Value.fromStringArray(value));
   }
 
   get delegatorsAmount(): BigInt {
@@ -420,22 +549,13 @@ export class Credit extends Entity {
     this.set("delegatorsAmount", Value.fromBigInt(value));
   }
 
-  get gelatoTaskId(): string {
-    let value = this.get("gelatoTaskId");
-    return value!.toString();
+  get delegatorsGlobalFee(): BigInt {
+    let value = this.get("delegatorsGlobalFee");
+    return value!.toBigInt();
   }
 
-  set gelatoTaskId(value: string) {
-    this.set("gelatoTaskId", Value.fromString(value));
-  }
-
-  get delegators(): Array<string> {
-    let value = this.get("delegators");
-    return value!.toStringArray();
-  }
-
-  set delegators(value: Array<string>) {
-    this.set("delegators", Value.fromStringArray(value));
+  set delegatorsGlobalFee(value: BigInt) {
+    this.set("delegatorsGlobalFee", Value.fromBigInt(value));
   }
 }
 
@@ -498,8 +618,8 @@ export class ChartMonth extends Entity {
     super();
     this.set("id", Value.fromString(id));
 
-    this.set("month", Value.fromI32(0));
-    this.set("year", Value.fromI32(0));
+    this.set("month", Value.fromString(""));
+    this.set("year", Value.fromString(""));
     this.set("timestamp", Value.fromBigInt(BigInt.zero()));
     this.set("balance", Value.fromBigInt(BigInt.zero()));
     this.set("staked", Value.fromBigInt(BigInt.zero()));
@@ -531,22 +651,22 @@ export class ChartMonth extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get month(): i32 {
+  get month(): string {
     let value = this.get("month");
-    return value!.toI32();
+    return value!.toString();
   }
 
-  set month(value: i32) {
-    this.set("month", Value.fromI32(value));
+  set month(value: string) {
+    this.set("month", Value.fromString(value));
   }
 
-  get year(): i32 {
+  get year(): string {
     let value = this.get("year");
-    return value!.toI32();
+    return value!.toString();
   }
 
-  set year(value: i32) {
-    this.set("year", Value.fromI32(value));
+  set year(value: string) {
+    this.set("year", Value.fromString(value));
   }
 
   get timestamp(): BigInt {
