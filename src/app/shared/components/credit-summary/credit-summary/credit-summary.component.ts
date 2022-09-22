@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ICREDIT_DELEGATED, ROLE } from 'angular-web3';
+import { Store } from '@ngrx/store';
+import { DappBaseComponent, DappInjector, ICREDIT_DELEGATED, ROLE } from 'angular-web3';
 
 enum CreditStatus {
   NONE,
@@ -12,12 +13,12 @@ enum CreditStatus {
   templateUrl: './credit-summary.component.html',
   styleUrls: ['./credit-summary.component.scss']
 })
-export class CreditSummaryComponent implements OnInit {
+export class CreditSummaryComponent  extends DappBaseComponent implements OnInit {
 
   stepItems!: { label: string }[];
   activeStep = 0;
   display_step! :CreditStatus;
-  constructor() { 
+  constructor(dapp: DappInjector, store:Store) {super(dapp,store) 
     this.stepItems = [
       {label: 'One Delegator Match'},
       {label: '10 Delegators'},
@@ -43,6 +44,9 @@ export class CreditSummaryComponent implements OnInit {
   executeCredit(){
     
   }
+
+
+  
   ngOnInit(): void {
     if ( <CreditStatus>+this.credit.status == CreditStatus.PHASE1) {
       this.display_step = CreditStatus.PHASE1;

@@ -419,6 +419,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
 
         DataTypes.Pool memory currentPool = poolByTimestamp[block.timestamp];
         currentPool.id = poolId;
+        currentPool.timestamp = block.timestamp;
 
         DataTypes.Pool memory lastPool = poolByTimestamp[poolTimestamp];
 

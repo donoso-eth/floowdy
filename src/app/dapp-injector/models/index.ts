@@ -1,2 +1,2 @@
 export * from './models'
-export * from './expo'
+export * from '../../shared/models/pool_models'

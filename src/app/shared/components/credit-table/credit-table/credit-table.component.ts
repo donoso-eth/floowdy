@@ -25,7 +25,7 @@ export class CreditTableComponent extends DappBaseComponent implements OnInit {
    blockTimeToTime = blockTimeToTime;
 
    @Input() credits!:Array<ICREDIT_DELEGATED> | Array<ICREDIT_REQUESTED> ;
-   @Input() creditType!: 'requested' | 'delegated'; 
+   @Input() creditType!: 'loading' | 'none' | 'member' | 'requested' | 'delegated'; 
 
    goToCredit(id:string){
     this.router.navigateByUrl(`/details-credit/${id}`)
@@ -40,6 +40,7 @@ export class CreditTableComponent extends DappBaseComponent implements OnInit {
    }
 
   ngOnInit(): void {
+    console.log(this.credits)
   }
 
 }

@@ -13,6 +13,7 @@ export interface ICREDIT_DELEGATED {
   status: string;
   finishPhaseTimestamp:string,
   delegatorsAmount:string,
+  delegatorsRequired:string;
   requester: { member:string}
 
 }
