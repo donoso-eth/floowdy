@@ -32,9 +32,18 @@ type Pool @entity {
   nrMembers: BigInt!
 }
 
+type _Schema_
+  @fulltext(
+    name: "creditSearch"
+    language: en
+    algorithm: rank
+    include: [{ entity: "Credit", fields: [{ name: "handle" }] }]
+  )
+
 type Credit @entity {
   id: ID!
   requester: Member!
+  handle: String!
   initTimestamp: BigInt!
   finishPhaseTimestamp: BigInt!
   gelatoTaskId: String!

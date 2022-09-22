@@ -550,6 +550,10 @@ export class CreditRequested__Params {
       this._event.parameters[0].value.toTuple()
     );
   }
+
+  get lensHandle(): string {
+    return this._event.parameters[1].value.toString();
+  }
 }
 
 export class CreditRequestedCreditStruct extends ethereum.Tuple {
@@ -2664,6 +2668,10 @@ export class RequestCreditCall__Inputs {
 
   get nrInstallments(): BigInt {
     return this._call.inputValues[3].value.toBigInt();
+  }
+
+  get handle(): string {
+    return this._call.inputValues[4].value.toString();
   }
 }
 

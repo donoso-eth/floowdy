@@ -164,7 +164,7 @@ export interface FloowdyInterface extends utils.Interface {
     "poolTimestamp()": FunctionFragment;
     "rejectCredit(uint256)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
-    "requestCredit(uint256,uint256,uint256,uint256)": FunctionFragment;
+    "requestCredit(uint256,uint256,uint256,uint256,string)": FunctionFragment;
     "sendNotif()": FunctionFragment;
     "setCreditFee(uint256)": FunctionFragment;
     "setMaxAllowance(uint256)": FunctionFragment;
@@ -311,7 +311,7 @@ export interface FloowdyInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "requestCredit",
-    values: [BigNumberish, BigNumberish, BigNumberish, BigNumberish]
+    values: [BigNumberish, BigNumberish, BigNumberish, BigNumberish, string]
   ): string;
   encodeFunctionData(functionFragment: "sendNotif", values?: undefined): string;
   encodeFunctionData(
@@ -837,6 +837,7 @@ export interface Floowdy extends BaseContract {
       rate: BigNumberish,
       interval: BigNumberish,
       nrInstallments: BigNumberish,
+      handle: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -1161,6 +1162,7 @@ export interface Floowdy extends BaseContract {
     rate: BigNumberish,
     interval: BigNumberish,
     nrInstallments: BigNumberish,
+    handle: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1475,6 +1477,7 @@ export interface Floowdy extends BaseContract {
       rate: BigNumberish,
       interval: BigNumberish,
       nrInstallments: BigNumberish,
+      handle: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1730,6 +1733,7 @@ export interface Floowdy extends BaseContract {
       rate: BigNumberish,
       interval: BigNumberish,
       nrInstallments: BigNumberish,
+      handle: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1988,6 +1992,7 @@ export interface Floowdy extends BaseContract {
       rate: BigNumberish,
       interval: BigNumberish,
       nrInstallments: BigNumberish,
+      handle: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

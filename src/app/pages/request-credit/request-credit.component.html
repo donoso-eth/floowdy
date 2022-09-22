@@ -1,126 +1,136 @@
 <div class="grid justify-content-center">
   <div class="col-12">
-    <div style="position: relative; border-color: transparent" class="text-center">
+    <div
+      style="position: relative; border-color: transparent"
+      class="text-center"
+    >
       <div class="card">
         <div class="flex align-items-center justify-content-between mb-0">
-          <h5>Let's build together the Trust</h5>
-
+          <h6>Let's build together the Trust</h6>
         </div>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-          dolore magna aliqua.
-          Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-          consequat.
-          Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-          Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est
-          laborum.</p>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+          aliquip ex ea commodo consequat. Duis aute irure dolor in
+          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+          culpa qui officia deserunt mollit anim id est laborum.
+        </p>
       </div>
-
 
       <div style="margin-top: 20px" class="card">
         <div class="grid">
-          <div class="col-12 lg:col-5 xl:col-5">
+          <div  style="align-items: center;
+          align-content: center;
+          justify-content: center;
+          display: flex;" class="col-12 lg:col-5 xl:col-5">
             <div *ngIf="lensLoading">
               <h6>Checking Your Lens Profile</h6>
               <p-progressSpinner></p-progressSpinner>
             </div>
 
             <div *ngIf="lensLoading == false && lensProfile == false">
-              <h6>OOPS Profile not found</h6>
+              <h6 style="color:var(--pink-400);font-weight:bold;">OOPS Profile not found</h6>
               <span>You can </span>
             </div>
 
             <div *ngIf="lensLoading == false && lensProfile == true">
-              <h6>Great!!</h6>
               <div class="grid">
-                <lens-profile></lens-profile>
+                <lens-profile [profile]="profile"></lens-profile>
               </div>
             </div>
-
           </div>
-          <p-divider layout="vertical">
-            <b>AND</b>
-          </p-divider>
+          <p-divider layout="vertical"> </p-divider>
           <div class="col-12 lg:col-4 xl:col-5">
-            <div>
-              <!-- <h5>Credit Details</h5> -->
-              <div class="grid p-fluid justify-content-center">
+      
+              <!-- <h6>Credit Details</h6> -->
+              <div style="padding: 20px;" class="grid p-fluid justify-content-center">
                 <div [formGroup]="requestCreditForm">
-                  <h6>Choose Credit Amount</h6>
-                  <div>
-                    MAx Amount Pool: 221
+                  <div class="input-block" >
+                    <h6 style="width:100%">MAx Amount Pool: 221</h6>
                   </div>
-                  <div>
-                    Your Max Amount (leverage 50%): 221
+                  <div class="input-block" >
+                    <h6 style="width:100%">Your Max Amount (leverage 50%): 221</h6>
                   </div>
-
-                    <h5>
+            
+                  <div class="input-block" >
+                  <h6 >
                     CreditAmount
-                  </h5>
-                    <p-inputNumber formControlName="amountCtrl" placeholder="Credit Amount" mode="decimal"
-                      [showButtons]="true" [min]="0">
-                    </p-inputNumber>
-
-                    <h5>
-                      Proposed rate (>=3%)
-                    </h5>
-                      <p-inputNumber formControlName="rateCtrl"  placeholder="Credit Amount" mode="decimal"
-                        [showButtons]="true" [min]="0">
-                      </p-inputNumber>
-                      <h5>
-                        Type of interval
-                    </h5>
-
-                    <p-dropdown
-                      [options]="durations"
-                      formControlName="durationInCtrl"
-                      placeholder="Stop Condition"
+                  </h6>
+                    <p-inputNumber 
+                      class="text-center"
+                      formControlName="amountCtrl"
+                      placeholder="Credit Amount"
+                      mode="decimal"
+                      [showButtons]="true"
+                      [min]="0"
                     >
-                      <ng-template pTemplate="selectedItem">
-                        <span>{{
-                          requestCreditForm.controls.durationInCtrl.value.name
-                        }}</span>
-                      </ng-template>
-                      <ng-template let-duration pTemplate="duration">
-                        <span>{{ duration.name }}</span>
-                      </ng-template>
-                    </p-dropdown>
-                    
-                      <h5>
-                        Nr of Installments
-                      </h5>
-                        <p-inputNumber formControlName="installementsCtrl" placeholder="Nr Installments" mode="decimal"
-                          [showButtons]="true" [min]="0">
-                        </p-inputNumber>
+                    </p-inputNumber>
+                 
+                </div>
+                <div class="input-block" >
+                  <h6>Proposed rate (>=3%)</h6>
+                  <p-inputNumber
+                    formControlName="rateCtrl"
+                    placeholder="Credit Amount"
+                    mode="decimal"
+                    [showButtons]="true"
+                    [min]="0"
+                  >
+                  </p-inputNumber>
+                  </div>
+                  <div class="input-block" >
+                  <h6>Type of interval</h6>
 
-
-  
-
+                  <p-dropdown
+                    [options]="durations"
+                    formControlName="durationInCtrl"
+                    placeholder="Stop Condition"
+                  >
+                    <ng-template pTemplate="selectedItem">
+                      <span>{{
+                        requestCreditForm.controls.durationInCtrl.value.name
+                      }}</span>
+                    </ng-template>
+                    <ng-template let-duration pTemplate="duration">
+                      <span>{{ duration.name }}</span>
+                    </ng-template>
+                  </p-dropdown>
+                </div>
+                <div class="input-block" >
+                  <h6>Nr of Installments</h6>
+                  <p-inputNumber
+                    formControlName="installementsCtrl"
+                    placeholder="Nr Installments"
+                    mode="decimal"
+                    [showButtons]="true"
+                    [min]="0"
+                  >
+                  </p-inputNumber>
+</div>
                   <button
-                  pButton
-                  pRipple
-                  [disabled]="requestCreditForm.invalid"
-                  style="
-                    position: relative;
-                    width: fit-content;
-                    border-color: var(--orange-400);
-                    background-color: var(--yellow-200);
-                  "
-                  (click)="requestCredit()"
-                  type="button"
-                  label="Request Credit Delegation"
-                  class="p-button-rounded mr-2 mb-2"
-                ></button>
-           
+                    pButton
+                    pRipple
+                    [disabled]="requestCreditForm.invalid"
+                    style="
+                      margin-top: 20px;
+                      position: relative;
+                      width: fit-content;
+                      border-color: var(--orange-400);
+                      background-color: var(--yellow-200);
+                    "
+                    (click)="requestCredit()"
+                    type="button"
+                    label="Request Credit Delegation"
+                    class="p-button-rounded mr-2 mb-2"
+                  ></button>
                 </div>
               </div>
-
             </div>
-
-
-          </div>
+        
         </div>
       </div>
-
     </div>
   </div>
 </div>

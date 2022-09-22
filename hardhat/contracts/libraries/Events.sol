@@ -20,9 +20,8 @@ library Events {
         uint256 amountLocked
     );
 
-    event CreditAction(DataTypes.Credit credit);
 
-    event CreditRequested(DataTypes.Credit credit);
+    event CreditRequested(DataTypes.Credit credit, string lensHandle);
 
     event CreditApproved(DataTypes.Credit credit);
 

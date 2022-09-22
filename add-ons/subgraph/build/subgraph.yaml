@@ -1,4 +1,6 @@
-specVersion: 0.0.2
+specVersion: 0.0.4
+features:
+  - fullTextSearch
 schema:
   file: schema.graphql
 dataSources:
@@ -6,7 +8,7 @@ dataSources:
     name: Floowdy
     network: localhost
     source:
-      address: "0xBE7C7BBB91FEDf4ccd2387c031268BbD5e17B75f"
+      address: "0x98F45b84B4824d7A96e7672A154bA8DC3988A20b"
       abi: Floowdy
       startBlock: 7588383
     mapping:
@@ -33,7 +35,7 @@ dataSources:
           handler: handleCreditCheckOut
         - event: CreditRejected((uint256,address,uint256,uint256,uint8,bytes32,(uint256,uint256,address[],uint256,uint256),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,bytes32)))
           handler: handleCreditRejected
-        - event: CreditRequested((uint256,address,uint256,uint256,uint8,bytes32,(uint256,uint256,address[],uint256,uint256),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,bytes32)))
+        - event: CreditRequested((uint256,address,uint256,uint256,uint8,bytes32,(uint256,uint256,address[],uint256,uint256),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,bytes32)),string)
           handler: handleCreditRequested
         - event: MemberDelegateCredit(uint256,address,uint256)
           handler: handleMemberDelegateCredit

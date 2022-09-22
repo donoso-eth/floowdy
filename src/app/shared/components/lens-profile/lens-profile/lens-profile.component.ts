@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
   selector: 'lens-profile',
@@ -9,7 +9,12 @@ export class LensProfileComponent implements OnInit {
 
   constructor() { }
 
+  @Input() profile! :any
+
   ngOnInit(): void {
+    console.log(this.profile);
   }
+
+  
 
 }

@@ -7,6 +7,8 @@ import { LensProfileModule } from '../lens-profile/lens-profile.module';
 import { StepsModule } from 'primeng/steps';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
+import { ClipboardModule } from '@angular/cdk/clipboard';
+import { ButtonModule } from 'primeng/button';
 
 @NgModule({
   declarations: [
@@ -18,7 +20,9 @@ import { InputTextModule } from 'primeng/inputtext';
     ReactiveFormsModule,
     LensProfileModule,
     InputTextModule,
-    StepsModule
+    StepsModule,
+    ClipboardModule,
+    ButtonModule
   ],
   exports: [
     CreditSummaryComponent

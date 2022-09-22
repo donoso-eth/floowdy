@@ -5,6 +5,16 @@ import {Apollo, ApolloModule, APOLLO_NAMED_OPTIONS, APOLLO_OPTIONS, NamedOptions
 import {HttpLink} from 'apollo-angular/http';
 import {InMemoryCache} from '@apollo/client/core';
 
+const defaultOptions = {
+  watchQuery: {
+    fetchPolicy: 'network-only',
+    errorPolicy: 'ignore',
+  },
+  query: {
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  },
+}
 
 @NgModule({
   declarations: [],
@@ -20,21 +30,37 @@ export class GraphQlModule {
       ngModule: GraphQlModule,
       providers: [GraphQlService,
         {
+          provide: APOLLO_OPTIONS,
+          useFactory: (httpLink: HttpLink) => {
+            return {
+              cache: new InMemoryCache(),
+              link: httpLink.create({
+                uri: config.uri,
+              }),
+              defaultOptions: defaultOptions
+            };
+          },
+          deps: [HttpLink],
+        },  
+        {
           provide: APOLLO_NAMED_OPTIONS, // <-- Different from standard initialization
           useFactory(httpLink: HttpLink): NamedOptions {
             return {
-              default: /* <-- this settings will be saved as default client */ {
-                cache: new InMemoryCache(),
-                link: httpLink.create({
-                  uri: config.uri,
-                }),
-              },
               superfluid: /* <-- these settings will be saved by name: superfluid*/ {
                 cache: new InMemoryCache(),
                 link: httpLink.create({
-                  uri: config.uri,
-                  //uri: 'https://api.thegraph.com/subgraphs/name/superfluid-finance/protocol-v1-goerli',
+                  uri: 'https://api.thegraph.com/subgraphs/name/superfluid-finance/protocol-v1-goerli',
                 }),
+                defaultOptions: {
+                  watchQuery: {
+                    fetchPolicy:'network-only',
+                    errorPolicy:'ignore'
+                  },
+                  query: {
+                    fetchPolicy: 'no-cache',
+                    errorPolicy: 'all',
+                  },
+                }
               },
               lens: /* <-- these settings will be saved by name: lens*/ {
                 cache: new InMemoryCache(),
@@ -45,7 +71,10 @@ export class GraphQlModule {
             };
           },
           deps: [HttpLink],
-        },],
+        }, 
+      
+     
+      ],
     };
   }
  }

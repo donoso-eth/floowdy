@@ -74,7 +74,7 @@ export function handleCreditRequested(event:CreditRequested):void {
     credit.initTimestamp = eventObject.initTimestamp;
     credit.finishPhaseTimestamp = eventObject.finishPhaseTimestamp;
     credit.status = BigInt.fromI32(eventObject.status);
-    
+    credit.handle = event.params.lensHandle;
     credit.nrInstallments = eventObject.repaymentOptions.nrInstallments;
     credit.interval = eventObject.repaymentOptions.interval;
     credit.amount = eventObject.repaymentOptions.amount;

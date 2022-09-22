@@ -25,8 +25,8 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
   balanceSupertoken = 0;
   poolToken?: IPOOL_TOKEN;
   poolState!: IPOOL_STATE;
-  twoDec!: string;
-  fourDec!: string;
+  twoDec: string = "00";
+  fourDec: string = "0000";
 
   destroyQueries: Subject<void> = new Subject();
   destroyFormatting: Subject<void> = new Subject();
@@ -81,9 +81,14 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
     let amount = utils.parseEther(this.depositAmountCtrl.value.toString());
     console.log(amount);
     this.store.dispatch(Web3Actions.chainBusy({ status: true }));
-    await this.erc777.depositIntoPool(amount);
-    this.refreshBalance();
-    this.store.dispatch(Web3Actions.chainBusy({ status: false }));
+    await  this.erc777.depositIntoPool(amount);
+  
+
+      await this.refreshBalance();
+     // await this.getMember();
+    
+
+  
   }
 
   async refreshBalance() {
@@ -96,14 +101,18 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
 
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    if (this.blockchain_status == 'wallet-connected'){
+     // this.getMember()
+    }
+  }
 
   requestCredit() {
     this.router.navigateByUrl('request-credit');
   }
 
-  async getCredits() {
-    console.log('getCredits');
+  async getMember() {
+  
     this.destroyQueries.next()
    this.graphqlService
         .watchMember(this.dapp.signerAddress!)
@@ -119,9 +128,8 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
                 creditsRequested : queryMember.creditsRequested,
                 creditsDelegated: queryMember.creditsDelegated.map((map:any)=> map.credit)
             }
-               console.log(JSON.stringify(this.member))
-       
-    
+
+             console.log(this.member)
         // let queryMember = mockMember1;
 
 
@@ -133,15 +141,7 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
         //         creditsRequested : queryMember.creditsRequested,
         //         creditsDelegated: queryMember.creditsDelegated
         //     }
-        
-            console.log(+this.member.flow)
 
-        this.memberDisplay = {
-
-
-        } 
-            console.log(this.member.flow)
-            console.log(this.member.timestamp)
         let value = +this.member.flow * ( (new Date().getTime() / 1000)- +this.member.timestamp);
         console.log(value)
         let formated = this.global.prepareNumbers(
@@ -150,7 +150,7 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
         this.twoDec = formated.twoDec;
         this.fourDec = formated.fourDec;
           
-        console.log(+this.member.flow)
+  
 
         if (+this.member.flow > 0) {
           this.destroyFormatting.next();
@@ -166,7 +166,19 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
             this.fourDec = formated.fourDec;
           });
         }
+        this.store.dispatch(Web3Actions.chainBusy({ status: false }));
       }
+      if (val.data.member == null) {
+        this.member = {
+          deposit:'0',
+          timestamp:'0',
+          flow:'0',
+          creditsDelegated:[],
+          creditsRequested:[]
+        }
+       }
+ 
+
     });
 
 
@@ -175,8 +187,8 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
   }
 
   override async hookContractConnected(): Promise<void> {
-    this.refreshBalance();
-    this.getCredits();
+    await this.refreshBalance();
+    await this.getMember();
   }
 
   override ngOnDestroy(): void {

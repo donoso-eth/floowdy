@@ -15,6 +15,7 @@ export interface ICREDIT_DELEGATED {
   delegatorsAmount:string,
   delegatorsRequired:string;
   requester: { member:string}
+  delegatorsNr: string;
 
 }
 
@@ -25,4 +26,4 @@ export interface ICREDIT_REQUESTED  {
   rate: string;
   delegatorsNr: string;
 };
- export type ROLE = 'member' | 'requester' |'delegater'
+ export type ROLE = 'member' | 'requester' |'delegater' | 'none' |'loading'

@@ -1,57 +1,130 @@
 <div class="grid">
-  <div style="border:unset;" class="col-12 card">
+  <div style="border:unset;text-center" class="col-12 card">
     <div  class="card credit-cockpit">
-      <div class="grid p-fluid">
-        <div class="col-12 mb-2 lg:col-4 lg:mb-0">
-          <input pInputText type="text"  [disabled]="true"  style="border-color:green;background: grey;" value="hola" placeholder="Default" />
+      <div class="grid p-2">
+        <div class="">
+          <h5>
+           Requested by
+        </h5>
+          <p  class="credit_details" >{{displayAdress(credit.requester.member)}}<i
+            class="pi pi-copy"
+            style="margin-left:5px;font-size: 1rem; cursor: pointer"
+            [cdkCopyToClipboard]="credit.requester.member"
+          ></i></p> 
+         
+     
         </div>
-        <div class="col-12 mb-2 lg:col-4 lg:mb-0">
-          <input pInputText type="text"  [disabled]="true"  style="border-color:green;background: grey;" value="hola" placeholder="Default" />
+        <div >
+          <h5>
+            Amount
+         </h5>
+         <span  class="credit_details" >{{credit.amount}}$</span>
         </div>
-        <div class="col-12 mb-2 lg:col-4 lg:mb-0">
+        <div >
+          <h5>
+            Rate
+         </h5>
+         <span  class="credit_details" >{{credit.rate}}%</span>       </div>
+        <div >
+          <h5>
+            Installments
+         </h5>
+         <span  class="credit_details" >{{credit.amount}}</span>       </div>
+       </div>
+        <div>
+          <h5>
+            Amount 
+         </h5>
           <input pInputText type="text"  [disabled]="true"  style="border-color:green;background: grey;" value="hola" placeholder="Default" />
         </div>
     </div>
     </div>
    
-  <div class="col-12">
-    <div class="card">
+  <div  class="col-12">
+    <div style="height:420px" class="text-center card">
+      <h5 style="margin: 20px auto 5px" class="mb-1">
+        <i (click)="doRefresh()" style="color: var(--primary-color); font-size: 30px;cursor:pointer;margin-right:10px" class="pi pi-refresh"></i>  Current Phase: <span style="color: var(--primary-color)">{{ stepItems[display_step-1].label }}</span> 
+      </h5>
     <p-steps
       class="col-12"
       [model]="stepItems"
       (activeIndexChange)="activeStep = 0"
       [(activeIndex)]="activeStep"
-      styleClass="mt-5"
+      styleClass="mt-1"
       [readonly]="false"
     ></p-steps>
-  </div>
+
     <div
       style="min-height: 100px; width: 100%; text-align: center"
       class="flex justify-content-center flex-column"
     >
       <div *ngIf="activeStep == 0">
-        <div *ngIf="display_step == 0">
-          <p [ngStyle]="{ lineHeight: '2.5rem' }">Current Amount</p>
-          <button
-            pButton
-            pRipple
-            style="margin: auto"
-            (click)="checkInPhase1()"
-            type="button"
-            label="Start"
-            class="p-button-rounded mr-2 mb-2"
-          ></button>
+        <div *ngIf="display_step == 1">
+          <span [ngStyle]="{ lineHeight: '2.5rem' }">Amount to Delegate <span style="color:var(--primary-color)"> {{credit.delegatorsAmount}}$</span></span>
+          <span style="margin-left:10px" [ngStyle]="{ lineHeight: '2.5rem' }">Phase will end:<span style="color:var(--primary-color)">{{ blockTimeToTime(+credit.finishPhaseTimestamp) }}</span> </span>
+          <div>
+          <button (click)="checkInPhase1()" pButton pRipple type="button" icon="pi pi-check" class="p-button-rounded p-button-outlined mr-2 mb-2"></button>
         </div>
-        <div *ngIf="display_step > 0">
-          <p [ngStyle]="{ lineHeight: '2.5rem' }"></p>
+        </div>
+        <div *ngIf="display_step != 1">
+          <p [ngStyle]="{ lineHeight: '2.5rem' }">Not Current Phase</p>
+        </div>
+      </div>
+      <div *ngIf="activeStep == 1">
+        <div *ngIf="display_step == 2">
+          <span [ngStyle]="{ lineHeight: '2.5rem' }">Amount to Delegate <span style="color:var(--primary-color)"> {{credit.delegatorsAmount}}$</span></span>
+          <span style="margin-left:15px" [ngStyle]="{ lineHeight: '2.5rem' }">Nr of Delegators <span style="color:var(--primary-color)"> {{credit.delegatorsNr}} of ({{credit.delegatorsRequired}})</span></span> 
+        <br/>
+          <span style="margin-left:10px" [ngStyle]="{ lineHeight: '2.5rem' }">Phase will end:<span style="color:var(--primary-color)">{{ blockTimeToTime(+credit.finishPhaseTimestamp) }}</span> </span>
+   
+          <div>
+          <button (click)="checkInPhase10()" pButton pRipple type="button" icon="pi pi-check" class="p-button-rounded p-button-outlined mr-2 mb-2"></button>   
+        </div>
+        </div>
+        <div *ngIf="display_step != 2">
+          <p [ngStyle]="{ lineHeight: '2.5rem' }">Not Current Phase</p>
+        </div>
+      </div>
+      <div *ngIf="activeStep == 2">
+        <div *ngIf="display_step == 3">
+          <span [ngStyle]="{ lineHeight: '2.5rem' }">Amount to Delegate <span style="color:var(--primary-color)"> {{credit.delegatorsAmount}}$</span></span>
+          <span style="margin-left:15px" [ngStyle]="{ lineHeight: '2.5rem' }">Nr of Delegators <span style="color:var(--primary-color)"> {{credit.delegatorsNr}} of ({{credit.delegatorsRequired}})</span></span> 
+          <div>
+          <span style="margin-left:10px" [ngStyle]="{ lineHeight: '2.5rem' }">Phase will end:<span style="color:var(--primary-color)">{{ blockTimeToTime(+credit.finishPhaseTimestamp) }}</span> </span>
+        </div>
+          <div>
+          <button (click)="checkInPhase5()" pButton pRipple type="button" icon="pi pi-check" class="p-button-rounded p-button-outlined mr-2 mb-2"></button>
+          <button (click)="rejectCredit()" pButton pRipple type="button" icon="pi pi-times" class="p-button-rounded p-button-danger p-button-outlined mr-2 mb-2"></button>
+   
+        </div>
+        </div>
+        <div *ngIf="display_step !=3">
+          <p [ngStyle]="{ lineHeight: '2.5rem' }">Nor Current Phase</p>
+        </div>
+      </div>
+
+      <div *ngIf="activeStep == 3">
+        <div *ngIf="display_step == 4">
+            <span style="margin-left:15px" [ngStyle]="{ lineHeight: '2.5rem' }">Nr of Delegators <span style="color:var(--primary-color)"> {{credit.delegatorsNr}} of ({{credit.delegatorsRequired}})</span></span> 
+          <br>
+          <span style="margin-left:10px" [ngStyle]="{ lineHeight: '2.5rem' }">Phase will end:<span style="color:var(--primary-color)">{{ blockTimeToTime(+credit.finishPhaseTimestamp) }}</span> </span>
+    
+          <div>
+          <button (click)="executeCredit()" pButton pRipple type="button" icon="pi pi-check" class="p-button-rounded p-button-outlined mr-2 mb-2"></button>
+          <button (click)="cancelCredit()" pButton pRipple type="button" icon="pi pi-times" class="p-button-rounded p-button-danger p-button-outlined mr-2 mb-2"></button>
+   
+      
+        </div>
+        </div>
+        <div *ngIf="display_step !=4">
+          <p [ngStyle]="{ lineHeight: '2.5rem' }">Nor Current Phase</p>
         </div>
       </div>
     </div>
   </div>
-  <div class="col-6">
-    <lens-profile></lens-profile>
   </div>
   <div class="col-6">
-    <lens-profile></lens-profile>
+   <!-- // <lens-profile [profile]="profile" > </lens-profile> -->
   </div>
+
 </div>

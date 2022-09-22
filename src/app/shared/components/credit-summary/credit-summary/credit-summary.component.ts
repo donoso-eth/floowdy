@@ -1,11 +1,15 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { DappBaseComponent, DappInjector, ICREDIT_DELEGATED, ROLE } from 'angular-web3';
+import { blockTimeToTime, displayAdress } from 'src/app/shared/helpers/helpers';
 
 enum CreditStatus {
   NONE,
   PHASE1,
-  PHASE2
+  PHASE2,
+  PHASE3,
+  PHASE4,
+  APPROVED
 }
 
 @Component({
@@ -27,8 +31,12 @@ export class CreditSummaryComponent  extends DappBaseComponent implements OnInit
   ];
   }
 
+  displayAdress =  displayAdress;
+  blockTimeToTime = blockTimeToTime;
   @Input() credit!:ICREDIT_DELEGATED;
   @Input() role!: ROLE
+
+  doRefresh(){}
 
   checkInPhase1(){
 
@@ -41,16 +49,22 @@ export class CreditSummaryComponent  extends DappBaseComponent implements OnInit
     
   }
 
+  rejectCredit(){
+
+  }
+
   executeCredit(){
     
   }
 
-
+  cancelCredit() {
+    
+  }
   
   ngOnInit(): void {
-    if ( <CreditStatus>+this.credit.status == CreditStatus.PHASE1) {
-      this.display_step = CreditStatus.PHASE1;
-    } 
+    console.log(this.credit)
+       this.display_step =  <CreditStatus>+this.credit.status;
+      this.display_step = 4;
   }
 
 }

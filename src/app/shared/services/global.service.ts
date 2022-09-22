@@ -116,17 +116,17 @@ export class GlobalService {
     let amount = 1000000 * 10 ** 6;
     let amountSuper = 1000 * 10 ** 18;
     await doSignerTransaction(
-      (this.erc20 as Contract)['mint(uint256)'](amount)
+      (this.erc20 as Contract).connect(this.dapp.signer!)['mint(uint256)'](amount)
     );
     await doSignerTransaction(
-      (this.erc20 as Contract).approve(
+      (this.erc20 as Contract).connect(this.dapp.signer!).approve(
         this.supertoken?.address,
         constants.MaxUint256
       )
     );
 
     const value = utils.parseEther('1000000').toString();
-    await doSignerTransaction((this.supertoken as ISuperToken).upgrade(value));
+    await doSignerTransaction((this.supertoken as ISuperToken).connect(this.dapp.signer!).upgrade(value));
 
     // console.log(this.dapp.defaultContract?.address)
 

@@ -25,6 +25,7 @@ export class RequestCreditComponent
     { name: 'days', id: 2, factor: 86400 },
     { name: 'months', id: 3, factor: 2592000 },
   ];
+  profile!: ILENS_PROFILE;
   constructor(
     dapp: DappInjector,
     store: Store,
@@ -44,7 +45,8 @@ export class RequestCreditComponent
       ],
       installementsCtrl: [ 10,
         [Validators.required, Validators.min(1)],
-      ],   
+      ],  
+      profileCtrl: [false, Validators.requiredTrue] 
    
     })
   }
@@ -63,9 +65,9 @@ export class RequestCreditComponent
 
     this.store.dispatch(Web3Actions.chainBusy({ status: true }));
 
-    await doSignerTransaction(this.dapp.defaultContract?.instance.requestCredit(amount, rate,interval,nrInstallments)!)
+    await doSignerTransaction(this.dapp.defaultContract?.instance.requestCredit(amount, rate,interval,nrInstallments, this.profile.name)!)
 
-    this.store.dispatch(Web3Actions.chainBusy({ status: false }));
+    this.router.navigateByUrl('dashboard')
   }
 
   override async hookContractConnected(): Promise<void> {
@@ -73,11 +75,15 @@ export class RequestCreditComponent
 
     if (!!val && !!val.data) {
    
+      console.log(val)
       this.profiles = val.data.profiles.items;
+      this.profile  = this.profiles[0];
+      console.log(val.data.profiles.items)
       if (this.profiles.length == 0) {
         this.lensProfile = false;
       } else {
         this.lensProfile = true;
+        this.requestCreditForm.controls.profileCtrl.setValue(true);
       }
       this.lensLoading = false;
     } else {

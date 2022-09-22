@@ -20,5 +20,6 @@ export interface IPOOL_TOKEN {
 
 
   export interface ILENS_PROFILE {
-    
+    handle: string;
+    name:string
   }

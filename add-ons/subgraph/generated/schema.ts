@@ -352,6 +352,7 @@ export class Credit extends Entity {
     this.set("id", Value.fromString(id));
 
     this.set("requester", Value.fromString(""));
+    this.set("handle", Value.fromString(""));
     this.set("initTimestamp", Value.fromBigInt(BigInt.zero()));
     this.set("finishPhaseTimestamp", Value.fromBigInt(BigInt.zero()));
     this.set("gelatoTaskId", Value.fromString(""));
@@ -403,6 +404,15 @@ export class Credit extends Entity {
 
   set requester(value: string) {
     this.set("requester", Value.fromString(value));
+  }
+
+  get handle(): string {
+    let value = this.get("handle");
+    return value!.toString();
+  }
+
+  set handle(value: string) {
+    this.set("handle", Value.fromString(value));
   }
 
   get initTimestamp(): BigInt {

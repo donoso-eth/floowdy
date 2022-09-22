@@ -12,59 +12,66 @@
   >
     <div
       data-testid="layer-0"
+      *ngIf="profile.coverPicture!== undefined"
       style="
-        background-image: url('https://lens.infura-ipfs.io/ipfs/QmTFLSXdEQ6qsSzaXaCSNtiv6wA56qq87ytXJ182dXDQJS');
         background-position: center center;
         background-size: cover;
+        background-color: beige;
         position: absolute;
         inset: -100px 0px;
         will-change: transform;
         transform: translateY(32.7669px);
-      "
-    ></div>
+      " [ngStyle]="{'background-image': 'url(' + profile.coverPicture?.original.url + ')'}"
+     
+    > </div>
+    <div
+    data-testid="layer-0"
+    *ngIf="profile.coverPicture == undefined"
+    style="
+      background-position: center center;
+      background-size: cover;
+      background-color: beige;
+      position: absolute;
+      inset: -100px 0px;
+      will-change: transform;
+      transform: translateY(32.7669px);
+    " 
+   
+  > </div>
   </div>
-  <img height="200" width="200"
+  <img height="200" width="200" *ngIf="profile.picture != undefined"
   style="top: 5rem;"
     class="object-cover border-4 border-cream rounded-full  absolute top-10 sm:top-20 z-10"
     alt="profile_picture"
-    src="https://lens.infura-ipfs.io/ipfs/QmY9dUwYu67puaWBMxRKW98LPbXCznPwHUbhX5NeWnCJbX"
+    src="{{profile.picture.original.url}}"
   />
   <div
     class="bg-lightBg border-4 border-cream rounded-full w-36 h-36 md:w-52 md:h-52 absolute top-10 sm:top-20"
   ></div>
 
   <div  class="bg-white rounded-t-xl w-full h-4 absolute top-24 sm:top-44"></div>
-  <div   style="margin-top: 4rem;color:var(--gray-700)" class="flex flex-column align-items-center text-center">
+  <div   style="    margin-bottom: 30px;margin-top: 4rem;color:var(--gray-700)" class="flex flex-column align-items-center text-center">
     <a style="    font-size: 2.25rem;
-    line-height: 2.5rem;" class="font-header text-400" href="/lensprotocol"
-      >LensProtocol 🌿</a
-    ><a class="font-header sm:text-2xl" href="/lensprotocol">@lensprotocol</a>
+    line-height: 2.5rem;" class="font-header text-400"  target="_blank" href="https://www.lenster.xyz/u/{{profile.handle}}"
+      >{{profile.name}}</a
+    ><a class="font-header sm:text-2xl" href="https://www.lenster.xyz/u/{{profile.handle}}">@{{profile.handle}}</a>
     <div class="flex items-center gap-4 mx-auto mt-2 px-3 py-1 rounded-lg">
       <span class="font-header text-black flex gap-1"
-        ><p class="font-header text-black font-semibold">14323</p>
+        ><p class="font-header text-black font-semibold">{{profile.stats.totalFollowers}}</p>
         followers</span
       ><span class="font-header text-black flex gap-1"
-        ><p class="font-header text-black font-semibold">0</p>
-        following</span
-      >
+        ><p class="font-header text-black font-semibold">{{profile.stats.totalFollowing}}</p>
+        following</span>
+        <span class="font-header text-black flex gap-1"
+        ><p class="font-header text-black font-semibold">{{profile.stats.totalPublications}}</p>
+        publications</span>
+
     </div>
     <p
       class="font-header sm:text-lg mt-3 px-5 sm:px-12 text-center text-black/80 break-all"
     >
-      A permissionless, composable, &amp; decentralized social graph that makes
-      building a Web3 social platform easy.
+     {{profile.bio}}
     </p>
-    <div class="mb-8 mt-4">
-      <button
-        class="rounded-full text-center  flex items-center justify-content-center ease-in-out cursor-pointer lens-button"
-        propsclasses="w-full mt-2"
-        label="Follow"
-      >
-        <span
-          class="text-basil font-subheader font-medium text-sm sm:text-base leading-tight sm:leading-3 uppercase flex items-center gap-2"
-          >Follow</span
-        >
-      </button>
-    </div>
+
   </div>
 </div>

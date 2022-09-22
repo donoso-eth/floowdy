@@ -614,7 +614,8 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
         uint256 amount,
         uint256 rate,
         uint256 interval,
-        uint256 nrInstallments
+        uint256 nrInstallments,
+        string memory handle
     ) external onlyMember onlyOneCredit {
         require(rate >= CREDIT_FEE, "RATE_TOO_LOW");
         uint256 maxAmount = getMaxAmount();
@@ -659,7 +660,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
         credit.repaymentOptions = options;
 
         /// notify
-        emit Events.CreditRequested(credit);
+        emit Events.CreditRequested(credit,handle);
     }
 
     function cancelCredit(uint256 creditId) external onlyMember {

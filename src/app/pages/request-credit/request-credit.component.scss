@@ -1,0 +1,9 @@
+.input-block {
+    display: inline-flex;
+    align-items: center;
+    margin-bottom:20px;
+    width:100%;
+    h6 {margin-bottom:unset;color:var(--primary-color)};
+    p-inputNumber  {margin-left:20px};
+    p-dropdown {margin-left:20px;width:100%};
+}

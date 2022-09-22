@@ -9,6 +9,28 @@ export const GET_POOL = `
     }
   `;
 
+  export const GET_FULL_TEXT = `
+  {
+    creditSearch(text: "vier") {
+      id
+      initTimestamp
+      finishPhaseTimestamp
+      amount
+      status
+      rate
+      handle
+      delegatorsNr
+      delegatorsRequired
+      delegatorsAmount
+      gelatoTaskId
+      requester {
+        member
+      }
+    }
+  }
+`;
+
+
 export const GET_CREDITS = `
     {
       credits(first: 5,  where: {status_in:["1","2","3","4"]}, orderBy: initTimestamp, orderDirection: desc) {
@@ -16,6 +38,7 @@ export const GET_CREDITS = `
         initTimestamp
         finishPhaseTimestamp
         amount
+        handle
         status
         rate
         delegatorsNr
