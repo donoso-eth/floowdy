@@ -54,6 +54,7 @@ task('publish', 'publish subgraph')
       }
 
       console.log(network);
+      console.log(onlyAddress)
       const contract_config = JSON.parse(
         readFileSync(join(processDir, 'contract.config.json'), 'utf-8')
       ) as { [key: string]: ICONTRACT_DEPLOY };

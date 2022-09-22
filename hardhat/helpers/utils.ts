@@ -56,6 +56,12 @@ export async function initEnv(hre: HardhatRuntimeEnvironment): Promise<any[]> {
   }
 }
 
+export async function getTimestamp(hre: HardhatRuntimeEnvironment): Promise<any> {
+  const blockNumber = await hre.ethers.provider.send('eth_blockNumber', []);
+  const block = await hre.ethers.provider.send('eth_getBlockByNumber', [blockNumber, false]);
+  return block.timestamp;
+}
+
 
 export function getHardhatNetwork(hre: HardhatRuntimeEnvironment) {
   let network = hre.hardhatArguments.network;

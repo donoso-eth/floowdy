@@ -73,7 +73,6 @@ if (network_params == undefined) {
     epnsChannel:network_params.epnsChanel
   }
 
-  console.log(floodyInit);
 
   //// DEPLOY POOLFACTORY
 

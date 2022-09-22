@@ -37,7 +37,8 @@ type Pool @entity {
 type Credit @entity {
   id: ID!
   requester: Member!
-  handle: String!
+  handle: String
+  bio: String
   initTimestamp: BigInt!
   finishPhaseTimestamp: BigInt!
   gelatoTaskId: String!
@@ -77,10 +78,3 @@ staked: BigInt!
 
 }
 
-type _Schema_
-  @fulltext(
-    name: "creditSearch"
-    language: en
-    algorithm: rank
-    include: [{ entity: "Credit", fields: [{ name: "handle" }] }]
-  )

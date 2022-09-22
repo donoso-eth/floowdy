@@ -6,6 +6,7 @@ import { DappBaseComponent, DappInjector, Web3Actions } from 'angular-web3';
 import { doSignerTransaction } from 'src/app/dapp-injector/classes/transactor';
 import { GraphQlService } from 'src/app/dapp-injector/services/graph-ql/graph-ql.service';
 import { ILENS_PROFILE } from 'src/app/shared/models/models';
+import { CreditRequestOptionsStruct } from 'src/assets/contracts/interfaces/Floowdy';
 
 @Component({
   selector: 'app-request-credit',
@@ -65,7 +66,16 @@ export class RequestCreditComponent
 
     this.store.dispatch(Web3Actions.chainBusy({ status: true }));
 
-    await doSignerTransaction(this.dapp.defaultContract?.instance.requestCredit(amount, rate,interval,nrInstallments, this.profile.name)!)
+    let creditRequest: CreditRequestOptionsStruct = {
+      amount,
+      rate,
+      nrInstallments,
+      interval,
+      handle:'javier',
+      bio:'javier'
+    }
+
+    await doSignerTransaction(this.dapp.defaultContract?.instance.requestCredit(creditRequest)!)
 
     this.router.navigateByUrl('dashboard')
   }

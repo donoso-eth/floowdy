@@ -123,6 +123,31 @@ export type POOLDELEGATIONStructOutput = [
   totalLiquidated: BigNumber;
 };
 
+export type CreditRequestOptionsStruct = {
+  amount: BigNumberish;
+  rate: BigNumberish;
+  interval: BigNumberish;
+  nrInstallments: BigNumberish;
+  handle: string;
+  bio: string;
+};
+
+export type CreditRequestOptionsStructOutput = [
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  string,
+  string
+] & {
+  amount: BigNumber;
+  rate: BigNumber;
+  interval: BigNumber;
+  nrInstallments: BigNumber;
+  handle: string;
+  bio: string;
+};
+
 export interface FloowdyInterface extends utils.Interface {
   functions: {
     "ETH()": FunctionFragment;
@@ -164,7 +189,7 @@ export interface FloowdyInterface extends utils.Interface {
     "poolTimestamp()": FunctionFragment;
     "rejectCredit(uint256)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
-    "requestCredit(uint256,uint256,uint256,uint256,string)": FunctionFragment;
+    "requestCredit((uint256,uint256,uint256,uint256,string,string))": FunctionFragment;
     "sendNotif()": FunctionFragment;
     "setCreditFee(uint256)": FunctionFragment;
     "setMaxAllowance(uint256)": FunctionFragment;
@@ -311,7 +336,7 @@ export interface FloowdyInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "requestCredit",
-    values: [BigNumberish, BigNumberish, BigNumberish, BigNumberish, string]
+    values: [CreditRequestOptionsStruct]
   ): string;
   encodeFunctionData(functionFragment: "sendNotif", values?: undefined): string;
   encodeFunctionData(
@@ -833,11 +858,7 @@ export interface Floowdy extends BaseContract {
     ): Promise<ContractTransaction>;
 
     requestCredit(
-      amount: BigNumberish,
-      rate: BigNumberish,
-      interval: BigNumberish,
-      nrInstallments: BigNumberish,
-      handle: string,
+      options: CreditRequestOptionsStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -1158,11 +1179,7 @@ export interface Floowdy extends BaseContract {
   ): Promise<ContractTransaction>;
 
   requestCredit(
-    amount: BigNumberish,
-    rate: BigNumberish,
-    interval: BigNumberish,
-    nrInstallments: BigNumberish,
-    handle: string,
+    options: CreditRequestOptionsStruct,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1473,11 +1490,7 @@ export interface Floowdy extends BaseContract {
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
     requestCredit(
-      amount: BigNumberish,
-      rate: BigNumberish,
-      interval: BigNumberish,
-      nrInstallments: BigNumberish,
-      handle: string,
+      options: CreditRequestOptionsStruct,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1729,11 +1742,7 @@ export interface Floowdy extends BaseContract {
     ): Promise<BigNumber>;
 
     requestCredit(
-      amount: BigNumberish,
-      rate: BigNumberish,
-      interval: BigNumberish,
-      nrInstallments: BigNumberish,
-      handle: string,
+      options: CreditRequestOptionsStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1988,11 +1997,7 @@ export interface Floowdy extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     requestCredit(
-      amount: BigNumberish,
-      rate: BigNumberish,
-      interval: BigNumberish,
-      nrInstallments: BigNumberish,
-      handle: string,
+      options: CreditRequestOptionsStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

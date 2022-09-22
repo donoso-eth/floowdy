@@ -21,7 +21,7 @@ library Events {
     );
 
 
-    event CreditRequested(DataTypes.Credit credit, string lensHandle);
+    event CreditRequested(DataTypes.Credit credit);
 
     event CreditApproved(DataTypes.Credit credit);
 

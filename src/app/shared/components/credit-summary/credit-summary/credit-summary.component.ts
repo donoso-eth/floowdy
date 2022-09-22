@@ -64,7 +64,7 @@ export class CreditSummaryComponent  extends DappBaseComponent implements OnInit
   ngOnInit(): void {
     console.log(this.credit)
        this.display_step =  <CreditStatus>+this.credit.status;
-      this.display_step = 4;
+    
   }
 
 }

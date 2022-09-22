@@ -1,9 +1,9 @@
 import { readFileSync } from 'fs-extra';
 import { task } from 'hardhat/config';
-import { initEnv, waitForTx } from '../helpers/utils';
+import { getTimestamp, initEnv, setNextBlockTimestamp, waitForTx } from '../helpers/utils';
 import { join } from 'path';
 import { constants , utils, Signer} from 'ethers';
-import { Floowdy, Floowdy__factory, IERC20, IPool, ISuperToken, ISuperToken__factory } from '../typechain-types';
+import { Floowdy, Floowdy__factory, IERC20, IOps__factory, IPool, ISuperToken, ISuperToken__factory } from '../typechain-types';
 import { abi_erc20mint } from '../helpers/abis/ERC20Mint';
 import { abi_pool } from '../helpers/abis/pool';
 import { abi_aerc20 } from '../helpers/abis/aERC20';
@@ -17,10 +17,12 @@ const contract_config = JSON.parse(
   readFileSync(join(processDir, 'contract.config.json'), 'utf-8')
 ) as { [key: string]: any };
 
+import { encodeResolverArgs, encodeTimeArgs, Module, ModuleData } from '../helpers/module';
 
+import {  execSync} from 'child_process'
+import { CreditRequestOptionsStruct } from '../typechain-types/Floowdy';
 
-import { exec, execSync} from 'child_process'
-
+const ETH = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
  const faucet = async (user:SignerWithAddress,erc20Under:any,superToken:string,supertokenContract: ISuperToken  ) =>{
 
   await  waitForTx(erc20Under.connect(user)["mint(uint256)"](1000000000000))
@@ -54,58 +56,59 @@ const doAllFaucet= async (erc20Under:any, supertokenContract:any, network_params
     erc20Under,
     network_params.superToken,
     supertokenContract
-  );
-  await faucet(
-    user3,
-    erc20Under,
-    network_params.superToken,
-    supertokenContract
-  );
-  await faucet(
-    user4,
-    erc20Under,
-    network_params.superToken,
-    supertokenContract
-  );
-  await faucet(
-    user5,
-    erc20Under,
-    network_params.superToken,
-    supertokenContract
-  );
-  await faucet(
-    user6,
-    erc20Under,
-    network_params.superToken,
-  supertokenContract
-);
+  )
 
-await faucet(
-  user7,
-  erc20Under,
-  network_params.superToken,
-supertokenContract
-);
+//   await faucet(
+//     user3,
+//     erc20Under,
+//     network_params.superToken,
+//     supertokenContract
+//   );
+//   await faucet(
+//     user4,
+//     erc20Under,
+//     network_params.superToken,
+//     supertokenContract
+//   );
+//   await faucet(
+//     user5,
+//     erc20Under,
+//     network_params.superToken,
+//     supertokenContract
+//   );
+//   await faucet(
+//     user6,
+//     erc20Under,
+//     network_params.superToken,
+//   supertokenContract
+// );
 
-await faucet(
-  user8,
-  erc20Under,
-  network_params.superToken,
-supertokenContract
-);
+// await faucet(
+//   user7,
+//   erc20Under,
+//   network_params.superToken,
+// supertokenContract
+// );
 
-await faucet(
-  user9,
-  erc20Under,
-  network_params.superToken,
-supertokenContract
-);
-await faucet(
-  user10,
-  erc20Under,
-  network_params.superToken,
-supertokenContract
-);
+// await faucet(
+//   user8,
+//   erc20Under,
+//   network_params.superToken,
+// supertokenContract
+// );
+
+// await faucet(
+//   user9,
+//   erc20Under,
+//   network_params.superToken,
+// supertokenContract
+// );
+// await faucet(
+//   user10,
+//   erc20Under,
+//   network_params.superToken,
+// supertokenContract
+// );
 }
 
 task('deploy-state', 'create state').setAction(async ({}, hre) => {
@@ -113,19 +116,16 @@ task('deploy-state', 'create state').setAction(async ({}, hre) => {
   
 //const  [deployer, user1, user2, user3, user4, user5, user6, user7, user8, user9, user10]= await initEnv(hre); console.log(user1.address);
 
-execSync("npm run deploy")
-execSync("npm run task publish --onlyAddress")
-
-throw new Error("");
-
-
-const  [deployer, user1, user2, user3, user4, user5, user6]= await initEnv(hre); 
-
+execSync("npm run deploy",{encoding: "utf8",stdio: 'inherit'})
+console.log('.....deployed')
+execSync("npm run task publish -- --only-address true",{encoding: "utf8",stdio: 'inherit'})
+console.log('.....publish to subgraph')
+execSync("npm run deploy-graph-local",{encoding: "utf8",stdio: 'inherit'})
+console.log('.....graph deployed')
 
 
-console.log(deployer.address);
-console.log(user1.address)
 
+const  [deployer, user1, user2, user3, user4, user5, user6, user7, user8, user9, user10]= await initEnv(hre); console.log(user1.address);
 
 
  let deployContract = 'floowdy';
@@ -145,6 +145,12 @@ console.log(user1.address)
 
 let network_params = networks_config["goerli"];
  
+let execData;
+let execAddress;
+let execSelector;
+let resolverAddress;
+let resolverData;
+let resolverHash;
 
  let supertokenContract = await ISuperToken__factory.connect(
   network_params.superToken,
@@ -157,78 +163,134 @@ let token = new hre.ethers.Contract(
   abi_erc20mint,
   deployer
 );
-
-
-let tokenBalance = await token['balanceOf(address)'](user1.address);
-console.log(tokenBalance.toString())
-
-
-let aToken = new hre.ethers.Contract(
-  network_params.aToken,
+let erc20Under = new hre.ethers.Contract(
+  network_params.token,
   abi_erc20mint,
   deployer
 );
 
+let initialPoolEth = hre.ethers.utils.parseEther('10');
 
-let aTokenBalance = await aToken['balanceOf(address)'](user1.address);
-console.log(aTokenBalance.toString())
+let balance = await hre.ethers.provider.getBalance(floowdyAddress);
 
-let pool = new hre.ethers.Contract(
-  network_params.aavePool,
-  abi_pool,
-  deployer
-);
+await deployer.sendTransaction({
+  to: floowdyAddress,
+  value: initialPoolEth,
+});
+balance = await hre.ethers.provider.getBalance(floowdyAddress);
 
-let poolAccount = await pool['getUserAccountData(address)'](user1.address);
-console.log(poolAccount.toString())
-
-
-throw new Error("");
+console.log(balance)
 
 
+await hre.network.provider.request({
+  method: 'hardhat_impersonateAccount',
+  params: [network_params.opsExec],
+});
+
+let executor = await hre.ethers.provider.getSigner(network_params.opsExec);
+let ops = IOps__factory.connect(network_params.ops, executor);
 
 
-throw new Error("");
-
-
-let creditNr = 3;
+let creditNr = 1;
 
 if(creditNr == 1){
-//await doAllFaucet(erc20Under, supertokenContract, network_params,deployer, user1, user2, user3, user4, user5, user6, user7, user8, user9, user10)
+await doAllFaucet(erc20Under, supertokenContract, network_params,deployer, user1, user2, user3, user4, user5, user6, user7, user8, user9, user10)
 }
 
 let amount = utils.parseEther("20000")
 
 
 await waitForTx(
-supertokenContract.connect(deployer).send(floowdyAddress, amount, '0x')
+supertokenContract.connect(user1).send(floowdyAddress, amount, '0x')
 )
 
-await waitForTx(floowdy.connect(deployer).requestCredit(100000000000000000000,5));
+let creditReQuest: CreditRequestOptionsStruct = {
+  amount:1000000000,
+  rate:5,
+  nrInstallments:12,
+  interval:3600,
+  handle:'javier',
+  bio:'javier'
+}
+let t0 = +(await getTimestamp(hre));
+await waitForTx(floowdy.connect(user1).requestCredit(creditReQuest));
 
 await waitForTx(
-  supertokenContract.connect(user1).send(floowdyAddress, amount  ,'0x')
+  supertokenContract.connect(deployer).send(floowdyAddress, amount  ,'0x')
 );
 
 
-await waitForTx(floowdy.connect(user1).creditCheckIn(creditNr));
+await waitForTx(floowdy.connect(deployer).creditCheckIn(creditNr));
+
+console.log(t0)
+
+await setNextBlockTimestamp(hre, t0 + 4000);
+
+
+execData = floowdy.interface.encodeFunctionData('stopCreditPeriodExec', [
+  creditNr
+ ]);
+ execSelector = floowdy.interface.getSighash(
+   'stopCreditPeriodExec(uint256)'
+ );
+
+ resolverAddress = floowdyAddress;
+ resolverData = await floowdy.interface.encodeFunctionData(
+   'checkCreditPeriod',
+   [creditNr]
+ );
+ // bytes4(utils.keccak256(bytes('stopCreditPeriodExec(uint256)')));
+
+ resolverHash = utils.keccak256(
+   new utils.AbiCoder().encode(
+     ['address', 'bytes'],
+     [resolverAddress, resolverData]
+   )
+ );
 
 
 
-await waitForTx(
-  supertokenContract.connect(user2).send(floowdyAddress, amount , '0x')
-);
-await waitForTx(floowdy.connect(user2).creditCheckIn(creditNr));
+ let id = utils.keccak256(
+   new utils.AbiCoder().encode(
+     ['address', 'address', 'bytes4', 'bool', 'address', 'bytes32'],
+     [floowdyAddress, floowdyAddress, execSelector, false, ETH, resolverHash]
+   )
+ );
 
-await waitForTx(
-  supertokenContract.connect(user3).send(floowdyAddress, amount.mul(3) , '0x')
-);
-await waitForTx(floowdy.connect(user3).creditCheckIn(creditNr));
+ console.log(t0)
+ console.log(t0+3600);
+   let fee = utils.parseEther("0.1")
+   const moduleData: ModuleData = {
+     modules: [Module.RESOLVER, Module.TIME],
+     args: [
+       encodeResolverArgs(hre,floowdyAddress, resolverData),
+       encodeTimeArgs(hre,t0+1, 600),
+     ],
+   };
 
-await waitForTx(
-  supertokenContract.connect(user4).send(floowdyAddress,amount.mul(2) , '0x')
-);
-await waitForTx(floowdy.connect(user4).creditCheckIn(creditNr));
+
+//    await waitForTx(floowdy.connect(user1).stopStream({gasLimit:100000}))
+
+await   ops.connect(executor).exec(floowdyAddress,floowdyAddress,execData,moduleData,fee,ETH,false,true)
+
+
+
+
+
+// await waitForTx(
+//   supertokenContract.connect(user2).send(floowdyAddress, amount , '0x')
+// );
+// await waitForTx(floowdy.connect(user2).creditCheckIn(creditNr));
+
+// await waitForTx(
+//   supertokenContract.connect(user3).send(floowdyAddress, amount.mul(3) , '0x')
+// );
+// await waitForTx(floowdy.connect(user3).creditCheckIn(creditNr));
+
+// await waitForTx(
+//   supertokenContract.connect(user4).send(floowdyAddress,amount.mul(2) , '0x')
+// );
+// await waitForTx(floowdy.connect(user4).creditCheckIn(creditNr));
  
 // await waitForTx(
 //   supertokenContract.connect(user5).send(floowdyAddress, 2 * amount  '0x')

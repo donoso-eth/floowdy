@@ -1033,29 +1033,41 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "rate",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "interval",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "nrInstallments",
-        "type": "uint256"
-      },
-      {
-        "internalType": "string",
-        "name": "handle",
-        "type": "string"
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "amount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "rate",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "interval",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "nrInstallments",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "handle",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "bio",
+            "type": "string"
+          }
+        ],
+        "internalType": "struct DataTypes.CreditRequestOptions",
+        "name": "options",
+        "type": "tuple"
       }
     ],
     "name": "requestCredit",
@@ -1254,130 +1266,6 @@
   {
     "stateMutability": "payable",
     "type": "receive"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "id",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "requester",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "initTimestamp",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "finishPhaseTimestamp",
-            "type": "uint256"
-          },
-          {
-            "internalType": "enum DataTypes.CreditStatus",
-            "name": "status",
-            "type": "uint8"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "gelatoTaskId",
-            "type": "bytes32"
-          },
-          {
-            "components": [
-              {
-                "internalType": "uint256",
-                "name": "delegatorsNr",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
-                "name": "delegatorsRequired",
-                "type": "uint256"
-              },
-              {
-                "internalType": "address[]",
-                "name": "delegators",
-                "type": "address[]"
-              },
-              {
-                "internalType": "uint256",
-                "name": "delegatorsAmount",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
-                "name": "delegatorsGlobalFee",
-                "type": "uint256"
-              }
-            ],
-            "internalType": "struct DataTypes.CreditDelegatorsOptions",
-            "name": "delegatorsOptions",
-            "type": "tuple"
-          },
-          {
-            "components": [
-              {
-                "internalType": "uint256",
-                "name": "nrInstallments",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
-                "name": "interval",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
-                "name": "installment",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
-                "name": "amount",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
-                "name": "rate",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
-                "name": "totalYield",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
-                "name": "alreadyPayed",
-                "type": "uint256"
-              },
-              {
-                "internalType": "bytes32",
-                "name": "GelatoRepaymentTaskId",
-                "type": "bytes32"
-              }
-            ],
-            "internalType": "struct DataTypes.CreditRepaymentOptions",
-            "name": "repaymentOptions",
-            "type": "tuple"
-          }
-        ],
-        "indexed": false,
-        "internalType": "struct DataTypes.Credit",
-        "name": "credit",
-        "type": "tuple"
-      }
-    ],
-    "name": "CreditAction",
-    "type": "event"
   },
   {
     "anonymous": false,
@@ -1908,12 +1796,6 @@
         "internalType": "struct DataTypes.Credit",
         "name": "credit",
         "type": "tuple"
-      },
-      {
-        "indexed": false,
-        "internalType": "string",
-        "name": "lensHandle",
-        "type": "string"
       }
     ],
     "name": "CreditRequested",

@@ -102,4 +102,13 @@ library DataTypes {
         CreditDelegatorsOptions delegatorsOptions;
         CreditRepaymentOptions repaymentOptions;
     }
+
+    struct CreditRequestOptions {
+        uint256 amount;
+        uint256 rate;
+        uint256 interval;
+        uint256 nrInstallments;
+        string handle;
+        string  bio;
+    }
 }

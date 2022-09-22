@@ -18,3 +18,12 @@ Floowdy will use the collatarel to delegate to other pool members.
 Every member can request to have a credit delegated for double the balance.
 
 
+type _Schema_
+  @fulltext(
+    name: "creditSearch"
+    language: en
+    algorithm: rank
+    include: [{ entity: "Credit", fields: [{ name: "handle", name:"bio" }] }]
+  )
+
+
