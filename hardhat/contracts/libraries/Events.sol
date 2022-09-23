@@ -37,6 +37,7 @@ library Events {
    
     event CreditInstallment(uint256 creditId);
 
+   event CreditLiquidated(uint256 creditId);
 
     event PoolUpdated(DataTypes.Pool pool);
 }

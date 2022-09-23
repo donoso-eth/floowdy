@@ -6,6 +6,20 @@ export interface IMEMBER_QUERY {
   creditsDelegated: Array<ICREDIT_DELEGATED>;
 }
 
+export enum CreditStatus {
+  NONE,
+  PHASE1,
+  PHASE2,
+  PHASE3,
+  PHASE4,
+  APPROVED,
+  REJECTED,
+  CANCELLED,
+  REPAYED,
+  LIQUIDATED
+}
+
+
 export interface ICREDIT_DELEGATED {
   id: string;
   amount: string;
@@ -17,6 +31,9 @@ export interface ICREDIT_DELEGATED {
   requester: { member:string};
   delegators: Array<{member: { member:string}}>;
   delegatorsNr: string;
+  currentInstallment:string;
+  installment:string;
+  installments:Array<{timestamp:string, nr:string}>
 
 }
 

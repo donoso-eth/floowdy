@@ -21,11 +21,12 @@ import { encodeResolverArgs, encodeTimeArgs, Module, ModuleData } from '../helpe
 
 import {  execSync} from 'child_process'
 import { CreditRequestOptionsStruct } from '../typechain-types/Floowdy';
+import { printPool } from '../helpers/print';
 
 const ETH = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
  const faucet = async (user:SignerWithAddress,erc20Under:any,superToken:string,supertokenContract: ISuperToken  ) =>{
 
-  await  waitForTx(erc20Under.connect(user)["mint(uint256)"](1000000000000))
+  await  waitForTx(erc20Under.connect(user)["mint(uint256)"](2000000000000))
 
   await erc20Under.connect(user).approve(superToken, constants.MaxInt256)
   let amountSuper = utils.parseEther("1000000")
@@ -118,10 +119,10 @@ task('deploy-state', 'create state').setAction(async ({}, hre) => {
 
 execSync("npm run deploy",{encoding: "utf8",stdio: 'inherit'})
 console.log('.....deployed')
-execSync("npm run task publish -- --only-address true",{encoding: "utf8",stdio: 'inherit'})
-console.log('.....publish to subgraph')
-execSync("npm run deploy-graph-local",{encoding: "utf8",stdio: 'inherit'})
-console.log('.....graph deployed')
+// execSync("npm run task publish -- --only-address true",{encoding: "utf8",stdio: 'inherit'})
+// console.log('.....publish to subgraph')
+// execSync("npm run deploy-graph-local",{encoding: "utf8",stdio: 'inherit'})
+// console.log('.....graph deployed')
 
 
 
@@ -198,12 +199,69 @@ if(creditNr == 1){
 await doAllFaucet(erc20Under, supertokenContract, network_params,deployer, user1, user2, user3, user4, user5, user6, user7, user8, user9, user10)
 }
 
-let amount = utils.parseEther("20000")
+let amount = utils.parseEther("200000")
+let t0 = +(await getTimestamp(hre));
 
+
+let pool_aave = await floowdy.getAaveData();
+console.log(pool_aave)
+
+await printPool(hre,floowdy)
 
 await waitForTx(
 supertokenContract.connect(user1).send(floowdyAddress, amount, '0x')
 )
+await printPool(hre,floowdy)
+
+await waitForTx(
+  supertokenContract.connect(user2).send(floowdyAddress, amount, '0x')
+  )
+
+await printPool(hre,floowdy)
+
+execData = floowdy.interface.encodeFunctionData('supplyStakeToAave');
+ execSelector = floowdy.interface.getSighash(
+   'supplyStakeToAave()'
+ );
+
+ resolverAddress = floowdyAddress;
+ resolverData = await floowdy.interface.encodeFunctionData(
+   'checkStakeAvailable'
+ );
+ // bytes4(utils.keccak256(bytes('stopCreditPeriodExec(uint256)')));
+
+ resolverHash = utils.keccak256(
+   new utils.AbiCoder().encode(
+     ['address', 'bytes'],
+     [resolverAddress, resolverData]
+   )
+ );
+
+ let fee = utils.parseEther("0.1")
+ let moduleData: ModuleData = {
+   modules: [Module.RESOLVER],
+   args: [
+     encodeResolverArgs(hre,floowdyAddress, resolverData)
+   ],
+ };
+
+
+//    await waitForTx(floowdy.connect(user1).stopStream({gasLimit:100000}))
+
+await  ops.connect(executor).exec(floowdyAddress,floowdyAddress,execData,moduleData,fee,ETH,false,true)
+
+await printPool(hre,floowdy)
+
+await setNextBlockTimestamp(hre, t0 + 365 * 24 * 3600);
+
+await waitForTx(floowdy.poolRebalance());
+
+await printPool(hre,floowdy)
+
+// let user1Balance = await floowdy._getMemberAvailable(user1.adress)
+// console.log(user1Balance.toString())
+throw new Error("");
+
 
 let creditReQuest: CreditRequestOptionsStruct = {
   amount:1000000000,
@@ -213,9 +271,9 @@ let creditReQuest: CreditRequestOptionsStruct = {
   handle:'javier',
   bio:'javier'
 }
-let t0 = +(await getTimestamp(hre));
-await waitForTx(floowdy.connect(user1).requestCredit(creditReQuest));
 
+await waitForTx(floowdy.connect(user1).requestCredit(creditReQuest));
+t0 = +(await getTimestamp(hre));
 await waitForTx(
   supertokenContract.connect(deployer).send(floowdyAddress, amount  ,'0x')
 );
@@ -258,8 +316,8 @@ execData = floowdy.interface.encodeFunctionData('stopCreditPeriodExec', [
    )
  );
 
-   let fee = utils.parseEther("0.1")
-   let moduleData: ModuleData = {
+   fee = utils.parseEther("0.1")
+    moduleData: ModuleData = {
      modules: [Module.RESOLVER, Module.TIME],
      args: [
        encodeResolverArgs(hre,floowdyAddress, resolverData),
@@ -325,7 +383,42 @@ console.log(id);
 
 await   ops.connect(executor).exec(floowdyAddress,floowdyAddress,execData,moduleData,fee,ETH,false,true)
 
+let t2 =  +(await getTimestamp(hre));
 
+await setNextBlockTimestamp(hre, t2 + 3600);
+
+moduleData = {
+  modules: [Module.RESOLVER, Module.TIME],
+  args: [
+    encodeResolverArgs(hre,floowdyAddress, resolverData),
+    encodeTimeArgs(hre,t2, 3600),
+  ],
+};
+
+await   ops.connect(executor).exec(floowdyAddress,floowdyAddress,execData,moduleData,fee,ETH,false,true)
+
+
+balance =(await token.balanceOf(user1.address));
+
+ await waitForTx(supertokenContract.connect(user1).upgrade(balance.mul(10**12)));
+
+ balance = await token.balanceOf(user1.address);
+
+ console.log(349, balance.toString())
+
+t2 =  +(await getTimestamp(hre));
+
+await setNextBlockTimestamp(hre, t2 + 3600);
+
+moduleData = {
+  modules: [Module.RESOLVER, Module.TIME],
+  args: [
+    encodeResolverArgs(hre,floowdyAddress, resolverData),
+    encodeTimeArgs(hre,t2, 3600),
+  ],
+};
+
+await   ops.connect(executor).exec(floowdyAddress,floowdyAddress,execData,moduleData,fee,ETH,false,true)
 // await waitForTx(
 //   supertokenContract.connect(user2).send(floowdyAddress, amount , '0x')
 // );

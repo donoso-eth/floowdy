@@ -8,7 +8,7 @@ dataSources:
     name: Floowdy
     network: localhost
     source:
-      address: "0x98F45b84B4824d7A96e7672A154bA8DC3988A20b"
+      address: "0xA92a00D083D9De8cD18B08fC2DDE27298633e422"
       abi: Floowdy
       startBlock: 7588383
     mapping:
@@ -38,6 +38,8 @@ dataSources:
           handler: handleCreditCheckOut
         - event: CreditInstallment(uint256)
           handler: handleCreditInstallment
+        - event: CreditLiquidated(uint256)
+          handler: handleCreditLiquidated
         - event: CreditRejected((uint256,address,uint256,uint256,uint8,bytes32,(uint256,uint256,address[],uint256,uint256),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,bytes32)))
           handler: handleCreditRejected
         - event: CreditRequested((uint256,address,uint256,uint256,uint8,bytes32,(uint256,uint256,address[],uint256,uint256),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,bytes32)))

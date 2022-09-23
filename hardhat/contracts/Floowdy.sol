@@ -74,6 +74,8 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
   address public epnsComm;
   address public epnsChannel;
 
+  uint256 PRECISSION = 1_000_000_000_000_000_000_000_000;
+
   constructor(DataTypes.Floowdy_Init memory floowdy_init) {
     require(address(floowdy_init.host) != address(0), "host is zero address");
     require(
@@ -159,10 +161,8 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
 
     _memberUpdate(_member);
     DataTypes.Member storage member = members[_member];
-
     // poolByTimestamp[block.timestamp].totalShares = poolByTimestamp[block.timestamp].totalShares + inDeposit - outDeposit;
     poolByTimestamp[block.timestamp].totalDeposit += amount;
-
     member.deposit += amount;
 
     if (member.flow > 0) {
@@ -283,7 +283,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
   }
 
   function _getMemberAvailable(address _member)
-    internal
+    public
     view
     returns (uint256 availableBalance)
   {
@@ -365,7 +365,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
 
     uint256 yieldFromDeposit = (member.deposit *
       (poolByTimestamp[poolTimestamp].depositIndex -
-        poolByTimestamp[lastTimestamp].depositIndex));
+        poolByTimestamp[lastTimestamp].depositIndex)).div(PRECISSION);
 
     yieldMember = yieldFromDeposit;
     if (member.flow > 0) {
@@ -393,7 +393,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
 
     DataTypes.Member storage member = members[_member];
 
-    uint256 yieldDeposit = yieldDepositNew * member.deposit;
+    uint256 yieldDeposit = (yieldDepositNew * member.deposit).div(PRECISSION);
     uint256 yieldInFlow = uint96(member.flow) * yieldFlowNew;
 
     yieldMember = yieldEarned + yieldDeposit + yieldInFlow;
@@ -404,6 +404,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
   // ============= ============= Pool ============= ============= //
   // #region Pool
 
+
   function poolRebalance() external {
     _poolRebalance();
     emit Events.PoolUpdated(poolByTimestamp[poolTimestamp]);
@@ -413,7 +414,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
 
   function _poolRebalance() internal {
     poolId++;
-
+    console.log(415,poolId);
     DataTypes.Pool memory currentPool = poolByTimestamp[block.timestamp];
     currentPool.id = poolId;
     currentPool.timestamp = block.timestamp;
@@ -422,6 +423,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
 
     uint256 poolSpan = currentPool.timestamp - lastPool.timestamp;
 
+    currentPool.totalDeposit = lastPool.totalDeposit;
     currentPool.totalDepositFlow =
       uint96(lastPool.totalFlow) *
       poolSpan +
@@ -474,17 +476,18 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
     ).div(2);
 
     uint256 totalDepositToYield = averageFlowDeposit + lastPool.totalDeposit;
-
+    console.log(477,totalDepositToYield);
     yieldPool = _calculatePoolYield(lastPool.totalStaked);
-
+    console.log(479,yieldPool);
+    console.log(lastPool.totalDeposit);
     if (totalDepositToYield == 0 || yieldPool == 0) {
       depositIndex = 0;
       flowIndex = 0;
     } else {
       if (lastPool.totalDeposit != 0) {
         depositIndex = (
-          (lastPool.totalDeposit * yieldPool).div(
-            (lastPool.totalDeposit) * totalDepositToYield
+          (lastPool.totalDeposit * yieldPool*PRECISSION).div(
+            (lastPool.totalDeposit.div(10**12)) * totalDepositToYield
           )
         );
       }
@@ -496,6 +499,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
         );
       }
     }
+    console.log(499, depositIndex);
   }
 
   function _calculatePoolYield(uint256 staked)
@@ -503,7 +507,11 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
     view
     returns (uint256 yield)
   {
-    yield = IAToken(aToken).balanceOf(address(this)) - staked;
+   uint256 currentAtoken = IAToken(aToken).balanceOf(address(this));
+    console.log(507,currentAtoken);
+    console.log(508, staked);
+    yield = (IAToken(aToken).balanceOf(address(this))).sub(staked);
+    console.log(yield);
   }
 
   // #endregion Pool
@@ -537,10 +545,14 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
   function supplyStakeToAave() external onlyOps {
     //// check if
 
-    uint256 balanceToStake = token.balanceOf(address(this));
+    uint256 balanceToStake = superToken.balanceOf(address(this)).div(10**12);
+   require(balanceToStake > 5 * 10**6, "NOT_ENOUGH_AMOUNT_TO_STAKE");
 
-    require(balanceToStake > 5 * 10**6, "NOT_ENOUGH_AMOUNT_TO_STAKE");
+ 
 
+
+    
+ 
     //// every task will be payed with a transfer, therefore receive(), we have to fund the contract
     uint256 fee;
     address feeToken;
@@ -549,31 +561,37 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
 
     _transfer(fee, feeToken);
 
-    uint256 poolSuperTokenBalance = (superToken.balanceOf(address(this))).div(
-      10**12
-    );
+    // uint256 poolSuperTokenBalance = (superToken.balanceOf(address(this))).div(
+    //   10**12
+    // );
 
-    superToken.downgrade(poolSuperTokenBalance);
+    superToken.downgrade(balanceToStake*10**12);
 
     uint256 poolTokenBalance = token.balanceOf(address(this));
-
-    aavePool.supply(address(token), poolTokenBalance, address(this), 0);
+    
 
     _poolRebalance();
+    aavePool.supply(address(token), poolTokenBalance, address(this), 0);
+
     DataTypes.Pool storage pool = poolByTimestamp[poolTimestamp];
     pool.totalStaked += poolTokenBalance;
   }
 
   // #endregion Task GElato CREDIT PHASE PERIOD
 
-  function getAaveData() public {
-    (
-      uint256 totalCollateralBase,
+  function getAaveData() public view returns( uint256 totalCollateralBase,
       uint256 totalDebtBase,
       uint256 availableBorrowsBase,
       uint256 currentLiquidationThreshold,
       uint256 ltv,
-      uint256 healthFactor
+      uint256 healthFactor) {
+    (
+      totalCollateralBase,
+      totalDebtBase,
+      availableBorrowsBase,
+      currentLiquidationThreshold,
+      ltv,
+      healthFactor
     ) = aavePool.getUserAccountData(address(this));
   }
 
@@ -735,8 +753,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
       credit.id,
       credit.repaymentOptions.interval
     );
-    console.log(738);
-    console.logBytes32(credit.repaymentOptions.GelatoRepaymentTaskId);
+
     emit Events.CreditApproved(credit);
   }
 
@@ -756,7 +773,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
 
   function getMaxAmount() public view returns (uint256 maxAmount) {
     uint256 balance = _getMemberAvailable(msg.sender);
-    console.log(balance);
+
     maxAmount = (100 + (100 - MAX_ALLOWANCE)).mul(balance);
   }
 
@@ -778,8 +795,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
 
   modifier onlyRequester(uint256 creditId) {
     DataTypes.Credit storage credit = creditsById[creditId];
-    console.log(credit.requester);
-    console.log(msg.sender);
+
     require(credit.requester == msg.sender, "NOT_cREDIT_OWNER");
     _;
   }
@@ -835,9 +851,6 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
 
     _transfer(fee, feeToken);
 
-    console.log(836,uint(credit.status));
-    console.log(credit.delegatorsOptions.delegators.length);
-    console.log(credit.delegatorsOptions.delegatorsNr);
 
     if (credit.status == DataTypes.CreditStatus.PHASE1) {
  
@@ -956,6 +969,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
       credit.repaymentOptions.currentInstallment <=
       credit.repaymentOptions.nrInstallments
     ) {
+      
       try
         token.transferFrom(
           credit.requester,
@@ -964,11 +978,12 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
         )
       returns (bool success) {
         emit Events.CreditInstallment(creditId);
-        // pool.repay(, amount, interestRateMode, address(this));
+          // pool.repay(, amount, interestRateMode, address(this));
         //recalculate credit conditions
       } catch {
         credit.status = DataTypes.CreditStatus.LIQUIDATED;
         /// Liquidate the credit
+        emit Events.CreditLiquidated(creditId);
         console.log(972);
       }
     }
@@ -1073,7 +1088,6 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
       (address, address)
     );
     newCtx = _ctx;
-    console.log(683);
     _updateFlow(sender, 0, 0, 0);
     return newCtx;
   }

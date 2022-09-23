@@ -436,6 +436,24 @@ export class CreditInstallment__Params {
   }
 }
 
+export class CreditLiquidated extends ethereum.Event {
+  get params(): CreditLiquidated__Params {
+    return new CreditLiquidated__Params(this);
+  }
+}
+
+export class CreditLiquidated__Params {
+  _event: CreditLiquidated;
+
+  constructor(event: CreditLiquidated) {
+    this._event = event;
+  }
+
+  get creditId(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+}
+
 export class CreditRejected extends ethereum.Event {
   get params(): CreditRejected__Params {
     return new CreditRejected__Params(this);

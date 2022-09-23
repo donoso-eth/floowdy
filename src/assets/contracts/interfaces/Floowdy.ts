@@ -152,6 +152,7 @@ export interface FloowdyInterface extends utils.Interface {
   functions: {
     "ETH()": FunctionFragment;
     "_calculateYield()": FunctionFragment;
+    "_getMemberAvailable(address)": FunctionFragment;
     "aaveSupply()": FunctionFragment;
     "afterAgreementCreated(address,address,bytes32,bytes,bytes,bytes)": FunctionFragment;
     "afterAgreementTerminated(address,address,bytes32,bytes,bytes,bytes)": FunctionFragment;
@@ -209,6 +210,10 @@ export interface FloowdyInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "_calculateYield",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getMemberAvailable",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "aaveSupply",
@@ -388,6 +393,10 @@ export interface FloowdyInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "ETH", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_calculateYield",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_getMemberAvailable",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "aaveSupply", data: BytesLike): Result;
@@ -607,6 +616,11 @@ export interface Floowdy extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    _getMemberAvailable(
+      _member: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { availableBalance: BigNumber }>;
+
     aaveSupply(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -757,8 +771,17 @@ export interface Floowdy extends BaseContract {
     gelato(overrides?: CallOverrides): Promise<[string]>;
 
     getAaveData(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+        totalCollateralBase: BigNumber;
+        totalDebtBase: BigNumber;
+        availableBorrowsBase: BigNumber;
+        currentLiquidationThreshold: BigNumber;
+        ltv: BigNumber;
+        healthFactor: BigNumber;
+      }
+    >;
 
     getMaxAmount(
       overrides?: CallOverrides
@@ -933,6 +956,11 @@ export interface Floowdy extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  _getMemberAvailable(
+    _member: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   aaveSupply(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -1083,8 +1111,17 @@ export interface Floowdy extends BaseContract {
   gelato(overrides?: CallOverrides): Promise<string>;
 
   getAaveData(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+      totalCollateralBase: BigNumber;
+      totalDebtBase: BigNumber;
+      availableBorrowsBase: BigNumber;
+      currentLiquidationThreshold: BigNumber;
+      ltv: BigNumber;
+      healthFactor: BigNumber;
+    }
+  >;
 
   getMaxAmount(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1252,6 +1289,11 @@ export interface Floowdy extends BaseContract {
 
     _calculateYield(overrides?: CallOverrides): Promise<void>;
 
+    _getMemberAvailable(
+      _member: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     aaveSupply(overrides?: CallOverrides): Promise<void>;
 
     afterAgreementCreated(
@@ -1396,7 +1438,18 @@ export interface Floowdy extends BaseContract {
 
     gelato(overrides?: CallOverrides): Promise<string>;
 
-    getAaveData(overrides?: CallOverrides): Promise<void>;
+    getAaveData(
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+        totalCollateralBase: BigNumber;
+        totalDebtBase: BigNumber;
+        availableBorrowsBase: BigNumber;
+        currentLiquidationThreshold: BigNumber;
+        ltv: BigNumber;
+        healthFactor: BigNumber;
+      }
+    >;
 
     getMaxAmount(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1568,6 +1621,11 @@ export interface Floowdy extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    _getMemberAvailable(
+      _member: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     aaveSupply(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -1695,9 +1753,7 @@ export interface Floowdy extends BaseContract {
 
     gelato(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getAaveData(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    getAaveData(overrides?: CallOverrides): Promise<BigNumber>;
 
     getMaxAmount(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1816,6 +1872,11 @@ export interface Floowdy extends BaseContract {
 
     _calculateYield(
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    _getMemberAvailable(
+      _member: string,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     aaveSupply(
@@ -1947,9 +2008,7 @@ export interface Floowdy extends BaseContract {
 
     gelato(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getAaveData(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    getAaveData(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getMaxAmount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

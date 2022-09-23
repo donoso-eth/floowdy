@@ -1,16 +1,8 @@
 import { Component, OnInit, Input, OnChanges } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { DappBaseComponent, DappInjector, ICREDIT_DELEGATED, ROLE } from 'angular-web3';
+import { CreditStatus, DappBaseComponent, DappInjector, ICREDIT_DELEGATED, ROLE } from 'angular-web3';
 import { blockTimeToTime, displayAdress } from 'src/app/shared/helpers/helpers';
 
-enum CreditStatus {
-  NONE,
-  PHASE1,
-  PHASE2,
-  PHASE3,
-  PHASE4,
-  APPROVED
-}
 
 @Component({
   selector: 'credit-summary',

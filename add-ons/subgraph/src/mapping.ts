@@ -5,7 +5,8 @@ export {
   handleCreditCheckOut,
   handleCreditRejected,
   handleCreditRequested,
-  handleCreditInstallment
+  handleCreditInstallment,
+  handleCreditLiquidated
 } from './mapping_credit';
 
 export { handleMemberDeposit, handleMemberStream } from './mapping_member';

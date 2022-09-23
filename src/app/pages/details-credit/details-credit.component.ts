@@ -35,14 +35,16 @@ export class DetailsCreditComponent extends DappBaseComponent implements AfterVi
 checkRole() {
     console.log(this.blockchain_status)
     if(this.blockchain_status == 'wallet-connected') {
-      
+
+      if (this.credit!== undefined) {
+    
+                
       let signerAddress = this.dapp.signerAddress!.toLowerCase();
       let requester = this.credit.requester.member.toLowerCase();
       let delegators = this.credit.delegators.map(map=> map.member.member)
 
 
-      if (this.credit!== undefined) {
-    
+
           if ( requester == signerAddress) {
             this.role = 'requester';
             console.log(this.role)

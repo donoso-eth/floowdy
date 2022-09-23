@@ -1,7 +1,7 @@
 // #region =========== CREDIT =================
 
 import { store } from "@graphprotocol/graph-ts";
-import { CreditRequested, CreditCheckIn, CreditCheckOut, CreditApproved, CreditRejected, CreditChangePhase, CreditInstallment } from "../generated/Floowdy/Floowdy";
+import { CreditRequested, CreditCheckIn, CreditCheckOut, CreditApproved, CreditRejected, CreditChangePhase, CreditInstallment, CreditLiquidated } from "../generated/Floowdy/Floowdy";
 import { MemberCredit, Credit, Installment } from "../generated/schema";
 import { BigDecimal, BigInt } from '@graphprotocol/graph-ts';
 
@@ -45,6 +45,7 @@ export function handleCreditRequested(event:CreditRequested):void {
     let id = event.params.credit.id.toString();
     let credit = _getCredit(id);
     credit.status = BigInt.fromI32(event.params.credit.status);
+    
     credit.save()
   }
   
@@ -80,6 +81,17 @@ export function handleCreditRequested(event:CreditRequested):void {
 
   }
 
+  export function handleCreditLiquidated(event:CreditLiquidated):void {
+    let id = event.params.creditId.toString();
+    let credit = _getCredit(id);
+    credit.status = BigInt.fromI32(9);
+    let alreadypayed = credit.currentInstallment.times(credit.installment);
+    let loss = credit.amount.minus(alreadypayed);
+
+    credit.save()
+    
+
+  }
 
  
 
@@ -107,7 +119,7 @@ export function handleCreditRequested(event:CreditRequested):void {
     credit.rate = eventObject.repaymentOptions.rate;
     credit.totalYield = eventObject.repaymentOptions.totalYield;
     credit.currentInstallment = eventObject.repaymentOptions.currentInstallment;
-
+    credit.installment = eventObject.repaymentOptions.installment;
    
 
     credit.delegatorsNr = eventObject.delegatorsOptions.delegatorsNr;
