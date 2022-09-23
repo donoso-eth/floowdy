@@ -18,6 +18,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import {IPoolAddressesProvider} from "./aave/IPoolAddressesProvider.sol";
 import {IPool} from "./aave/IPool.sol";
 import {IAToken} from "./aave/IAToken.sol";
+import {IPoolDataProvider} from './aave/IPoolDataProvider.sol';
 
 import {ISuperfluid, ISuperAgreement, ISuperToken, ISuperApp, SuperAppDefinitions} from "@superfluid-finance/ethereum-contracts/contracts/interfaces/superfluid/ISuperfluid.sol";
 import {IConstantFlowAgreementV1} from "@superfluid-finance/ethereum-contracts/contracts/interfaces/agreements/IConstantFlowAgreementV1.sol";
@@ -613,6 +614,22 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
       ltv,
       healthFactor
     ) = aavePool.getUserAccountData(address(this));
+
+    (
+      uint256 unbacked,
+      uint256 accruedToTreasuryScaled,
+      uint256 totalAToken,
+      uint256 totalStableDebt,
+      uint256 totalVariableDebt,
+      uint256 liquidityRate,
+      uint256 variableBorrowRate,
+      uint256 stableBorrowRate,
+      uint256 averageStableBorrowRate,
+      uint256 liquidityIndex,
+      uint256 variableBorrowIndex,
+      uint40 lastUpdateTimestamp
+    ) = IPoolDataProvider(token).getReserveData(asset);
+
   }
 
   function aaveSupply() public {
