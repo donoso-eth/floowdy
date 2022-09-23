@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { AngularContract, DappBaseComponent, DappInjector, Web3Actions } from 'angular-web3';
+import { AngularContract, DappBaseComponent, DappInjector, IPOOL, Web3Actions } from 'angular-web3';
+import { BigNumber, utils } from 'ethers';
 import { GraphQlService } from 'src/app/dapp-injector/services/graph-ql/graph-ql.service';
 
 @Component({
@@ -9,11 +10,16 @@ import { GraphQlService } from 'src/app/dapp-injector/services/graph-ql/graph-ql
   templateUrl: './landing.component.html',
   styleUrls: ['./landing.component.scss'],
 })
-export class LandingComponent extends DappBaseComponent {
+export class LandingComponent extends DappBaseComponent implements OnInit{
   pieData:any;
   pieOptions: any;
   barData:any;
   barOptions:any;
+
+  currentPool!:IPOOL
+    totalTvl: any;
+    totalYieldStake!: any;
+
   constructor(private router: Router, store: Store, dapp: DappInjector, public graphqlService:GraphQlService
     
     ) {
@@ -113,5 +119,31 @@ this.barOptions = {
    // this.router.navigate(['home'])
   
 
+  }
+
+  getPool(){
+    this.graphqlService.watchPool().subscribe(val=> {
+        if (!!val && !!val.data && !!val.data.pools) { 
+        
+            console.log(val.data.pools)
+
+            this.currentPool = val.data.pools[0];
+
+            console.log(this.currentPool);
+
+            let currentTimestamp = new Date().getTime()/1000;
+            console.log(BigNumber.from(this.currentPool.totalDeposit))
+            this.totalYieldStake = +this.currentPool.totalYieldStake / 10**6;
+
+           this.totalTvl = utils.formatEther(BigNumber.from(this.currentPool.totalDeposit))
+             
+            console.log(this.totalYieldStake)
+
+        }
+    })
+  }
+
+  ngOnInit() {
+    this.getPool()
   }
 }

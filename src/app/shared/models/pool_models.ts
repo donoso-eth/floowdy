@@ -45,3 +45,13 @@ export interface ICREDIT_REQUESTED  {
   delegatorsNr: string;
 };
  export type ROLE = 'member' | 'requester' |'delegater' | 'none' |'loading'
+
+
+ export interface IPOOL {
+  id:string;
+  timestamp: string,
+  totalDeposit: string;
+  totalFlow:string;
+  totalYieldStake:string;
+  nrMembers:string;
+ }

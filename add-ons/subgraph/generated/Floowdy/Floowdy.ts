@@ -896,6 +896,14 @@ export class PoolUpdatedPoolStruct extends ethereum.Tuple {
   get nrMembers(): BigInt {
     return this[10].toBigInt();
   }
+
+  get yieldPeriod(): BigInt {
+    return this[11].toBigInt();
+  }
+
+  get poolSpan(): BigInt {
+    return this[12].toBigInt();
+  }
 }
 
 export class PoolUpdatedPoolDelegationStruct extends ethereum.Tuple {
@@ -1091,6 +1099,42 @@ export class Floowdy__creditsByIdResult {
   }
 }
 
+export class Floowdy__getAaveDataResult {
+  value0: BigInt;
+  value1: BigInt;
+  value2: BigInt;
+  value3: BigInt;
+  value4: BigInt;
+  value5: BigInt;
+
+  constructor(
+    value0: BigInt,
+    value1: BigInt,
+    value2: BigInt,
+    value3: BigInt,
+    value4: BigInt,
+    value5: BigInt
+  ) {
+    this.value0 = value0;
+    this.value1 = value1;
+    this.value2 = value2;
+    this.value3 = value3;
+    this.value4 = value4;
+    this.value5 = value5;
+  }
+
+  toMap(): TypedMap<string, ethereum.Value> {
+    let map = new TypedMap<string, ethereum.Value>();
+    map.set("value0", ethereum.Value.fromUnsignedBigInt(this.value0));
+    map.set("value1", ethereum.Value.fromUnsignedBigInt(this.value1));
+    map.set("value2", ethereum.Value.fromUnsignedBigInt(this.value2));
+    map.set("value3", ethereum.Value.fromUnsignedBigInt(this.value3));
+    map.set("value4", ethereum.Value.fromUnsignedBigInt(this.value4));
+    map.set("value5", ethereum.Value.fromUnsignedBigInt(this.value5));
+    return map;
+  }
+}
+
 export class Floowdy__membersResult {
   value0: BigInt;
   value1: Address;
@@ -1177,6 +1221,8 @@ export class Floowdy__poolByTimestampResult {
   value8: BigInt;
   value9: Floowdy__poolByTimestampResultDelegationStruct;
   value10: BigInt;
+  value11: BigInt;
+  value12: BigInt;
 
   constructor(
     value0: BigInt,
@@ -1189,7 +1235,9 @@ export class Floowdy__poolByTimestampResult {
     value7: BigInt,
     value8: BigInt,
     value9: Floowdy__poolByTimestampResultDelegationStruct,
-    value10: BigInt
+    value10: BigInt,
+    value11: BigInt,
+    value12: BigInt
   ) {
     this.value0 = value0;
     this.value1 = value1;
@@ -1202,6 +1250,8 @@ export class Floowdy__poolByTimestampResult {
     this.value8 = value8;
     this.value9 = value9;
     this.value10 = value10;
+    this.value11 = value11;
+    this.value12 = value12;
   }
 
   toMap(): TypedMap<string, ethereum.Value> {
@@ -1217,6 +1267,8 @@ export class Floowdy__poolByTimestampResult {
     map.set("value8", ethereum.Value.fromUnsignedBigInt(this.value8));
     map.set("value9", ethereum.Value.fromTuple(this.value9));
     map.set("value10", ethereum.Value.fromUnsignedBigInt(this.value10));
+    map.set("value11", ethereum.Value.fromUnsignedBigInt(this.value11));
+    map.set("value12", ethereum.Value.fromUnsignedBigInt(this.value12));
     return map;
   }
 }
@@ -1239,6 +1291,29 @@ export class Floowdy extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
+  _getMemberAvailable(_member: Address): BigInt {
+    let result = super.call(
+      "_getMemberAvailable",
+      "_getMemberAvailable(address):(uint256)",
+      [ethereum.Value.fromAddress(_member)]
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try__getMemberAvailable(_member: Address): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "_getMemberAvailable",
+      "_getMemberAvailable(address):(uint256)",
+      [ethereum.Value.fromAddress(_member)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
   afterAgreementCreated(
@@ -1835,6 +1910,45 @@ export class Floowdy extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
+  getAaveData(): Floowdy__getAaveDataResult {
+    let result = super.call(
+      "getAaveData",
+      "getAaveData():(uint256,uint256,uint256,uint256,uint256,uint256)",
+      []
+    );
+
+    return new Floowdy__getAaveDataResult(
+      result[0].toBigInt(),
+      result[1].toBigInt(),
+      result[2].toBigInt(),
+      result[3].toBigInt(),
+      result[4].toBigInt(),
+      result[5].toBigInt()
+    );
+  }
+
+  try_getAaveData(): ethereum.CallResult<Floowdy__getAaveDataResult> {
+    let result = super.tryCall(
+      "getAaveData",
+      "getAaveData():(uint256,uint256,uint256,uint256,uint256,uint256)",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(
+      new Floowdy__getAaveDataResult(
+        value[0].toBigInt(),
+        value[1].toBigInt(),
+        value[2].toBigInt(),
+        value[3].toBigInt(),
+        value[4].toBigInt(),
+        value[5].toBigInt()
+      )
+    );
+  }
+
   getMaxAmount(): BigInt {
     let result = super.call("getMaxAmount", "getMaxAmount():(uint256)", []);
 
@@ -1989,7 +2103,7 @@ export class Floowdy extends ethereum.SmartContract {
   poolByTimestamp(param0: BigInt): Floowdy__poolByTimestampResult {
     let result = super.call(
       "poolByTimestamp",
-      "poolByTimestamp(uint256):(uint256,uint256,int96,uint256,uint256,uint256,uint256,uint256,uint256,(uint256,uint256,uint256,uint256,uint256),uint256)",
+      "poolByTimestamp(uint256):(uint256,uint256,int96,uint256,uint256,uint256,uint256,uint256,uint256,(uint256,uint256,uint256,uint256,uint256),uint256,uint256,uint256)",
       [ethereum.Value.fromUnsignedBigInt(param0)]
     );
 
@@ -2006,7 +2120,9 @@ export class Floowdy extends ethereum.SmartContract {
       changetype<Floowdy__poolByTimestampResultDelegationStruct>(
         result[9].toTuple()
       ),
-      result[10].toBigInt()
+      result[10].toBigInt(),
+      result[11].toBigInt(),
+      result[12].toBigInt()
     );
   }
 
@@ -2015,7 +2131,7 @@ export class Floowdy extends ethereum.SmartContract {
   ): ethereum.CallResult<Floowdy__poolByTimestampResult> {
     let result = super.tryCall(
       "poolByTimestamp",
-      "poolByTimestamp(uint256):(uint256,uint256,int96,uint256,uint256,uint256,uint256,uint256,uint256,(uint256,uint256,uint256,uint256,uint256),uint256)",
+      "poolByTimestamp(uint256):(uint256,uint256,int96,uint256,uint256,uint256,uint256,uint256,uint256,(uint256,uint256,uint256,uint256,uint256),uint256,uint256,uint256)",
       [ethereum.Value.fromUnsignedBigInt(param0)]
     );
     if (result.reverted) {
@@ -2036,7 +2152,9 @@ export class Floowdy extends ethereum.SmartContract {
         changetype<Floowdy__poolByTimestampResultDelegationStruct>(
           value[9].toTuple()
         ),
-        value[10].toBigInt()
+        value[10].toBigInt(),
+        value[11].toBigInt(),
+        value[12].toBigInt()
       )
     );
   }
@@ -2557,32 +2675,6 @@ export class CreditCheckOutCall__Outputs {
   _call: CreditCheckOutCall;
 
   constructor(call: CreditCheckOutCall) {
-    this._call = call;
-  }
-}
-
-export class GetAaveDataCall extends ethereum.Call {
-  get inputs(): GetAaveDataCall__Inputs {
-    return new GetAaveDataCall__Inputs(this);
-  }
-
-  get outputs(): GetAaveDataCall__Outputs {
-    return new GetAaveDataCall__Outputs(this);
-  }
-}
-
-export class GetAaveDataCall__Inputs {
-  _call: GetAaveDataCall;
-
-  constructor(call: GetAaveDataCall) {
-    this._call = call;
-  }
-}
-
-export class GetAaveDataCall__Outputs {
-  _call: GetAaveDataCall;
-
-  constructor(call: GetAaveDataCall) {
     this._call = call;
   }
 }

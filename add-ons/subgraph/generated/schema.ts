@@ -191,6 +191,8 @@ export class Pool extends Entity {
     this.set("liquidatedIndex", Value.fromBigInt(BigInt.zero()));
     this.set("totalLiquidated", Value.fromBigInt(BigInt.zero()));
     this.set("nrMembers", Value.fromBigInt(BigInt.zero()));
+    this.set("apy", Value.fromBigInt(BigInt.zero()));
+    this.set("apySpan", Value.fromBigInt(BigInt.zero()));
   }
 
   save(): void {
@@ -343,6 +345,24 @@ export class Pool extends Entity {
 
   set nrMembers(value: BigInt) {
     this.set("nrMembers", Value.fromBigInt(value));
+  }
+
+  get apy(): BigInt {
+    let value = this.get("apy");
+    return value!.toBigInt();
+  }
+
+  set apy(value: BigInt) {
+    this.set("apy", Value.fromBigInt(value));
+  }
+
+  get apySpan(): BigInt {
+    let value = this.get("apySpan");
+    return value!.toBigInt();
+  }
+
+  set apySpan(value: BigInt) {
+    this.set("apySpan", Value.fromBigInt(value));
   }
 }
 

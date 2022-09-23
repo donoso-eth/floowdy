@@ -67,6 +67,7 @@ const config: HardhatUserConfig = {
 
   networks: {
     hardhat: {
+      allowUnlimitedContractSize: true,
     //   forking: {
     //   url: `https://polygon-mumbai.g.alchemy.com/v2/P2lEQkjFdNjdN0M_mpZKB8r3fAa2M0vT`,
     //   blockNumber: 28154232,
@@ -122,7 +123,8 @@ const config: HardhatUserConfig = {
           : [],
     },
     goerli: {
-      url: `https://goerli.infura.io/v3/1e43f3d31eea4244bf25ed4c13bfde0e`, // <---- YOUR INFURA ID! (or it won't work)
+      url: `https://goerli.infura.io/v3/1e43f3d31eea4244bf25ed4c13bfde0e`,
+      allowUnlimitedContractSize: true, // <---- YOUR INFURA ID! (or it won't work)
       // `https://speedy-nodes-nyc.moralis.io/${MORALIS_ID}/eth/goerli`
       accounts:
         process.env['DEPLOYER_KEY'] !== undefined

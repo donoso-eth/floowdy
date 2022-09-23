@@ -30,6 +30,8 @@ type Pool @entity {
   liquidatedIndex:BigInt!
   totalLiquidated:BigInt!
   nrMembers: BigInt!
+  apy:BigInt!
+  apySpan:BigInt!
 }
 
 

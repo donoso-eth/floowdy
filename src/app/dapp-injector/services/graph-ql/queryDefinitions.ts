@@ -1,10 +1,15 @@
 export const GET_POOL = `
     {
-      pools(first: 5, orderBy: id, orderDirection: desc) {
+      pools(first: 4, orderBy: id, orderDirection: desc) {
         id
         totalFlow
         totalDeposit
+        nrMembers
         timestamp
+        totalYieldStake
+        totalStaked
+        apy
+        apySpan
       }
     }
   `;

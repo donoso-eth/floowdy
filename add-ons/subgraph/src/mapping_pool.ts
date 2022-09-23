@@ -10,9 +10,26 @@ export function handlePoolUpdated(event:PoolUpdated):void {
   
 
   function _updatePool(event: PoolUpdated):void {
-    let id = event.params.pool.timestamp.toHexString();
+    let id = event.params.pool.id.toString();
    
     let pool= _getPool(id)
+
+    pool.apy = BigInt.fromI32(0);
+    pool.apySpan = BigInt.fromI32(0);
+
+    if (id == "1") {
+      pool.apy = BigInt.fromI32(0);
+      pool.apySpan = BigInt.fromI32(0);
+    } else {
+      let lastId = event.params.pool.id.minus(BigInt.fromI32(1));
+      let lastPool = _getPool(lastId.toString())
+      pool.apy =  ((lastPool.apy.times(lastPool.apySpan))
+      .plus(event.params.pool.poolSpan.times(event.params.pool.yieldPeriod)))
+      .div((lastPool.apySpan).plus(event.params.pool.poolSpan));
+      pool.apySpan = (lastPool.apySpan).plus(event.params.pool.poolSpan);
+
+    }
+
     pool.poolId=   event.params.pool.id.toString();
   
     pool.timestamp = event.params.pool.timestamp;
@@ -53,6 +70,7 @@ export function handlePoolUpdated(event:PoolUpdated):void {
       let pool = Pool.load(id);
       if (pool=== null) {
         pool= new Pool(id);
+        
         pool.save();
       }
       return pool;

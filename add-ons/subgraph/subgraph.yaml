@@ -8,7 +8,7 @@ dataSources:
     name: Floowdy
     network: localhost
     source:
-      address: '0xA92a00D083D9De8cD18B08fC2DDE27298633e422'
+      address: '0x51522C5D19dF4841B3eC82d1F97e1D08E8BFf37f'
       abi: Floowdy
       startBlock: 7588383
     mapping:
@@ -58,6 +58,6 @@ dataSources:
             MemberStream((uint256,address,int96,bytes32,uint256,uint256,uint256,uint256,uint256,uint256))
           handler: handleMemberStream
         - event: >-
-            PoolUpdated((uint256,uint256,int96,uint256,uint256,uint256,uint256,uint256,uint256,(uint256,uint256,uint256,uint256,uint256),uint256))
+            PoolUpdated((uint256,uint256,int96,uint256,uint256,uint256,uint256,uint256,uint256,(uint256,uint256,uint256,uint256,uint256),uint256,uint256,uint256))
           handler: handlePoolUpdated
       file: ./src/mapping.ts

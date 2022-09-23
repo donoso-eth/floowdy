@@ -39,9 +39,10 @@ export class GraphQlService {
   }
 
   watchPool() {
-    this.apollo
+    return this.apollo
       .watchQuery<any>({
         query: gql(GET_POOL),
+      pollInterval: 500,
       })
       .valueChanges
   }

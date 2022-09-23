@@ -58,6 +58,9 @@ library DataTypes {
         uint256 totalStaked;
         POOL_DELEGATION delegation;
         uint256 nrMembers;
+        uint256 yieldPeriod;
+        uint256 poolSpan;
+
     }
 
     enum CreditStatus {

@@ -847,6 +847,8 @@ export interface Floowdy extends BaseContract {
         BigNumber,
         BigNumber,
         POOLDELEGATIONStructOutput,
+        BigNumber,
+        BigNumber,
         BigNumber
       ] & {
         id: BigNumber;
@@ -860,6 +862,8 @@ export interface Floowdy extends BaseContract {
         totalStaked: BigNumber;
         delegation: POOLDELEGATIONStructOutput;
         nrMembers: BigNumber;
+        yieldPeriod: BigNumber;
+        poolSpan: BigNumber;
       }
     >;
 
@@ -1182,6 +1186,8 @@ export interface Floowdy extends BaseContract {
       BigNumber,
       BigNumber,
       POOLDELEGATIONStructOutput,
+      BigNumber,
+      BigNumber,
       BigNumber
     ] & {
       id: BigNumber;
@@ -1195,6 +1201,8 @@ export interface Floowdy extends BaseContract {
       totalStaked: BigNumber;
       delegation: POOLDELEGATIONStructOutput;
       nrMembers: BigNumber;
+      yieldPeriod: BigNumber;
+      poolSpan: BigNumber;
     }
   >;
 
@@ -1513,6 +1521,8 @@ export interface Floowdy extends BaseContract {
         BigNumber,
         BigNumber,
         POOLDELEGATIONStructOutput,
+        BigNumber,
+        BigNumber,
         BigNumber
       ] & {
         id: BigNumber;
@@ -1526,6 +1536,8 @@ export interface Floowdy extends BaseContract {
         totalStaked: BigNumber;
         delegation: POOLDELEGATIONStructOutput;
         nrMembers: BigNumber;
+        yieldPeriod: BigNumber;
+        poolSpan: BigNumber;
       }
     >;
 

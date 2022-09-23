@@ -14,7 +14,7 @@
                   <span style="font-size:20px;text-align: left;color:var(--primary-color);"> TVL</span>
                   <div class="text-900 font-medium">
                     <span style="font-size: 15px;text-align: left;" class="text-pink-400">
-                      <span style="font-size: 30px"> {{ '00' }}</span>{{ '0000' }}
+                      <span style="font-size: 30px"> {{ totalTvl }}</span>{{ '0000' }}
                     </span>
                   </div>
                 </div>
@@ -27,7 +27,7 @@
                   <span style="font-size:20px;text-align: left;color:grey;"> YIELD</span>
                   <div class="text-900 font-medium">
                     <span style="font-size: 30px;text-align: left;" class="text-pink-400">
-                      {{ '1.02' }}%
+                      {{ totalYieldStake?.toFixed(4)}}$
 
                     </span>
                   </div>
@@ -58,7 +58,7 @@
                   <span style="font-size:20px;text-align: left;color:grey;"> FLOOWDIES</span>
                   <div class="text-900 font-medium">
                     <span style="font-size: 30px;text-align: left;" class="text-pink-400">
-                      {{ '1207' }}
+                      {{ currentPool?.nrMembers }}
 
                     </span>
                   </div>

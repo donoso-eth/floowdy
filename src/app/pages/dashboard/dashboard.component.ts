@@ -129,18 +129,6 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
                 creditsDelegated: queryMember.creditsDelegated.map((map:any)=> map.credit)
             }
 
-             console.log(this.member)
-        // let queryMember = mockMember1;
-
-
-
-        //     this.member =  {
-        //         deposit:queryMember.deposit,
-        //         flow:queryMember.flow,
-        //         timestamp: queryMember.timestamp,
-        //         creditsRequested : queryMember.creditsRequested,
-        //         creditsDelegated: queryMember.creditsDelegated
-        //     }
 
         let value = +this.member.flow * ( (new Date().getTime() / 1000)- +this.member.timestamp);
         console.log(value)
