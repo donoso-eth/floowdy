@@ -1,8 +1,8 @@
 // #region =========== CREDIT =================
 
 import { store } from "@graphprotocol/graph-ts";
-import { CreditRequested, CreditCheckIn, CreditCheckOut, CreditApproved, CreditRejected } from "../generated/Floowdy/Floowdy";
-import { MemberCredit, Credit } from "../generated/schema";
+import { CreditRequested, CreditCheckIn, CreditCheckOut, CreditApproved, CreditRejected, CreditChangePhase, CreditInstallment } from "../generated/Floowdy/Floowdy";
+import { MemberCredit, Credit, Installment } from "../generated/schema";
 import { BigDecimal, BigInt } from '@graphprotocol/graph-ts';
 
 
@@ -22,7 +22,16 @@ export function handleCreditRequested(event:CreditRequested):void {
     credit.save()
    
   }
-  
+           
+  export function handleCreditChangePhase(event:CreditChangePhase):void {
+    let id = event.params.credit.id.toString();
+    let credit = _getCredit(id);
+    credit.status = BigInt.fromI32(event.params.credit.status);
+    credit.finishPhaseTimestamp = event.params.credit.finishPhaseTimestamp;
+    credit.save()
+   
+  }
+
   
   export function handleCreditCheckOut(event:CreditCheckOut):void {
     let id = event.params.creditId.toString().concat(event.params.delegator.toHexString())
@@ -35,12 +44,6 @@ export function handleCreditRequested(event:CreditRequested):void {
   export function handleCreditApproved(event:CreditApproved):void {
     let id = event.params.credit.id.toString();
     let credit = _getCredit(id);
-    // for (let i = 0; i < credit.delegators.length; ++i) {
-    //    let delegatorId:string =  credit.delegators[i];
-    //    let delegator:Member = _getMember(delegatorId);
-    //    delegator.amountLocked = delegator.amountLocked.plus(credit.delegatorsAmount); 
-    //    delegator.save()
-    // }
     credit.status = BigInt.fromI32(event.params.credit.status);
     credit.save()
   }
@@ -58,6 +61,29 @@ export function handleCreditRequested(event:CreditRequested):void {
     credit.status = BigInt.fromI32(event.params.credit.status);
     credit.save()
   }
+
+ export function handleCreditInstallment(event:CreditInstallment):void {
+  let id = event.params.creditId.toString();
+  let credit = _getCredit(id);
+  credit.currentInstallment = credit.currentInstallment.plus(BigInt.fromI32(1));
+  let installmentId = event.params.creditId.toString().concat(credit.requester).concat(credit.currentInstallment.toString())
+
+  let installment = Installment.load(installmentId);
+    if (installment == null) {
+      installment = new Installment(installmentId);
+      installment.timestamp = event.block.timestamp;
+      installment.nr = credit.currentInstallment;
+      installment.credit = id;
+      installment.save()
+    }
+    credit.save()
+
+  }
+
+
+ 
+
+
   function _getCredit(creditId:string): Credit {
     let credit = Credit.load(creditId);
     if (credit == null) {
@@ -80,7 +106,7 @@ export function handleCreditRequested(event:CreditRequested):void {
     credit.amount = eventObject.repaymentOptions.amount;
     credit.rate = eventObject.repaymentOptions.rate;
     credit.totalYield = eventObject.repaymentOptions.totalYield;
-    credit.alreadyPayed = eventObject.repaymentOptions.alreadyPayed;
+    credit.currentInstallment = eventObject.repaymentOptions.currentInstallment;
 
    
 

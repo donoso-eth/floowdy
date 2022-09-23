@@ -162,7 +162,8 @@ let token = new hre.ethers.Contract(
   network_params.token,
   abi_erc20mint,
   deployer
-);
+) as IERC20;
+
 let erc20Under = new hre.ethers.Contract(
   network_params.token,
   abi_erc20mint,
@@ -257,10 +258,8 @@ execData = floowdy.interface.encodeFunctionData('stopCreditPeriodExec', [
    )
  );
 
- console.log(t0)
- console.log(t0+3600);
    let fee = utils.parseEther("0.1")
-   const moduleData: ModuleData = {
+   let moduleData: ModuleData = {
      modules: [Module.RESOLVER, Module.TIME],
      args: [
        encodeResolverArgs(hre,floowdyAddress, resolverData),
@@ -275,6 +274,56 @@ await   ops.connect(executor).exec(floowdyAddress,floowdyAddress,execData,module
 
 
 
+await waitForTx(floowdy.connect(user1).creditApproved(creditNr));
+
+
+let t1 =  +(await getTimestamp(hre));
+await setNextBlockTimestamp(hre, t1 + 3600);
+
+await waitForTx(token.connect(user1).approve(floowdyAddress, constants.MaxUint256));
+
+execData = floowdy.interface.encodeFunctionData('triggerRepayment', [
+  creditNr
+ ]);
+ execSelector = floowdy.interface.getSighash(
+   'triggerRepayment(uint256)'
+ );
+
+ resolverAddress = floowdyAddress;
+ resolverData = await floowdy.interface.encodeFunctionData(
+   'checkRepayment',
+   [creditNr]
+ );
+ // bytes4(utils.keccak256(bytes('stopCreditPeriodExec(uint256)')));
+
+ resolverHash = utils.keccak256(
+   new utils.AbiCoder().encode(
+     ['address', 'bytes'],
+     [resolverAddress, resolverData]
+   )
+ );
+
+ id = utils.keccak256(
+  new utils.AbiCoder().encode(
+    ['address', 'address', 'bytes4', 'bool', 'address', 'bytes32'],
+    [floowdyAddress, floowdyAddress, execSelector, false, ETH, resolverHash]
+  )
+);
+
+console.log(id);
+
+  fee = utils.parseEther("0.1")
+ moduleData = {
+   modules: [Module.RESOLVER, Module.TIME],
+   args: [
+     encodeResolverArgs(hre,floowdyAddress, resolverData),
+     encodeTimeArgs(hre,t1, 3600),
+   ],
+ };
+
+ 
+
+await   ops.connect(executor).exec(floowdyAddress,floowdyAddress,execData,moduleData,fee,ETH,false,true)
 
 
 // await waitForTx(

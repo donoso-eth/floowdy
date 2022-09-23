@@ -23,7 +23,7 @@ library Events {
 
     event CreditRequested(DataTypes.Credit credit);
 
-    event CreditApproved(DataTypes.Credit credit);
+    event CreditChangePhase(DataTypes.Credit credit);
 
     event CreditRejected(DataTypes.Credit credit);
 
@@ -32,6 +32,11 @@ library Events {
     event CreditCheckIn(uint256 creditId, address delegator);
 
     event CreditCheckOut(uint256 creditId, address delegator);
+
+    event CreditApproved(DataTypes.Credit credit);
+   
+    event CreditInstallment(uint256 creditId);
+
 
     event PoolUpdated(DataTypes.Pool pool);
 }

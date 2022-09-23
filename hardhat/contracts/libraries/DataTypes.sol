@@ -80,7 +80,7 @@ library DataTypes {
         uint256 amount;
         uint256 rate;
         uint256 totalYield;
-        uint256 alreadyPayed;
+        uint256 currentInstallment;
         bytes32 GelatoRepaymentTaskId;
     }
 

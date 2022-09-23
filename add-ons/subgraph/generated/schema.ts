@@ -352,7 +352,6 @@ export class Credit extends Entity {
     this.set("id", Value.fromString(id));
 
     this.set("requester", Value.fromString(""));
-    this.set("handle", Value.fromString(""));
     this.set("initTimestamp", Value.fromBigInt(BigInt.zero()));
     this.set("finishPhaseTimestamp", Value.fromBigInt(BigInt.zero()));
     this.set("gelatoTaskId", Value.fromString(""));
@@ -363,7 +362,7 @@ export class Credit extends Entity {
     this.set("amount", Value.fromBigInt(BigInt.zero()));
     this.set("rate", Value.fromBigInt(BigInt.zero()));
     this.set("totalYield", Value.fromBigInt(BigInt.zero()));
-    this.set("alreadyPayed", Value.fromBigInt(BigInt.zero()));
+    this.set("currentInstallment", Value.fromBigInt(BigInt.zero()));
     this.set("GelatoRepaymentTaskId", Value.fromString(""));
     this.set("delegatorsNr", Value.fromBigInt(BigInt.zero()));
     this.set("delegatorsRequired", Value.fromBigInt(BigInt.zero()));
@@ -406,13 +405,38 @@ export class Credit extends Entity {
     this.set("requester", Value.fromString(value));
   }
 
-  get handle(): string {
+  get handle(): string | null {
     let value = this.get("handle");
-    return value!.toString();
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
   }
 
-  set handle(value: string) {
-    this.set("handle", Value.fromString(value));
+  set handle(value: string | null) {
+    if (!value) {
+      this.unset("handle");
+    } else {
+      this.set("handle", Value.fromString(<string>value));
+    }
+  }
+
+  get bio(): string | null {
+    let value = this.get("bio");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set bio(value: string | null) {
+    if (!value) {
+      this.unset("bio");
+    } else {
+      this.set("bio", Value.fromString(<string>value));
+    }
   }
 
   get initTimestamp(): BigInt {
@@ -505,13 +529,22 @@ export class Credit extends Entity {
     this.set("totalYield", Value.fromBigInt(value));
   }
 
-  get alreadyPayed(): BigInt {
-    let value = this.get("alreadyPayed");
+  get currentInstallment(): BigInt {
+    let value = this.get("currentInstallment");
     return value!.toBigInt();
   }
 
-  set alreadyPayed(value: BigInt) {
-    this.set("alreadyPayed", Value.fromBigInt(value));
+  set currentInstallment(value: BigInt) {
+    this.set("currentInstallment", Value.fromBigInt(value));
+  }
+
+  get installments(): Array<string> {
+    let value = this.get("installments");
+    return value!.toStringArray();
+  }
+
+  set installments(value: Array<string>) {
+    this.set("installments", Value.fromStringArray(value));
   }
 
   get GelatoRepaymentTaskId(): string {
@@ -620,6 +653,70 @@ export class MemberCredit extends Entity {
 
   set credit(value: string) {
     this.set("credit", Value.fromString(value));
+  }
+}
+
+export class Installment extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("nr", Value.fromBigInt(BigInt.zero()));
+    this.set("credit", Value.fromString(""));
+    this.set("timestamp", Value.fromBigInt(BigInt.zero()));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Installment entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save Installment entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("Installment", id.toString(), this);
+    }
+  }
+
+  static load(id: string): Installment | null {
+    return changetype<Installment | null>(store.get("Installment", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get nr(): BigInt {
+    let value = this.get("nr");
+    return value!.toBigInt();
+  }
+
+  set nr(value: BigInt) {
+    this.set("nr", Value.fromBigInt(value));
+  }
+
+  get credit(): string {
+    let value = this.get("credit");
+    return value!.toString();
+  }
+
+  set credit(value: string) {
+    this.set("credit", Value.fromString(value));
+  }
+
+  get timestamp(): BigInt {
+    let value = this.get("timestamp");
+    return value!.toBigInt();
+  }
+
+  set timestamp(value: BigInt) {
+    this.set("timestamp", Value.fromBigInt(value));
   }
 }
 

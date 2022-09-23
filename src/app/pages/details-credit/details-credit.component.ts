@@ -11,7 +11,7 @@ import { GraphQlService } from 'src/app/dapp-injector/services/graph-ql/graph-ql
 })
 export class DetailsCreditComponent extends DappBaseComponent implements AfterViewInit {
 
-  role!: ROLE;
+  role: ROLE = 'loading';
   credit!: ICREDIT_DELEGATED
   constructor(dapp:DappInjector, store:Store, public route: ActivatedRoute, 
     public graphqlService: GraphQlService,
@@ -27,9 +27,39 @@ export class DetailsCreditComponent extends DappBaseComponent implements AfterVi
       if (!!val && !!val.data ) {
         this.credit = val.data.credit
         console.log(this.credit)
+        this.checkRole();
       }
   
    }
+
+checkRole() {
+    console.log(this.blockchain_status)
+    if(this.blockchain_status == 'wallet-connected') {
+      
+      let signerAddress = this.dapp.signerAddress!.toLowerCase();
+      let requester = this.credit.requester.member.toLowerCase();
+      let delegators = this.credit.delegators.map(map=> map.member.member)
+
+
+      if (this.credit!== undefined) {
+    
+          if ( requester == signerAddress) {
+            this.role = 'requester';
+            console.log(this.role)
+          } else if( delegators.indexOf(signerAddress)!= -1){
+            this.role = 'delegater'
+
+          }  else {
+            this.role = 'member';
+          }
+    }
+ 
+    } else {
+      this.role = 'none';
+      console.log('NOOOOOOOO')
+    }
+    console.log(this.role)
+  }
 
   override ngAfterViewInit(): void {
     super.ngAfterViewInit()
@@ -42,6 +72,12 @@ export class DetailsCreditComponent extends DappBaseComponent implements AfterVi
 
     this.getCredit(id)
 
+  }
+
+  override async hookContractConnected(): Promise<void> {
+    
+      console.log('should check tole')
+      this.checkRole();
   }
 
 }

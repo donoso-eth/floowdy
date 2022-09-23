@@ -65,6 +65,11 @@ export const GET_CREDIT = `
       delegatorsNr
       delegatorsRequired
       delegatorsAmount
+      delegators {
+        member {
+          member
+        }
+      }
       gelatoTaskId
       requester {
         member

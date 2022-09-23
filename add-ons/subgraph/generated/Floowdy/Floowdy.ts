@@ -137,7 +137,7 @@ export class CreditApprovedCreditRepaymentOptionsStruct extends ethereum.Tuple {
     return this[5].toBigInt();
   }
 
-  get alreadyPayed(): BigInt {
+  get currentInstallment(): BigInt {
     return this[6].toBigInt();
   }
 
@@ -251,7 +251,121 @@ export class CreditCancelledCreditRepaymentOptionsStruct extends ethereum.Tuple 
     return this[5].toBigInt();
   }
 
-  get alreadyPayed(): BigInt {
+  get currentInstallment(): BigInt {
+    return this[6].toBigInt();
+  }
+
+  get GelatoRepaymentTaskId(): Bytes {
+    return this[7].toBytes();
+  }
+}
+
+export class CreditChangePhase extends ethereum.Event {
+  get params(): CreditChangePhase__Params {
+    return new CreditChangePhase__Params(this);
+  }
+}
+
+export class CreditChangePhase__Params {
+  _event: CreditChangePhase;
+
+  constructor(event: CreditChangePhase) {
+    this._event = event;
+  }
+
+  get credit(): CreditChangePhaseCreditStruct {
+    return changetype<CreditChangePhaseCreditStruct>(
+      this._event.parameters[0].value.toTuple()
+    );
+  }
+}
+
+export class CreditChangePhaseCreditStruct extends ethereum.Tuple {
+  get id(): BigInt {
+    return this[0].toBigInt();
+  }
+
+  get requester(): Address {
+    return this[1].toAddress();
+  }
+
+  get initTimestamp(): BigInt {
+    return this[2].toBigInt();
+  }
+
+  get finishPhaseTimestamp(): BigInt {
+    return this[3].toBigInt();
+  }
+
+  get status(): i32 {
+    return this[4].toI32();
+  }
+
+  get gelatoTaskId(): Bytes {
+    return this[5].toBytes();
+  }
+
+  get delegatorsOptions(): CreditChangePhaseCreditDelegatorsOptionsStruct {
+    return changetype<CreditChangePhaseCreditDelegatorsOptionsStruct>(
+      this[6].toTuple()
+    );
+  }
+
+  get repaymentOptions(): CreditChangePhaseCreditRepaymentOptionsStruct {
+    return changetype<CreditChangePhaseCreditRepaymentOptionsStruct>(
+      this[7].toTuple()
+    );
+  }
+}
+
+export class CreditChangePhaseCreditDelegatorsOptionsStruct extends ethereum.Tuple {
+  get delegatorsNr(): BigInt {
+    return this[0].toBigInt();
+  }
+
+  get delegatorsRequired(): BigInt {
+    return this[1].toBigInt();
+  }
+
+  get delegators(): Array<Address> {
+    return this[2].toAddressArray();
+  }
+
+  get delegatorsAmount(): BigInt {
+    return this[3].toBigInt();
+  }
+
+  get delegatorsGlobalFee(): BigInt {
+    return this[4].toBigInt();
+  }
+}
+
+export class CreditChangePhaseCreditRepaymentOptionsStruct extends ethereum.Tuple {
+  get nrInstallments(): BigInt {
+    return this[0].toBigInt();
+  }
+
+  get interval(): BigInt {
+    return this[1].toBigInt();
+  }
+
+  get installment(): BigInt {
+    return this[2].toBigInt();
+  }
+
+  get amount(): BigInt {
+    return this[3].toBigInt();
+  }
+
+  get rate(): BigInt {
+    return this[4].toBigInt();
+  }
+
+  get totalYield(): BigInt {
+    return this[5].toBigInt();
+  }
+
+  get currentInstallment(): BigInt {
     return this[6].toBigInt();
   }
 
@@ -301,6 +415,24 @@ export class CreditCheckOut__Params {
 
   get delegator(): Address {
     return this._event.parameters[1].value.toAddress();
+  }
+}
+
+export class CreditInstallment extends ethereum.Event {
+  get params(): CreditInstallment__Params {
+    return new CreditInstallment__Params(this);
+  }
+}
+
+export class CreditInstallment__Params {
+  _event: CreditInstallment;
+
+  constructor(event: CreditInstallment) {
+    this._event = event;
+  }
+
+  get creditId(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
   }
 }
 
@@ -409,7 +541,7 @@ export class CreditRejectedCreditRepaymentOptionsStruct extends ethereum.Tuple {
     return this[5].toBigInt();
   }
 
-  get alreadyPayed(): BigInt {
+  get currentInstallment(): BigInt {
     return this[6].toBigInt();
   }
 
@@ -435,10 +567,6 @@ export class CreditRequested__Params {
     return changetype<CreditRequestedCreditStruct>(
       this._event.parameters[0].value.toTuple()
     );
-  }
-
-  get lensHandle(): string {
-    return this._event.parameters[1].value.toString();
   }
 }
 
@@ -527,7 +655,7 @@ export class CreditRequestedCreditRepaymentOptionsStruct extends ethereum.Tuple 
     return this[5].toBigInt();
   }
 
-  get alreadyPayed(): BigInt {
+  get currentInstallment(): BigInt {
     return this[6].toBigInt();
   }
 
@@ -889,7 +1017,7 @@ export class Floowdy__creditsByIdResultRepaymentOptionsStruct extends ethereum.T
     return this[5].toBigInt();
   }
 
-  get alreadyPayed(): BigInt {
+  get currentInstallment(): BigInt {
     return this[6].toBigInt();
   }
 
@@ -2540,24 +2668,10 @@ export class RequestCreditCall__Inputs {
     this._call = call;
   }
 
-  get amount(): BigInt {
-    return this._call.inputValues[0].value.toBigInt();
-  }
-
-  get rate(): BigInt {
-    return this._call.inputValues[1].value.toBigInt();
-  }
-
-  get interval(): BigInt {
-    return this._call.inputValues[2].value.toBigInt();
-  }
-
-  get nrInstallments(): BigInt {
-    return this._call.inputValues[3].value.toBigInt();
-  }
-
-  get handle(): string {
-    return this._call.inputValues[4].value.toString();
+  get options(): RequestCreditCallOptionsStruct {
+    return changetype<RequestCreditCallOptionsStruct>(
+      this._call.inputValues[0].value.toTuple()
+    );
   }
 }
 
@@ -2566,6 +2680,32 @@ export class RequestCreditCall__Outputs {
 
   constructor(call: RequestCreditCall) {
     this._call = call;
+  }
+}
+
+export class RequestCreditCallOptionsStruct extends ethereum.Tuple {
+  get amount(): BigInt {
+    return this[0].toBigInt();
+  }
+
+  get rate(): BigInt {
+    return this[1].toBigInt();
+  }
+
+  get interval(): BigInt {
+    return this[2].toBigInt();
+  }
+
+  get nrInstallments(): BigInt {
+    return this[3].toBigInt();
+  }
+
+  get handle(): string {
+    return this[4].toString();
+  }
+
+  get bio(): string {
+    return this[5].toString();
   }
 }
 

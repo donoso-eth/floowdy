@@ -77,7 +77,7 @@ export type CreditRepaymentOptionsStruct = {
   amount: BigNumberish;
   rate: BigNumberish;
   totalYield: BigNumberish;
-  alreadyPayed: BigNumberish;
+  currentInstallment: BigNumberish;
   GelatoRepaymentTaskId: BytesLike;
 };
 
@@ -97,7 +97,7 @@ export type CreditRepaymentOptionsStructOutput = [
   amount: BigNumber;
   rate: BigNumber;
   totalYield: BigNumber;
-  alreadyPayed: BigNumber;
+  currentInstallment: BigNumber;
   GelatoRepaymentTaskId: string;
 };
 

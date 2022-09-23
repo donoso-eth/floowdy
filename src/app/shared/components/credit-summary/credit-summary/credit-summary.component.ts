@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnChanges } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { DappBaseComponent, DappInjector, ICREDIT_DELEGATED, ROLE } from 'angular-web3';
 import { blockTimeToTime, displayAdress } from 'src/app/shared/helpers/helpers';
@@ -17,7 +17,7 @@ enum CreditStatus {
   templateUrl: './credit-summary.component.html',
   styleUrls: ['./credit-summary.component.scss']
 })
-export class CreditSummaryComponent  extends DappBaseComponent implements OnInit {
+export class CreditSummaryComponent  extends DappBaseComponent implements OnChanges {
 
   stepItems!: { label: string }[];
   activeStep = 0;
@@ -61,10 +61,11 @@ export class CreditSummaryComponent  extends DappBaseComponent implements OnInit
     
   }
   
-  ngOnInit(): void {
+  ngOnChanges(): void {
     console.log(this.credit)
        this.display_step =  <CreditStatus>+this.credit.status;
-    
+      this.activeStep = this.display_step-1;
+      console.log(this.role)
   }
 
 }

@@ -50,7 +50,8 @@ type Credit @entity {
   amount:BigInt!
   rate:BigInt!
   totalYield:BigInt!
-  alreadyPayed:BigInt!
+  currentInstallment:BigInt!
+  installments: [Installment!]! @derivedFrom(field: "credit")
   GelatoRepaymentTaskId:String!
 
   delegatorsNr: BigInt!
@@ -67,6 +68,14 @@ type MemberCredit @entity {
   member: Member!
   credit: Credit!
 }
+
+type Installment @entity {
+id:ID!
+nr:BigInt!
+credit: Credit!
+timestamp: BigInt!
+}
+
 
 type ChartMonth @entity {
 id:ID!

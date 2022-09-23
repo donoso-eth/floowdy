@@ -8,7 +8,7 @@ dataSources:
     name: Floowdy
     network: localhost
     source:
-      address: '0xa7E99C1df635d13d61F7c81eCe571cc952E64526'
+      address: '0x98F45b84B4824d7A96e7672A154bA8DC3988A20b'
       abi: Floowdy
       startBlock: 7588383
     mapping:
@@ -21,6 +21,7 @@ dataSources:
         - Credit
         - MemberCredit
         - ChartMonth
+        - Installment
       abis:
         - name: Floowdy
           file: ./abis/floowdy.json
@@ -31,10 +32,15 @@ dataSources:
         - event: >-
             CreditCancelled((uint256,address,uint256,uint256,uint8,bytes32,(uint256,uint256,address[],uint256,uint256),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,bytes32)))
           handler: handleCreditCancelled
+        - event: >-
+            CreditChangePhase((uint256,address,uint256,uint256,uint8,bytes32,(uint256,uint256,address[],uint256,uint256),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,bytes32)))
+          handler: handleCreditChangePhase
         - event: CreditCheckIn(uint256,address)
           handler: handleCreditCheckIn
         - event: CreditCheckOut(uint256,address)
           handler: handleCreditCheckOut
+        - event: CreditInstallment(uint256)
+          handler: handleCreditInstallment
         - event: >-
             CreditRejected((uint256,address,uint256,uint256,uint8,bytes32,(uint256,uint256,address[],uint256,uint256),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,bytes32)))
           handler: handleCreditRejected

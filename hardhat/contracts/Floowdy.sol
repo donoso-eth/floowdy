@@ -683,7 +683,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
       "MEMBER_ALREADY_CHECK_IN"
     );
     require(
-      credit.delegatorsOptions.delegatorsNr < 5,
+      credit.delegatorsOptions.delegatorsNr < credit.delegatorsOptions.delegatorsRequired,
       "ALREADY_ENOUGH_DELEGATORS"
     );
     credit.delegatorsOptions.delegatorsNr++;
@@ -723,7 +723,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
     emit Events.CreditCheckOut(creditId, msg.sender);
   }
 
-  function creditApproved(uint256 creditId) public onlyRequester {
+  function creditApproved(uint256 creditId) public onlyRequester(creditId) {
     DataTypes.Credit storage credit = creditsById[creditId];
     require(
       credit.status == DataTypes.CreditStatus.PHASE4,
@@ -735,7 +735,8 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
       credit.id,
       credit.repaymentOptions.interval
     );
-
+    console.log(738);
+    console.logBytes32(credit.repaymentOptions.GelatoRepaymentTaskId);
     emit Events.CreditApproved(credit);
   }
 
@@ -774,10 +775,11 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
     _;
   }
 
-  modifier onlyRequester() {
-    uint256 id = creditIdByAddresse[msg.sender];
-    DataTypes.Credit storage credit = creditsById[id];
 
+  modifier onlyRequester(uint256 creditId) {
+    DataTypes.Credit storage credit = creditsById[creditId];
+    console.log(credit.requester);
+    console.log(msg.sender);
     require(credit.requester == msg.sender, "NOT_cREDIT_OWNER");
     _;
   }
@@ -838,13 +840,15 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
     console.log(credit.delegatorsOptions.delegatorsNr);
 
     if (credit.status == DataTypes.CreditStatus.PHASE1) {
-      console.log(841,'dentro');
+ 
       if (
         credit.delegatorsOptions.delegatorsNr == 1 &&
         credit.delegatorsOptions.delegators.length == 1
       ) {
-         console.log(846);
+        
         credit.status = DataTypes.CreditStatus.PHASE4;
+        emit Events.CreditChangePhase(credit);
+        credit.finishPhaseTimestamp += CREDIT_PHASES_INTERVAL;
       } else {
         credit.status = DataTypes.CreditStatus.PHASE2;
         credit.delegatorsOptions.delegatorsRequired = 10;
@@ -915,7 +919,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
       uint128(block.timestamp + interval),
       uint128(interval),
       address(this),
-      this.stopStreamExec.selector,
+      this.triggerRepayment.selector,
       address(this),
       abi.encodeWithSelector(this.checkRepayment.selector, creditId),
       ETH,
@@ -949,7 +953,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
     _transfer(fee, feeToken);
 
     if (
-      credit.repaymentOptions.alreadyPayed <=
+      credit.repaymentOptions.currentInstallment <=
       credit.repaymentOptions.nrInstallments
     ) {
       try
@@ -959,16 +963,18 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
           credit.repaymentOptions.installment
         )
       returns (bool success) {
+        emit Events.CreditInstallment(creditId);
         // pool.repay(, amount, interestRateMode, address(this));
         //recalculate credit conditions
       } catch {
         credit.status = DataTypes.CreditStatus.LIQUIDATED;
         /// Liquidate the credit
+        console.log(972);
       }
     }
 
     if (
-      credit.repaymentOptions.alreadyPayed ==
+      credit.repaymentOptions.currentInstallment ==
       credit.repaymentOptions.nrInstallments &&
       credit.status == DataTypes.CreditStatus.APPROVED
     ) {
