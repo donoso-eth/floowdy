@@ -28,6 +28,8 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
   twoDec: string = "00";
   fourDec: string = "0000";
 
+  isFlowAvailable = false;
+
   destroyQueries: Subject<void> = new Subject();
   destroyFormatting: Subject<void> = new Subject();
 
@@ -48,7 +50,8 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
     public global: GlobalService,
     private graphqlService: GraphQlService,
     public erc777: ERC777Service,
-    public msg: MessageService
+    public msg: MessageService,
+    public superFluidService:SuperFluidService
   ) {
     super(dapp, store);
   }
@@ -57,12 +60,24 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
     this.router.navigateByUrl('start-flow');
   }
 
+ async stopFlow(){
+  this.store.dispatch(Web3Actions.chainBusy({ status: true }));
+  await this.superFluidService.stopStream({
+    receiver:this.dapp.defaultContract?.address!,
+    superToken:this.global.poolToken.superToken,
+
+    data:"0x"
+  })
+  
+      
+  }
+
   async wrapp() {}
 
   async mint() {
     this.store.dispatch(Web3Actions.chainBusy({ status: true }));
     await this.global.mint();
-    this.refreshBalance();
+    await this.refreshBalance();
     this.store.dispatch(Web3Actions.chainBusy({ status: false }));
   }
 
@@ -102,6 +117,7 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
   }
 
   ngOnInit(): void {
+    this.store.dispatch(Web3Actions.chainBusy({ status: true }));
     if (this.blockchain_status == 'wallet-connected'){
      // this.getMember()
     }
@@ -137,10 +153,11 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
         );
         this.twoDec = formated.twoDec;
         this.fourDec = formated.fourDec;
-          
+        this.isFlowAvailable = false;
   
 
         if (+this.member.flow > 0) {
+          this.isFlowAvailable = true;
           this.destroyFormatting.next();
           let source = interval(500);
           source.pipe(takeUntil(this.destroyFormatting)).subscribe((val) => {
@@ -157,6 +174,7 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
         this.store.dispatch(Web3Actions.chainBusy({ status: false }));
       }
       if (val.data.member == null) {
+        console.log('nulllllll')
         this.member = {
           deposit:'0',
           timestamp:'0',
@@ -164,8 +182,11 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
           creditsDelegated:[],
           creditsRequested:[]
         }
+        this.twoDec = '0.00';
+        this.fourDec = '0000';
        }
- 
+      
+       console.log(this.member)
 
     });
 
@@ -175,8 +196,9 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
   }
 
   override async hookContractConnected(): Promise<void> {
-    await this.refreshBalance();
+ 
     await this.getMember();
+    await this.refreshBalance();
   }
 
   override ngOnDestroy(): void {

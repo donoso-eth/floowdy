@@ -260,7 +260,7 @@ await printPool(hre,floowdy)
 
 // let user1Balance = await floowdy._getMemberAvailable(user1.adress)
 // console.log(user1Balance.toString())
-throw new Error("");
+
 
 
 let creditReQuest: CreditRequestOptionsStruct = {
@@ -279,7 +279,7 @@ await waitForTx(
 );
 
 
-await waitForTx(floowdy.connect(deployer).creditCheckIn(creditNr));
+//await waitForTx(floowdy.connect(deployer).creditCheckIn(creditNr));
 
 console.log(t0)
 
@@ -317,7 +317,7 @@ execData = floowdy.interface.encodeFunctionData('stopCreditPeriodExec', [
  );
 
    fee = utils.parseEther("0.1")
-    moduleData: ModuleData = {
+   moduleData = {
      modules: [Module.RESOLVER, Module.TIME],
      args: [
        encodeResolverArgs(hre,floowdyAddress, resolverData),
@@ -329,6 +329,10 @@ execData = floowdy.interface.encodeFunctionData('stopCreditPeriodExec', [
 //    await waitForTx(floowdy.connect(user1).stopStream({gasLimit:100000}))
 
 await   ops.connect(executor).exec(floowdyAddress,floowdyAddress,execData,moduleData,fee,ETH,false,true)
+
+
+
+throw new Error("");
 
 
 

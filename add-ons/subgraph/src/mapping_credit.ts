@@ -26,6 +26,8 @@ export function handleCreditRequested(event:CreditRequested):void {
   export function handleCreditChangePhase(event:CreditChangePhase):void {
     let id = event.params.credit.id.toString();
     let credit = _getCredit(id);
+    credit.delegatorsAmount = event.params.credit.delegatorsOptions.delegatorsAmount;
+    credit.delegatorsRequired = event.params.credit.delegatorsOptions.delegatorsRequired;
     credit.status = BigInt.fromI32(event.params.credit.status);
     credit.finishPhaseTimestamp = event.params.credit.finishPhaseTimestamp;
     credit.save()

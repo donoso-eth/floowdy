@@ -41,4 +41,6 @@ export const displayAdress= (address: string): string => {
     return new Contract(ERC, abi_ERC777, signer);
   };
   
-  
+  export const formatSmallEther = (value:number) => {
+    return (value/10**6).toFixed(4)
+  }

@@ -2,6 +2,7 @@ import { AfterViewInit, Component,  OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { DappBaseComponent, DappInjector, ICREDIT_DELEGATED, ICREDIT_REQUESTED, ROLE } from 'angular-web3';
+import { Subject, takeUntil } from 'rxjs';
 import { GraphQlService } from 'src/app/dapp-injector/services/graph-ql/graph-ql.service';
 
 @Component({
@@ -13,6 +14,7 @@ export class DetailsCreditComponent extends DappBaseComponent implements AfterVi
 
   role: ROLE = 'loading';
   credit!: ICREDIT_DELEGATED
+  destroyQueries: Subject<void> = new Subject();
   constructor(dapp:DappInjector, store:Store, public route: ActivatedRoute, 
     public graphqlService: GraphQlService,
     public router: Router) { 
@@ -20,8 +22,7 @@ export class DetailsCreditComponent extends DappBaseComponent implements AfterVi
   }
   
   async getCredit(id:string) {
-    let val =   await  this.graphqlService
-    .getCredit(id)
+    this.graphqlService.watchCredit(id).pipe(takeUntil(this.destroyQueries)).subscribe(( (val:any)=>{
       console.log(val.data)
 
       if (!!val && !!val.data ) {
@@ -29,6 +30,7 @@ export class DetailsCreditComponent extends DappBaseComponent implements AfterVi
         console.log(this.credit)
         this.checkRole();
       }
+    }))
   
    }
 
@@ -43,7 +45,7 @@ checkRole() {
       let requester = this.credit.requester.member.toLowerCase();
       let delegators = this.credit.delegators.map(map=> map.member.member)
 
-
+      
 
           if ( requester == signerAddress) {
             this.role = 'requester';
@@ -82,4 +84,10 @@ checkRole() {
       this.checkRole();
   }
 
-}
+  override ngOnDestroy(): void {
+      this.destroyQueries.next();
+      this.destroyQueries.complete()
+      super.ngOnDestroy()
+  }
+
+  }

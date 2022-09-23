@@ -34,6 +34,7 @@ export interface ICREDIT_DELEGATED {
   currentInstallment:string;
   installment:string;
   installments:Array<{timestamp:string, nr:string}>
+  nrInstallments:string;
 
 }
 

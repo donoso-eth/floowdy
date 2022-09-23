@@ -81,6 +81,7 @@ export const GET_CREDIT = `
           nr
           timestamp
       }
+      nrInstallments
       gelatoTaskId
       requester {
         member

@@ -1,7 +1,8 @@
 import { Component, OnInit, Input, OnChanges } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { CreditStatus, DappBaseComponent, DappInjector, ICREDIT_DELEGATED, ROLE } from 'angular-web3';
-import { blockTimeToTime, displayAdress } from 'src/app/shared/helpers/helpers';
+import { CreditStatus, DappBaseComponent, DappInjector, ICREDIT_DELEGATED, ROLE, Web3Actions } from 'angular-web3';
+import { doSignerTransaction } from 'src/app/dapp-injector/classes/transactor';
+import { blockTimeToTime, displayAdress, formatSmallEther } from 'src/app/shared/helpers/helpers';
 
 
 @Component({
@@ -25,19 +26,23 @@ export class CreditSummaryComponent  extends DappBaseComponent implements OnChan
 
   displayAdress =  displayAdress;
   blockTimeToTime = blockTimeToTime;
+  formatSmallEther  = formatSmallEther ;
   @Input() credit!:ICREDIT_DELEGATED;
   @Input() role!: ROLE
 
   doRefresh(){}
 
-  checkInPhase1(){
+  // checkInPhase1(){
 
-  }
+  // }
 
-  checkInPhase10(){
+  // checkInPhase10(){
     
-  }
-  checkInPhase5(){
+  //}
+  async checkInPhase(){
+    this.store.dispatch(Web3Actions.chainBusy({ status: true }));
+   await doSignerTransaction(this.dapp.defaultContract?.instance.creditCheckIn(+this.credit.id)!)
+    
     
   }
 
@@ -49,7 +54,12 @@ export class CreditSummaryComponent  extends DappBaseComponent implements OnChan
     
   }
 
-  cancelCredit() {
+  async cancelCredit() {
+    this.store.dispatch(Web3Actions.chainBusy({ status: true }));
+    await doSignerTransaction(this.dapp.defaultContract?.instance.cancelCredit(+this.credit.id)!)
+     
+     
+
     
   }
   
@@ -58,6 +68,7 @@ export class CreditSummaryComponent  extends DappBaseComponent implements OnChan
        this.display_step =  <CreditStatus>+this.credit.status;
       this.activeStep = this.display_step-1;
       console.log(this.role)
+      this.store.dispatch(Web3Actions.chainBusy({ status: false }));
   }
 
 }

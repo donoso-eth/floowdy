@@ -83,24 +83,27 @@ export class SuperFluidService {
 
 
   async stopStream(streamConfig: {
-    flowRate: string;
     receiver: string;
+    superToken: string;
     data: string;
   }) {
     if (this.sf == undefined){
       await this.initializeFramework()
     }
 
-    const createFlowOperation = this.sf.cfaV1.deleteFlow({
+    const deleteFlowOperation = this.sf.cfaV1.deleteFlow({
       sender: this.dapp.signerAddress!,
       receiver: streamConfig.receiver,
-      superToken: '0x5D8B4C2554aeB7e86F387B4d6c00Ac33499Ed01f', //environment.mumbaiDAIx,
+      superToken: streamConfig.superToken, //environment.mumbaiDAIx,
       userData: streamConfig.data,
       overrides: {
         gasPrice: utils.parseUnits('100', 'gwei'),
         gasLimit: 2000000,
       },
     });
+    const result = await deleteFlowOperation.exec(this.dapp.DAPP_STATE.signer!);
+    const result2 = await result.wait();
+
   }
 
   calculateFlowRate(amount: any) {

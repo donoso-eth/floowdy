@@ -373,7 +373,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
       ///// Yield from flow
       uint256 yieldFromFlow = uint96(member.flow) *
         (poolByTimestamp[poolTimestamp].flowIndex -
-          poolByTimestamp[lastTimestamp].flowIndex);
+          poolByTimestamp[lastTimestamp].flowIndex).div(PRECISSION);
 
       yieldMember = yieldMember + yieldFromFlow;
     }
@@ -395,7 +395,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
     DataTypes.Member storage member = members[_member];
 
     uint256 yieldDeposit = (yieldDepositNew * member.deposit).div(PRECISSION);
-    uint256 yieldInFlow = uint96(member.flow) * yieldFlowNew;
+    uint256 yieldInFlow = (uint96(member.flow) * yieldFlowNew).div(PRECISSION);
 
     yieldMember = yieldEarned + yieldDeposit + yieldInFlow;
   }
@@ -511,7 +511,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
       }
       if (lastPool.totalFlow != 0) {
         flowIndex = (
-          (averageFlowDeposit * yieldPool).div(
+          (averageFlowDeposit * yieldPool*PRECISSION).div(
             uint96(lastPool.totalFlow) * totalDepositToYield
           )
         );
@@ -873,7 +873,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
 
 
     if (credit.status == DataTypes.CreditStatus.PHASE1) {
- 
+        credit.finishPhaseTimestamp += CREDIT_PHASES_INTERVAL;
       if (
         credit.delegatorsOptions.delegatorsNr == 1 &&
         credit.delegatorsOptions.delegators.length == 1
@@ -881,7 +881,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
         
         credit.status = DataTypes.CreditStatus.PHASE4;
         emit Events.CreditChangePhase(credit);
-        credit.finishPhaseTimestamp += CREDIT_PHASES_INTERVAL;
+       
       } else {
         credit.status = DataTypes.CreditStatus.PHASE2;
         credit.delegatorsOptions.delegatorsRequired = 10;
@@ -889,6 +889,8 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
           .repaymentOptions
           .amount
           .div(10);
+
+         emit Events.CreditChangePhase(credit); 
       }
 
       //do the dance

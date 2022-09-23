@@ -1,12 +1,12 @@
 <div class="grid">
   <div style="border:unset;text-center" class="col-12 card">
     <div  class="card credit-cockpit">
-      <div class="grid p-2">
-        <div class="">
+      <div  style="justify-content: space-around;" class="grid p-2">
+        <div class="credit-details" >
           <h5>
-           Requested by
+           Requested by 
         </h5>
-          <p  class="credit_details" >{{displayAdress(credit.requester.member)}}<i
+          <p   >{{displayAdress(credit.requester.member)}}<i
             class="pi pi-copy"
             style="margin-left:5px;font-size: 1rem; cursor: pointer"
             [cdkCopyToClipboard]="credit.requester.member"
@@ -14,29 +14,34 @@
          
      
         </div>
-        <div >
+        <div class="credit-details" >
           <h5>
             Amount
          </h5>
-         <p  class="credit_details" >{{credit.amount}}$</p>
+         <p   >{{formatSmallEther(+credit.amount)}}$</p>
         </div>
-        <div >
+        <div class="credit-details" >
           <h5>
             Rate
          </h5>
-         <p  class="credit_details" >{{credit.rate}}%</p>       </div>
-        <div >
+         <p   >{{credit.rate}}%</p>       </div>
+        <div class="credit-details" >
           <h5>
-            Installments
+            Installment
          </h5>
-         <p  class="credit_details" >{{credit.amount}}</p>       </div>
-       </div>
-        <div>
-          <h5>
-            Amount 
-         </h5>
-          <input pInputText type="text"  [disabled]="true"  style="border-color:green;background: grey;" value="hola" placeholder="Default" />
+         <p   >{{formatSmallEther(+credit.installment)}}</p>    
+        
         </div>
+   
+       
+       <div class="credit-details" >
+        <h5>
+          Nr 
+       </h5>
+       <p   >{{credit.nrInstallments}}</p>      
+     </div>
+
+    </div>
     </div>
     </div>
    
@@ -60,13 +65,15 @@
     >
       <div *ngIf="activeStep == 0">
         <div *ngIf="display_step == 1">
-          <span [ngStyle]="{ lineHeight: '2.5rem' }">Amount to Delegate <span style="color:var(--primary-color)"> {{credit.delegatorsAmount}}$</span></span>
+          <span [ngStyle]="{ lineHeight: '2.5rem' }">Amount to Delegate <span style="color:var(--primary-color)"> {{formatSmallEther(+credit.delegatorsAmount)}}$</span></span>
           <span style="margin-left:10px" [ngStyle]="{ lineHeight: '2.5rem' }">Phase will end:<span style="color:var(--primary-color)">{{ blockTimeToTime(+credit.finishPhaseTimestamp) }}</span> </span>
           <div *ngIf="role == 'member'">
-          <button (click)="checkInPhase1()" pButton pRipple type="button" icon="pi pi-check" class="p-button-rounded p-button-outlined mr-2 mb-2"></button>
+          <button (click)="checkInPhase()" pButton pRipple type="button" icon="pi pi-check" class="p-button-rounded p-button-outlined mr-2 mb-2"></button>
         </div>
-        <div *ngIf="role == 'member'">
-            
+        <div *ngIf="role == 'requester'">
+          <p style="color:orange;font-weight: bold;font-size:20px;;" [ngStyle]="{ lineHeight: '2.5rem' }">Some Patiente!!   <button (click)="cancelCredit()" pButton pRipple type="button" icon="pi pi-times" class="p-button-rounded p-button-danger p-button-outlined mr-2 mb-2"></button>
+          </p>
+        
           </div>
 
         </div>
@@ -76,28 +83,33 @@
       </div>
       <div *ngIf="activeStep == 1">
         <div *ngIf="display_step == 2">
-          <span [ngStyle]="{ lineHeight: '2.5rem' }">Amount to Delegate <span style="color:var(--primary-color)"> {{credit.delegatorsAmount}}$</span></span>
+          <span [ngStyle]="{ lineHeight: '2.5rem' }">Amount to Delegate <span style="color:var(--primary-color)"> {{formatSmallEther(+credit.delegatorsAmount)}}$</span></span>
           <span style="margin-left:15px" [ngStyle]="{ lineHeight: '2.5rem' }">Nr of Delegators <span style="color:var(--primary-color)"> {{credit.delegatorsNr}} of ({{credit.delegatorsRequired}})</span></span> 
         <br/>
           <span style="margin-left:10px" [ngStyle]="{ lineHeight: '2.5rem' }">Phase will end:<span style="color:var(--primary-color)">{{ blockTimeToTime(+credit.finishPhaseTimestamp) }}</span> </span>
    
-          <div>
-          <button (click)="checkInPhase10()" pButton pRipple type="button" icon="pi pi-check" class="p-button-rounded p-button-outlined mr-2 mb-2"></button>   
+          <div *ngIf="role == 'member'">
+          <button (click)="checkInPhase()" pButton pRipple type="button" icon="pi pi-check" class="p-button-rounded p-button-outlined mr-2 mb-2"></button>   
+        </div>
+        <div *ngIf="role == 'requester'">
+          <p style="color:#fca5a5;font-weight: bold;font-size:20px;    display: inline-flex;
+          align-items: center;;" [ngStyle]="{ lineHeight: '2.5rem' }">Some Patiente!!   <button style="margin-left:10px" (click)="cancelCredit()" pButton pRipple type="button" icon="pi pi-times" class="p-button-rounded p-button-danger p-button-outlined mr-2 mb-2"></button>
+          </p>
         </div>
         </div>
         <div *ngIf="display_step != 2">
-          <p [ngStyle]="{ lineHeight: '2.5rem' }">Not Current Phase</p>
+          <p  [ngStyle]="{ lineHeight: '2.5rem' }">Not Current Phase</p>
         </div>
       </div>
       <div *ngIf="activeStep == 2">
         <div *ngIf="display_step == 3">
-          <span [ngStyle]="{ lineHeight: '2.5rem' }">Amount to Delegate <span style="color:var(--primary-color)"> {{credit.delegatorsAmount}}$</span></span>
+          <span [ngStyle]="{ lineHeight: '2.5rem' }">Amount to Delegate <span style="color:var(--primary-color)"> {{formatSmallEther(+credit.delegatorsAmount)}}$</span></span>
           <span style="margin-left:15px" [ngStyle]="{ lineHeight: '2.5rem' }">Nr of Delegators <span style="color:var(--primary-color)"> {{credit.delegatorsNr}} of ({{credit.delegatorsRequired}})</span></span> 
           <div>
           <span style="margin-left:10px" [ngStyle]="{ lineHeight: '2.5rem' }">Phase will end:<span style="color:var(--primary-color)">{{ blockTimeToTime(+credit.finishPhaseTimestamp) }}</span> </span>
         </div>
           <div>
-          <button (click)="checkInPhase5()" pButton pRipple type="button" icon="pi pi-check" class="p-button-rounded p-button-outlined mr-2 mb-2"></button>
+          <button (click)="checkInPhase()" pButton pRipple type="button" icon="pi pi-check" class="p-button-rounded p-button-outlined mr-2 mb-2"></button>
           <button (click)="rejectCredit()" pButton pRipple type="button" icon="pi pi-times" class="p-button-rounded p-button-danger p-button-outlined mr-2 mb-2"></button>
    
         </div>

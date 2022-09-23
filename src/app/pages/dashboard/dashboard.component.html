@@ -47,7 +47,7 @@
                 <!-- #endregion REALTIME ////  -->
 
                 <div class="col-12 flex justify-content-around">
-                  <button
+                  <button *ngIf="isFlowAvailable == false"
                     pButton
                     pRipple
                     style="position: relative; width: fit-content"
@@ -56,6 +56,15 @@
                     label="Stream-->"
                     class="p-button-rounded mr-2 mb-2"
                   ></button>
+                  <button *ngIf="isFlowAvailable == true"
+                  pButton
+                  pRipple
+                  style="position: relative; width: fit-content"
+                  (click)="stopFlow()"
+                  type="button"
+                  label="Stop Stream"
+                  class="p-button-rounded mr-2 mb-2"
+                ></button>
                 </div>
               </div>
             </div>

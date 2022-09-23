@@ -82,22 +82,16 @@ export class GraphQlService {
 
 
 
-  async getCredit(id: string): Promise<any> {
-    try {
-      //  const variables:ProfilesRequest =  { ownedBy: this.dapp.signerAddress! };
+  watchCredit(id: string) {
       const variables = { value: id }; //"0x7A84b3CaAC4C00AFA0886cb2238dbb9788376581" };
-      const profiles = await firstValueFrom(
-        this.apollo.use('default').query<any>({
+       return this.apollo.watchQuery<any>({
           query: gql(GET_CREDIT),
           variables,
-        })
-      );
+          pollInterval: 500
+        }).valueChanges
+   
 
-      return profiles;
-    } catch (error) {
-      console.log(error);
-      return {};
-    }
+
   }
 
   async getCredits(): Promise<any> {
