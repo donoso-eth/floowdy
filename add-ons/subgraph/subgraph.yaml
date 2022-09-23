@@ -8,7 +8,7 @@ dataSources:
     name: Floowdy
     network: localhost
     source:
-      address: '0x51522C5D19dF4841B3eC82d1F97e1D08E8BFf37f'
+      address: '0x8509EBc97cA4bC10eaD27870a4ac1B279dc6E992'
       abi: Floowdy
       startBlock: 7588383
     mapping:

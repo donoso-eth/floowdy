@@ -23,6 +23,9 @@ export function handlePoolUpdated(event:PoolUpdated):void {
     } else {
       let lastId = event.params.pool.id.minus(BigInt.fromI32(1));
       let lastPool = _getPool(lastId.toString())
+
+    
+
       pool.apy =  ((lastPool.apy.times(lastPool.apySpan))
       .plus(event.params.pool.poolSpan.times(event.params.pool.yieldPeriod)))
       .div((lastPool.apySpan).plus(event.params.pool.poolSpan));

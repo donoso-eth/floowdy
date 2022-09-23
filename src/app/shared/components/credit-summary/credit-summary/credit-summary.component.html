@@ -18,18 +18,18 @@
           <h5>
             Amount
          </h5>
-         <span  class="credit_details" >{{credit.amount}}$</span>
+         <p  class="credit_details" >{{credit.amount}}$</p>
         </div>
         <div >
           <h5>
             Rate
          </h5>
-         <span  class="credit_details" >{{credit.rate}}%</span>       </div>
+         <p  class="credit_details" >{{credit.rate}}%</p>       </div>
         <div >
           <h5>
             Installments
          </h5>
-         <span  class="credit_details" >{{credit.amount}}</span>       </div>
+         <p  class="credit_details" >{{credit.amount}}</p>       </div>
        </div>
         <div>
           <h5>
@@ -62,9 +62,13 @@
         <div *ngIf="display_step == 1">
           <span [ngStyle]="{ lineHeight: '2.5rem' }">Amount to Delegate <span style="color:var(--primary-color)"> {{credit.delegatorsAmount}}$</span></span>
           <span style="margin-left:10px" [ngStyle]="{ lineHeight: '2.5rem' }">Phase will end:<span style="color:var(--primary-color)">{{ blockTimeToTime(+credit.finishPhaseTimestamp) }}</span> </span>
-          <div>
+          <div *ngIf="role == 'member'">
           <button (click)="checkInPhase1()" pButton pRipple type="button" icon="pi pi-check" class="p-button-rounded p-button-outlined mr-2 mb-2"></button>
         </div>
+        <div *ngIf="role == 'member'">
+            
+          </div>
+
         </div>
         <div *ngIf="display_step != 1">
           <p [ngStyle]="{ lineHeight: '2.5rem' }">Not Current Phase</p>
