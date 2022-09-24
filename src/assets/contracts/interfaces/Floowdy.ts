@@ -210,14 +210,12 @@ export interface FloowdyInterface extends utils.Interface {
     "rejectCredit(uint256)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "requestCredit((uint256,uint256,uint256,uint256,uint256,string,string))": FunctionFragment;
-    "sendNotif()": FunctionFragment;
     "setCreditFee(uint256)": FunctionFragment;
     "setMaxAllowance(uint256)": FunctionFragment;
     "setVotingPeriod(uint256)": FunctionFragment;
     "stopCreditPeriodExec(uint256)": FunctionFragment;
     "stopStreamExec(address)": FunctionFragment;
     "supplyStakeToAave()": FunctionFragment;
-    "testRepayment()": FunctionFragment;
     "tokensReceived(address,address,address,uint256,bytes,bytes)": FunctionFragment;
     "totalCredits()": FunctionFragment;
     "totalYieldStakeEarnedMember(address)": FunctionFragment;
@@ -355,7 +353,6 @@ export interface FloowdyInterface extends utils.Interface {
     functionFragment: "requestCredit",
     values: [CreditRequestOptionsStruct]
   ): string;
-  encodeFunctionData(functionFragment: "sendNotif", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "setCreditFee",
     values: [BigNumberish]
@@ -378,10 +375,6 @@ export interface FloowdyInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "supplyStakeToAave",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "testRepayment",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -532,7 +525,6 @@ export interface FloowdyInterface extends utils.Interface {
     functionFragment: "requestCredit",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "sendNotif", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setCreditFee",
     data: BytesLike
@@ -555,10 +547,6 @@ export interface FloowdyInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "supplyStakeToAave",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "testRepayment",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -894,10 +882,6 @@ export interface Floowdy extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    sendNotif(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     setCreditFee(
       _CREDIT_FEE: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -924,10 +908,6 @@ export interface Floowdy extends BaseContract {
     ): Promise<ContractTransaction>;
 
     supplyStakeToAave(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    testRepayment(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -1227,10 +1207,6 @@ export interface Floowdy extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  sendNotif(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   setCreditFee(
     _CREDIT_FEE: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -1257,10 +1233,6 @@ export interface Floowdy extends BaseContract {
   ): Promise<ContractTransaction>;
 
   supplyStakeToAave(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  testRepayment(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1556,8 +1528,6 @@ export interface Floowdy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    sendNotif(overrides?: CallOverrides): Promise<void>;
-
     setCreditFee(
       _CREDIT_FEE: BigNumberish,
       overrides?: CallOverrides
@@ -1581,8 +1551,6 @@ export interface Floowdy extends BaseContract {
     stopStreamExec(_receiver: string, overrides?: CallOverrides): Promise<void>;
 
     supplyStakeToAave(overrides?: CallOverrides): Promise<void>;
-
-    testRepayment(overrides?: CallOverrides): Promise<void>;
 
     tokensReceived(
       operator: string,
@@ -1808,10 +1776,6 @@ export interface Floowdy extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    sendNotif(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     setCreditFee(
       _CREDIT_FEE: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1838,10 +1802,6 @@ export interface Floowdy extends BaseContract {
     ): Promise<BigNumber>;
 
     supplyStakeToAave(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    testRepayment(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -2065,10 +2025,6 @@ export interface Floowdy extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    sendNotif(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     setCreditFee(
       _CREDIT_FEE: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -2095,10 +2051,6 @@ export interface Floowdy extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     supplyStakeToAave(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    testRepayment(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
