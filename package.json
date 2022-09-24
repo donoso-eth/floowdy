@@ -9,6 +9,7 @@
     "test": "ng test",
     "chain": "cd hardhat && npx hardhat --tsconfig ./tsconfig.hardhat.json node",
     "compile": "cd hardhat && npx hardhat --tsconfig ./tsconfig.hardhat.json compile",
+    "size": "cd hardhat && npx hardhat --tsconfig ./tsconfig.hardhat.json size-contracts",
     "fork": "cd hardhat && npx hardhat --tsconfig ./tsconfig.hardhat.json node  --network hardhat",
     "deploy": "cd hardhat && npx hardhat --tsconfig ./tsconfig.hardhat.json run ./scripts/deploy.ts",
     "contracts:test": "cd hardhat && npx hardhat --tsconfig ./tsconfig.hardhat.json test",

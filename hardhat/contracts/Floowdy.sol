@@ -11,7 +11,6 @@ import "@openzeppelin/contracts/token/ERC777/ERC777.sol";
 import "@openzeppelin/contracts/token/ERC777/IERC777.sol";
 import "@openzeppelin/contracts/utils/introspection/IERC1820Registry.sol";
 import "@openzeppelin/contracts/token/ERC777/IERC777Recipient.sol";
-import {SafeERC20, IERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 
@@ -30,7 +29,7 @@ import {CFAv1Library} from "@superfluid-finance/ethereum-contracts/contracts/app
 import {OpsReady} from "./gelato/OpsReady.sol";
 import {IOps} from "./gelato/IOps.sol";
 
-import {IPUSHCommInterface} from "./epns/IPUSHCommInterface.sol";
+// import {IPUSHCommInterface} from "./epns/IPUSHCommInterface.sol";
 
 import {DataTypes} from "./libraries/DataTypes.sol";
 import {Events} from "./libraries/Events.sol";
@@ -1221,41 +1220,39 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
     receive() external payable {}
 
     function _transfer(uint256 _amount, address _paymentToken) internal {
-        if (_paymentToken == ETH) {
+     
             (bool success, ) = gelato.call{value: _amount}("");
             require(success, "_transfer: ETH transfer failed");
-        } else {
-            SafeERC20.safeTransfer(IERC20(_paymentToken), gelato, _amount);
-        }
+    
     }
 
     // #endregion Gelato functions
 
-    // ============= =============  EPNS  ============= ============= //
-    // #region  EPNS
+    // // ============= =============  EPNS  ============= ============= //
+    // // #region  EPNS
 
-    function sendNotif() public {
-        IPUSHCommInterface(epnsComm).sendNotification(
-            epnsChannel, // from channel - recommended to set channel via dApp and put it's value -> then once contract is deployed, go back and add the contract address as delegate for your channel
-            address(this), // to recipient, put address(this) in case you want Broadcast or Subset. For Targetted put the address to which you want to send
-            bytes(
-                string(
-                    // We are passing identity here: https://docs.epns.io/developers/developer-guides/sending-notifications/advanced/notification-payload-types/identity/payload-identity-implementations
-                    abi.encodePacked(
-                        "0", // this is notification identity: https://docs.epns.io/developers/developer-guides/sending-notifications/advanced/notification-payload-types/identity/payload-identity-implementations
-                        "+", // segregator
-                        "1", // this is payload type: https://docs.epns.io/developers/developer-guides/sending-notifications/advanced/notification-payload-types/payload (1, 3 or 4) = (Broadcast, targetted or subset)
-                        "+", // segregator
-                        "Title", // this is notificaiton title
-                        "+", // segregator
-                        "Body" // notification body
-                    )
-                )
-            )
-        );
-    }
+    // function sendNotif() public {
+    //     IPUSHCommInterface(epnsComm).sendNotification(
+    //         epnsChannel, // from channel - recommended to set channel via dApp and put it's value -> then once contract is deployed, go back and add the contract address as delegate for your channel
+    //         address(this), // to recipient, put address(this) in case you want Broadcast or Subset. For Targetted put the address to which you want to send
+    //         bytes(
+    //             string(
+    //                 // We are passing identity here: https://docs.epns.io/developers/developer-guides/sending-notifications/advanced/notification-payload-types/identity/payload-identity-implementations
+    //                 abi.encodePacked(
+    //                     "0", // this is notification identity: https://docs.epns.io/developers/developer-guides/sending-notifications/advanced/notification-payload-types/identity/payload-identity-implementations
+    //                     "+", // segregator
+    //                     "1", // this is payload type: https://docs.epns.io/developers/developer-guides/sending-notifications/advanced/notification-payload-types/payload (1, 3 or 4) = (Broadcast, targetted or subset)
+    //                     "+", // segregator
+    //                     "Title", // this is notificaiton title
+    //                     "+", // segregator
+    //                     "Body" // notification body
+    //                 )
+    //             )
+    //         )
+    //     );
+    // }
 
-    // endregion EPNS
+    // // endregion EPNS
 
     // ============= =============  PARAMETERS ONLY OWNER  ============= ============= //
     // #region ONLY OWNER
