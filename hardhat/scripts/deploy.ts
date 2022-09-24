@@ -41,6 +41,8 @@ async function main() {
 
   const [deployer] = await initEnv(hre);
 
+  console.log(deployer.address)
+
   let network = hardhatArguments.network;
   if (network == undefined) {
     network = config.defaultNetwork as string; 
@@ -75,10 +77,14 @@ if (network_params == undefined) {
     epnsChannel:network_params.epnsChanel
   }
 
+console.log(floodyInit);
+
 
   //// DEPLOY POOLFACTORY
 
-  const floowdy = await new Floowdy__factory(deployer).deploy(floodyInit)
+
+  
+  const floowdy = await new Floowdy__factory(deployer).deploy(floodyInit,{gasLimit:10000000})
 
   let toDeployContract = contract_config['floowdy'];
   

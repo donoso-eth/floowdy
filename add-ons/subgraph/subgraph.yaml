@@ -6,9 +6,9 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: Floowdy
-    network: localhost
+    network: goerli
     source:
-      address: '0x072A13215d3F56e195B1E7803445C51ae8392407'
+      address: '0x0cB3C7b4d930f6F2e96E3A3BCDfDDdb266c3Be29'
       abi: Floowdy
       startBlock: 7588383
     mapping:

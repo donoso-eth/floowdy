@@ -33,6 +33,8 @@ task('verify-contract', 'verify').setAction(async ({}, hre) => {
     host:network_params.host,
     superToken:network_params.superToken,
     token:network_params.token,
+    stableDebtToken: network_params.aStableDebtToken,
+    debtToken:network_params.debtToken,
     pool:network_params.aavePool,
     aToken:network_params.aToken,
     ops:network_params.ops,

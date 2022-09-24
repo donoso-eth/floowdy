@@ -86,7 +86,8 @@ export class RequestCreditComponent
 
     let creditRequest: CreditRequestOptionsStruct = {
       amount,
-      rate,
+      rateAave:rate,
+      ratePool:rate,
       nrInstallments,
       interval,
       handle:'javier',

@@ -73,8 +73,8 @@ const config: HardhatUserConfig = {
     //   blockNumber: 28154232,
     // },
       forking: {
-        url: `https://goerli.infura.io/v3/1e43f3d31eea4244bf25ed4c13bfde0e`,
-      blockNumber: 7631671,
+        url: `https://eth-goerli.g.alchemy.com/v2/VzTmruc2Hki6YOQEVGeAb7ZZOWlWXy_E`,
+      blockNumber: 7652390,
       },
     },
     localhost: {
@@ -123,8 +123,9 @@ const config: HardhatUserConfig = {
           : [],
     },
     goerli: {
-      url: `https://goerli.infura.io/v3/1e43f3d31eea4244bf25ed4c13bfde0e`,
-      allowUnlimitedContractSize: true, // <---- YOUR INFURA ID! (or it won't work)
+      url: `https://eth-goerli.g.alchemy.com/v2/VzTmruc2Hki6YOQEVGeAb7ZZOWlWXy_E`,
+      allowUnlimitedContractSize: true,
+      gasPrice: 1000000000, // <---- YOUR INFURA ID! (or it won't work)
       // `https://speedy-nodes-nyc.moralis.io/${MORALIS_ID}/eth/goerli`
       accounts:
         process.env['DEPLOYER_KEY'] !== undefined
