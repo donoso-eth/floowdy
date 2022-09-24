@@ -50,8 +50,11 @@ export class CreditSummaryComponent  extends DappBaseComponent implements OnChan
 
   }
 
-  executeCredit(){
-    
+  async executeCredit(){
+    this.store.dispatch(Web3Actions.chainBusy({ status: true }));
+    this.store.dispatch(Web3Actions.chainBusyWithMessage({message: {header:'A Moment please...', body:'We are executing the credit!'}}))
+    await doSignerTransaction(this.dapp.defaultContract?.instance.creditApproved(+this.credit.id)!)
+
   }
 
   async cancelCredit() {

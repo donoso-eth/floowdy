@@ -146,18 +146,26 @@
   </div>
 
     <div  *ngIf="display_step == 5 " style="height:420px" class="text-center card">
-      <h5 style="margin: 20px auto 5px" class="mb-1">
+      <h5 style="margin: 20px auto 25px 5px" class="mb-1">
         <i (click)="doRefresh()" style="color: var(--primary-color); font-size: 30px;cursor:pointer;margin-right:10px" class="pi pi-refresh"></i>  Payment Plan <span style="color: var(--primary-color)"> Payment Plan </span> 
       </h5>
-
-      <div style="margin-top:20px">
-          <div   *ngFor="let installment of credit.installments">
+      <div *ngIf="+credit.currentInstallment < +credit.nrInstallments">
+        <div class="flex justify-content-center align-items-center">
+          <span style="width:150px"> Installment #{{+credit.currentInstallment + 1}}</span> 
+          <span style="width:250px;">{{blockTimeToTime(+credit.finishPhaseTimestamp + +credit.interval)}} </span>
+   
+          <div 
+          style="margin: 5px 30px;height: 30px; width: 30px;border-radius: 20px;  background: orange;"></div>
+          </div>
+      </div>
+      <div style="">
+          <div style="margin:4px 0px;"  *ngFor="let installment of credit.installments">
             <div class="flex justify-content-center align-items-center">
           <span style="width:150px">  Installment #{{installment.nr}}</span> 
           <span style="width:250px;">{{blockTimeToTime(+installment.timestamp)}} </span>
    
           <div 
-          style="margin: 10px 30px;height: 30px; width: 30px;border-radius: 20px;  background: green;"></div>
+          style="margin: 5px 30px;height: 30px; width: 30px;border-radius: 20px;  background: green;"></div>
           </div>
           </div>
       </div>
@@ -170,6 +178,16 @@
         </h5>
   
         <div style="margin-top:20px">
+            <div *ngIf="+credit.currentInstallment < +credit.nrInstallments">
+              <div class="flex justify-content-center align-items-center">
+                <span style="width:150px"> Next Installment #{{+credit.currentInstallment + 1}}</span> 
+                <span style="width:250px;">{{blockTimeToTime(+credit.finishPhaseTimestamp)}} </span>
+         
+                <div 
+                style="margin: 10px 30px;height: 30px; width: 30px;border-radius: 20px;  background: orange;"></div>
+                </div>
+            </div>
+
             <div   *ngFor="let installment of credit.installments">
               <div class="flex justify-content-center align-items-center">
             <span style="width:150px">  Installment #{{installment.nr}}</span> 

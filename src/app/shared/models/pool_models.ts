@@ -31,9 +31,11 @@ export interface ICREDIT_DELEGATED {
   requester: { member:string};
   delegators: Array<{member: { member:string}}>;
   delegatorsNr: string;
+  interval:string;
   currentInstallment:string;
   installment:string;
   installments:Array<{timestamp:string, nr:string}>
+  nextInstallment:{timestamp:string, nr:string};
   nrInstallments:string;
 
 }

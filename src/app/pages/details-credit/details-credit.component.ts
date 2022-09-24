@@ -28,6 +28,9 @@ export class DetailsCreditComponent extends DappBaseComponent implements AfterVi
       if (!!val && !!val.data ) {
         this.credit = val.data.credit
         console.log(this.credit)
+        console.log(this.credit.currentInstallment)
+        console.log(this.credit.nrInstallments)
+        console.log(this.credit.installments)
         this.checkRole();
       }
     }))

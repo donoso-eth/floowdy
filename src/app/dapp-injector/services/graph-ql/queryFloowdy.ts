@@ -75,9 +75,10 @@ export const GET_CREDIT = `
           member
         }
       }
+      interval
       installment
       currentInstallment
-      installments {
+      installments (orderBy: timestamp, orderDirection: desc) {
           nr
           timestamp
       }

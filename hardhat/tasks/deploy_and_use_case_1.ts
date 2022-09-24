@@ -242,9 +242,18 @@ t0 = +(await getTimestamp(hre));
 
 console.log(typeof(t0));
 
-// await hre.run('gelato-phases',{interval:600, credit:creditNr, t0:t0})
+ await hre.run('gelato-phases',{interval:600, credit:creditNr, t0:t0})
 
 
+await waitForTx(floowdy.connect(user1).creditApproved(creditNr));
+
+await waitForTx(token.connect(user1).approve(floowdyAddress, constants.MaxUint256));
+
+for (let i = 0;i<5; i++) {
+
+t0 = +(await getTimestamp(hre));
+await hre.run('gelato-repay',{interval:3600,credit:creditNr, t0})
+}
 
 throw new Error("");
 

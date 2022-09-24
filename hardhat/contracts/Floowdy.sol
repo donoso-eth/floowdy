@@ -1016,6 +1016,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
           credit.repaymentOptions.installment
         )
       returns (bool success) {
+        credit.repaymentOptions.currentInstallment +=1;
         emit Events.CreditInstallment(creditId);
           // pool.repay(, amount, interestRateMode, address(this));
         //recalculate credit conditions

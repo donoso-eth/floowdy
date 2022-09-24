@@ -70,7 +70,7 @@ export function handleCreditRequested(event:CreditRequested):void {
   let credit = _getCredit(id);
   credit.currentInstallment = credit.currentInstallment.plus(BigInt.fromI32(1));
   let installmentId = event.params.creditId.toString().concat(credit.requester).concat(credit.currentInstallment.toString())
-
+  credit.finishPhaseTimestamp = event.block.timestamp;
   let installment = Installment.load(installmentId);
     if (installment == null) {
       installment = new Installment(installmentId);
