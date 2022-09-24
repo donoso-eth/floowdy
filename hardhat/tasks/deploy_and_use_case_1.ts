@@ -3,7 +3,7 @@ import { task } from 'hardhat/config';
 import { getTimestamp, initEnv, setNextBlockTimestamp, waitForTx } from '../helpers/utils';
 import { join } from 'path';
 import { constants , utils, Signer} from 'ethers';
-import { Floowdy, Floowdy__factory, IERC20, IOps__factory, IPool, ISuperToken, ISuperToken__factory } from '../typechain-types';
+import { Floowdy, Floowdy__factory, IERC20, IOps__factory, IPool, IPool__factory, ISuperToken, ISuperToken__factory } from '../typechain-types';
 import { abi_erc20mint } from '../helpers/abis/ERC20Mint';
 import { abi_pool } from '../helpers/abis/pool';
 import { abi_aerc20 } from '../helpers/abis/aERC20';
@@ -231,7 +231,8 @@ await printPool(hre,floowdy)
 
 let creditReQuest: CreditRequestOptionsStruct = {
   amount:1000000000,
-  rate:5,
+  rateAave:3,
+  ratePool:4,
   nrInstallments:12,
   interval:3600,
   handle:'javier',
@@ -258,8 +259,12 @@ await waitForTx(floowdy.connect(user1).creditApproved(creditNr));
 
 await waitForTx(token.connect(user1).approve(floowdyAddress, constants.MaxUint256));
 
-for (let i = 0;i<5; i++) {
+let pool = IPool__factory.connect(network_params.aavePool, user1);
 
+await waitForTx(pool.borrow(network_params.token,100*10**6,1,0,floowdyAddress));
+
+
+for (let i = 0;i<5; i++) {
 t0 = +(await getTimestamp(hre));
 await hre.run('gelato-repay',{interval:3600,credit:creditNr, t0})
 }

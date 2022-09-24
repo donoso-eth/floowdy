@@ -40,7 +40,8 @@ export const settings = {
     subgraph:
       'https://thegraph.com/hosted-service/subgraph/superfluid-finance/protocol-v1-goerli',
       graphUri:"http://localhost:8000/subgraphs/name/donoso-eth/floowdy",
-      wallet:'local'
+      wallet:'local',
+    aavePool:"0x368EedF3f56ad10b9bC57eed4Dac65B26Bb667f6"
   },
   goerli: {
     host: '0x22ff293e14F1EC3A09B137e9e06084AFd63adDF9',
@@ -51,7 +52,8 @@ export const settings = {
     subgraph:
       'https://thegraph.com/hosted-service/subgraph/superfluid-finance/protocol-v1-goerli',
       graphUri:"http://localhost:8000/subgraphs/name/donoso-eth/floowdy",
-      wallet:'wallet'
+      wallet:'wallet',
+      aavePool:"0x368EedF3f56ad10b9bC57eed4Dac65B26Bb667f6"
   },
 };
 

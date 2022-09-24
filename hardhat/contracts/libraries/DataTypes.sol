@@ -85,7 +85,7 @@ library DataTypes {
         uint256 installment;
         uint256 installmentPrincipal;
         uint256 installmentRateAave;
-        uint256 installmentRateFloowdy;
+        uint256 installmentRatePool;
         uint256 amount;
         uint256 rateAave;
         uint256 ratePool;
@@ -115,7 +115,8 @@ library DataTypes {
 
     struct CreditRequestOptions {
         uint256 amount;
-        uint256 rate;
+        uint256 rateAave;
+        uint256 ratePool;
         uint256 interval;
         uint256 nrInstallments;
         string handle;

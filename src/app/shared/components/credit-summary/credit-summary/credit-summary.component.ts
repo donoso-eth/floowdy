@@ -1,8 +1,11 @@
 import { Component, OnInit, Input, OnChanges } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { CreditStatus, DappBaseComponent, DappInjector, ICREDIT_DELEGATED, ROLE, Web3Actions } from 'angular-web3';
+import { CreditStatus, DappBaseComponent, DappInjector, ICREDIT_DELEGATED, ROLE, settings, Web3Actions } from 'angular-web3';
+import { Contract } from 'ethers';
 import { doSignerTransaction } from 'src/app/dapp-injector/classes/transactor';
+import { aavePool_abi } from 'src/app/shared/helpers/abis/aavePool';
 import { blockTimeToTime, displayAdress, formatSmallEther } from 'src/app/shared/helpers/helpers';
+import { IPool } from 'src/assets/contracts/interfaces/IAAVEPool';
 
 
 @Component({
@@ -53,7 +56,11 @@ export class CreditSummaryComponent  extends DappBaseComponent implements OnChan
   async executeCredit(){
     this.store.dispatch(Web3Actions.chainBusy({ status: true }));
     this.store.dispatch(Web3Actions.chainBusyWithMessage({message: {header:'A Moment please...', body:'We are executing the credit!'}}))
-    await doSignerTransaction(this.dapp.defaultContract?.instance.creditApproved(+this.credit.id)!)
+    let poolContract = new Contract(settings['goerli'].aavePool, aavePool_abi,this.dapp.signer!) as IPool;
+
+   await doSignerTransaction(poolContract.borrow(settings['goerli'].token,this.credit.amount,1,0,this.defaultContract.address));
+
+   await doSignerTransaction(this.dapp.defaultContract?.instance.creditApproved(+this.credit.id)!)
 
   }
 
