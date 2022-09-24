@@ -14,7 +14,7 @@ import * as hre from 'hardhat';
 import { abi_erc20mint } from "../helpers/abis/ERC20Mint";
 import { initEnv, waitForTx } from "../helpers/utils";
 import { Events__factory, Floowdy__factory } from "../typechain-types";
-import { FloowdyInitStruct } from "hardhat/typechain-types/Floowdy";
+import { FloowdyInitStruct } from "../typechain-types/Floowdy";
 import { INETWORK_CONFIG } from "hardhat/helpers/models";
 
 

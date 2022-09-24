@@ -8,7 +8,7 @@ dataSources:
     name: Floowdy
     network: goerli
     source:
-      address: '0x0cB3C7b4d930f6F2e96E3A3BCDfDDdb266c3Be29'
+      address: '0xf71aF83b930Ba2cA4B93aE7D04C5f95568F6D2F4'
       abi: Floowdy
       startBlock: 7588383
     mapping:

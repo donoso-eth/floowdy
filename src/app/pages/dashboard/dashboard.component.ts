@@ -186,6 +186,7 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
         }
         this.twoDec = '0.00';
         this.fourDec = '0000';
+        this.store.dispatch(Web3Actions.chainBusy({ status: false }));
        }
       
        console.log(this.member)

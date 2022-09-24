@@ -51,7 +51,7 @@ export const settings = {
     sfNetwork: 'goerli',
     subgraph:
       'https://thegraph.com/hosted-service/subgraph/superfluid-finance/protocol-v1-goerli',
-      graphUri:"http://localhost:8000/subgraphs/name/donoso-eth/floowdy",
+      graphUri:"https://api.thegraph.com/subgraphs/name/donoso-eth/floowdy",
       wallet:'wallet',
       aavePool:"0x368EedF3f56ad10b9bC57eed4Dac65B26Bb667f6"
   },
