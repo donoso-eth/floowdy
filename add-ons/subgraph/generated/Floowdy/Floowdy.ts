@@ -125,24 +125,36 @@ export class CreditApprovedCreditRepaymentOptionsStruct extends ethereum.Tuple {
     return this[2].toBigInt();
   }
 
-  get amount(): BigInt {
+  get installmentPrincipal(): BigInt {
     return this[3].toBigInt();
   }
 
-  get rate(): BigInt {
+  get installmentRateAave(): BigInt {
     return this[4].toBigInt();
   }
 
-  get totalYield(): BigInt {
+  get installmentRateFloowdy(): BigInt {
     return this[5].toBigInt();
   }
 
-  get currentInstallment(): BigInt {
+  get amount(): BigInt {
     return this[6].toBigInt();
   }
 
+  get rate(): BigInt {
+    return this[7].toBigInt();
+  }
+
+  get totalYield(): BigInt {
+    return this[8].toBigInt();
+  }
+
+  get currentInstallment(): BigInt {
+    return this[9].toBigInt();
+  }
+
   get GelatoRepaymentTaskId(): Bytes {
-    return this[7].toBytes();
+    return this[10].toBytes();
   }
 }
 
@@ -239,24 +251,36 @@ export class CreditCancelledCreditRepaymentOptionsStruct extends ethereum.Tuple 
     return this[2].toBigInt();
   }
 
-  get amount(): BigInt {
+  get installmentPrincipal(): BigInt {
     return this[3].toBigInt();
   }
 
-  get rate(): BigInt {
+  get installmentRateAave(): BigInt {
     return this[4].toBigInt();
   }
 
-  get totalYield(): BigInt {
+  get installmentRateFloowdy(): BigInt {
     return this[5].toBigInt();
   }
 
-  get currentInstallment(): BigInt {
+  get amount(): BigInt {
     return this[6].toBigInt();
   }
 
+  get rate(): BigInt {
+    return this[7].toBigInt();
+  }
+
+  get totalYield(): BigInt {
+    return this[8].toBigInt();
+  }
+
+  get currentInstallment(): BigInt {
+    return this[9].toBigInt();
+  }
+
   get GelatoRepaymentTaskId(): Bytes {
-    return this[7].toBytes();
+    return this[10].toBytes();
   }
 }
 
@@ -353,24 +377,36 @@ export class CreditChangePhaseCreditRepaymentOptionsStruct extends ethereum.Tupl
     return this[2].toBigInt();
   }
 
-  get amount(): BigInt {
+  get installmentPrincipal(): BigInt {
     return this[3].toBigInt();
   }
 
-  get rate(): BigInt {
+  get installmentRateAave(): BigInt {
     return this[4].toBigInt();
   }
 
-  get totalYield(): BigInt {
+  get installmentRateFloowdy(): BigInt {
     return this[5].toBigInt();
   }
 
-  get currentInstallment(): BigInt {
+  get amount(): BigInt {
     return this[6].toBigInt();
   }
 
+  get rate(): BigInt {
+    return this[7].toBigInt();
+  }
+
+  get totalYield(): BigInt {
+    return this[8].toBigInt();
+  }
+
+  get currentInstallment(): BigInt {
+    return this[9].toBigInt();
+  }
+
   get GelatoRepaymentTaskId(): Bytes {
-    return this[7].toBytes();
+    return this[10].toBytes();
   }
 }
 
@@ -547,24 +583,36 @@ export class CreditRejectedCreditRepaymentOptionsStruct extends ethereum.Tuple {
     return this[2].toBigInt();
   }
 
-  get amount(): BigInt {
+  get installmentPrincipal(): BigInt {
     return this[3].toBigInt();
   }
 
-  get rate(): BigInt {
+  get installmentRateAave(): BigInt {
     return this[4].toBigInt();
   }
 
-  get totalYield(): BigInt {
+  get installmentRateFloowdy(): BigInt {
     return this[5].toBigInt();
   }
 
-  get currentInstallment(): BigInt {
+  get amount(): BigInt {
     return this[6].toBigInt();
   }
 
+  get rate(): BigInt {
+    return this[7].toBigInt();
+  }
+
+  get totalYield(): BigInt {
+    return this[8].toBigInt();
+  }
+
+  get currentInstallment(): BigInt {
+    return this[9].toBigInt();
+  }
+
   get GelatoRepaymentTaskId(): Bytes {
-    return this[7].toBytes();
+    return this[10].toBytes();
   }
 }
 
@@ -661,24 +709,36 @@ export class CreditRequestedCreditRepaymentOptionsStruct extends ethereum.Tuple 
     return this[2].toBigInt();
   }
 
-  get amount(): BigInt {
+  get installmentPrincipal(): BigInt {
     return this[3].toBigInt();
   }
 
-  get rate(): BigInt {
+  get installmentRateAave(): BigInt {
     return this[4].toBigInt();
   }
 
-  get totalYield(): BigInt {
+  get installmentRateFloowdy(): BigInt {
     return this[5].toBigInt();
   }
 
-  get currentInstallment(): BigInt {
+  get amount(): BigInt {
     return this[6].toBigInt();
   }
 
+  get rate(): BigInt {
+    return this[7].toBigInt();
+  }
+
+  get totalYield(): BigInt {
+    return this[8].toBigInt();
+  }
+
+  get currentInstallment(): BigInt {
+    return this[9].toBigInt();
+  }
+
   get GelatoRepaymentTaskId(): Bytes {
-    return this[7].toBytes();
+    return this[10].toBytes();
   }
 }
 
@@ -768,6 +828,18 @@ export class MemberDepositMemberStruct extends ethereum.Tuple {
   get amountLocked(): BigInt {
     return this[9].toBigInt();
   }
+
+  get amountLoss(): BigInt {
+    return this[10].toBigInt();
+  }
+
+  get currentYield(): BigInt {
+    return this[11].toBigInt();
+  }
+
+  get memberSpan(): BigInt {
+    return this[12].toBigInt();
+  }
 }
 
 export class MemberStream extends ethereum.Event {
@@ -829,6 +901,18 @@ export class MemberStreamMemberStruct extends ethereum.Tuple {
 
   get amountLocked(): BigInt {
     return this[9].toBigInt();
+  }
+
+  get amountLoss(): BigInt {
+    return this[10].toBigInt();
+  }
+
+  get currentYield(): BigInt {
+    return this[11].toBigInt();
+  }
+
+  get memberSpan(): BigInt {
+    return this[12].toBigInt();
   }
 }
 
@@ -1031,24 +1115,36 @@ export class Floowdy__creditsByIdResultRepaymentOptionsStruct extends ethereum.T
     return this[2].toBigInt();
   }
 
-  get amount(): BigInt {
+  get installmentPrincipal(): BigInt {
     return this[3].toBigInt();
   }
 
-  get rate(): BigInt {
+  get installmentRateAave(): BigInt {
     return this[4].toBigInt();
   }
 
-  get totalYield(): BigInt {
+  get installmentRateFloowdy(): BigInt {
     return this[5].toBigInt();
   }
 
-  get currentInstallment(): BigInt {
+  get amount(): BigInt {
     return this[6].toBigInt();
   }
 
+  get rate(): BigInt {
+    return this[7].toBigInt();
+  }
+
+  get totalYield(): BigInt {
+    return this[8].toBigInt();
+  }
+
+  get currentInstallment(): BigInt {
+    return this[9].toBigInt();
+  }
+
   get GelatoRepaymentTaskId(): Bytes {
-    return this[7].toBytes();
+    return this[10].toBytes();
   }
 }
 
@@ -1104,23 +1200,12 @@ export class Floowdy__getAaveDataResult {
   value1: BigInt;
   value2: BigInt;
   value3: BigInt;
-  value4: BigInt;
-  value5: BigInt;
 
-  constructor(
-    value0: BigInt,
-    value1: BigInt,
-    value2: BigInt,
-    value3: BigInt,
-    value4: BigInt,
-    value5: BigInt
-  ) {
+  constructor(value0: BigInt, value1: BigInt, value2: BigInt, value3: BigInt) {
     this.value0 = value0;
     this.value1 = value1;
     this.value2 = value2;
     this.value3 = value3;
-    this.value4 = value4;
-    this.value5 = value5;
   }
 
   toMap(): TypedMap<string, ethereum.Value> {
@@ -1129,8 +1214,6 @@ export class Floowdy__getAaveDataResult {
     map.set("value1", ethereum.Value.fromUnsignedBigInt(this.value1));
     map.set("value2", ethereum.Value.fromUnsignedBigInt(this.value2));
     map.set("value3", ethereum.Value.fromUnsignedBigInt(this.value3));
-    map.set("value4", ethereum.Value.fromUnsignedBigInt(this.value4));
-    map.set("value5", ethereum.Value.fromUnsignedBigInt(this.value5));
     return map;
   }
 }
@@ -1146,6 +1229,9 @@ export class Floowdy__membersResult {
   value7: BigInt;
   value8: BigInt;
   value9: BigInt;
+  value10: BigInt;
+  value11: BigInt;
+  value12: BigInt;
 
   constructor(
     value0: BigInt,
@@ -1157,7 +1243,10 @@ export class Floowdy__membersResult {
     value6: BigInt,
     value7: BigInt,
     value8: BigInt,
-    value9: BigInt
+    value9: BigInt,
+    value10: BigInt,
+    value11: BigInt,
+    value12: BigInt
   ) {
     this.value0 = value0;
     this.value1 = value1;
@@ -1169,6 +1258,9 @@ export class Floowdy__membersResult {
     this.value7 = value7;
     this.value8 = value8;
     this.value9 = value9;
+    this.value10 = value10;
+    this.value11 = value11;
+    this.value12 = value12;
   }
 
   toMap(): TypedMap<string, ethereum.Value> {
@@ -1183,6 +1275,9 @@ export class Floowdy__membersResult {
     map.set("value7", ethereum.Value.fromUnsignedBigInt(this.value7));
     map.set("value8", ethereum.Value.fromUnsignedBigInt(this.value8));
     map.set("value9", ethereum.Value.fromUnsignedBigInt(this.value9));
+    map.set("value10", ethereum.Value.fromUnsignedBigInt(this.value10));
+    map.set("value11", ethereum.Value.fromUnsignedBigInt(this.value11));
+    map.set("value12", ethereum.Value.fromUnsignedBigInt(this.value12));
     return map;
   }
 }
@@ -1783,7 +1878,7 @@ export class Floowdy extends ethereum.SmartContract {
   creditsById(param0: BigInt): Floowdy__creditsByIdResult {
     let result = super.call(
       "creditsById",
-      "creditsById(uint256):(uint256,address,uint256,uint256,uint8,bytes32,(uint256,uint256,address[],uint256,uint256),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,bytes32))",
+      "creditsById(uint256):(uint256,address,uint256,uint256,uint8,bytes32,(uint256,uint256,address[],uint256,uint256),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,bytes32))",
       [ethereum.Value.fromUnsignedBigInt(param0)]
     );
 
@@ -1808,7 +1903,7 @@ export class Floowdy extends ethereum.SmartContract {
   ): ethereum.CallResult<Floowdy__creditsByIdResult> {
     let result = super.tryCall(
       "creditsById",
-      "creditsById(uint256):(uint256,address,uint256,uint256,uint8,bytes32,(uint256,uint256,address[],uint256,uint256),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,bytes32))",
+      "creditsById(uint256):(uint256,address,uint256,uint256,uint8,bytes32,(uint256,uint256,address[],uint256,uint256),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,bytes32))",
       [ethereum.Value.fromUnsignedBigInt(param0)]
     );
     if (result.reverted) {
@@ -1913,7 +2008,7 @@ export class Floowdy extends ethereum.SmartContract {
   getAaveData(): Floowdy__getAaveDataResult {
     let result = super.call(
       "getAaveData",
-      "getAaveData():(uint256,uint256,uint256,uint256,uint256,uint256)",
+      "getAaveData():(uint256,uint256,uint256,uint256)",
       []
     );
 
@@ -1921,16 +2016,14 @@ export class Floowdy extends ethereum.SmartContract {
       result[0].toBigInt(),
       result[1].toBigInt(),
       result[2].toBigInt(),
-      result[3].toBigInt(),
-      result[4].toBigInt(),
-      result[5].toBigInt()
+      result[3].toBigInt()
     );
   }
 
   try_getAaveData(): ethereum.CallResult<Floowdy__getAaveDataResult> {
     let result = super.tryCall(
       "getAaveData",
-      "getAaveData():(uint256,uint256,uint256,uint256,uint256,uint256)",
+      "getAaveData():(uint256,uint256,uint256,uint256)",
       []
     );
     if (result.reverted) {
@@ -1942,9 +2035,7 @@ export class Floowdy extends ethereum.SmartContract {
         value[0].toBigInt(),
         value[1].toBigInt(),
         value[2].toBigInt(),
-        value[3].toBigInt(),
-        value[4].toBigInt(),
-        value[5].toBigInt()
+        value[3].toBigInt()
       )
     );
   }
@@ -2005,7 +2096,7 @@ export class Floowdy extends ethereum.SmartContract {
   members(param0: Address): Floowdy__membersResult {
     let result = super.call(
       "members",
-      "members(address):(uint256,address,int96,bytes32,uint256,uint256,uint256,uint256,uint256,uint256)",
+      "members(address):(uint256,address,int96,bytes32,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256)",
       [ethereum.Value.fromAddress(param0)]
     );
 
@@ -2019,14 +2110,17 @@ export class Floowdy extends ethereum.SmartContract {
       result[6].toBigInt(),
       result[7].toBigInt(),
       result[8].toBigInt(),
-      result[9].toBigInt()
+      result[9].toBigInt(),
+      result[10].toBigInt(),
+      result[11].toBigInt(),
+      result[12].toBigInt()
     );
   }
 
   try_members(param0: Address): ethereum.CallResult<Floowdy__membersResult> {
     let result = super.tryCall(
       "members",
-      "members(address):(uint256,address,int96,bytes32,uint256,uint256,uint256,uint256,uint256,uint256)",
+      "members(address):(uint256,address,int96,bytes32,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256)",
       [ethereum.Value.fromAddress(param0)]
     );
     if (result.reverted) {
@@ -2044,7 +2138,10 @@ export class Floowdy extends ethereum.SmartContract {
         value[6].toBigInt(),
         value[7].toBigInt(),
         value[8].toBigInt(),
-        value[9].toBigInt()
+        value[9].toBigInt(),
+        value[10].toBigInt(),
+        value[11].toBigInt(),
+        value[12].toBigInt()
       )
     );
   }

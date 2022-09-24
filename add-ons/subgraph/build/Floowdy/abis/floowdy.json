@@ -644,6 +644,21 @@
           },
           {
             "internalType": "uint256",
+            "name": "installmentPrincipal",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "installmentRateAave",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "installmentRateFloowdy",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
             "name": "amount",
             "type": "uint256"
           },
@@ -745,11 +760,6 @@
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "totalCollateralBase",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
         "name": "totalDebtBase",
         "type": "uint256"
       },
@@ -760,17 +770,12 @@
       },
       {
         "internalType": "uint256",
-        "name": "currentLiquidationThreshold",
+        "name": "depositAPR",
         "type": "uint256"
       },
       {
         "internalType": "uint256",
-        "name": "ltv",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "healthFactor",
+        "name": "stableBorrowAPR",
         "type": "uint256"
       }
     ],
@@ -880,6 +885,21 @@
       {
         "internalType": "uint256",
         "name": "amountLocked",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amountLoss",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "currentYield",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "memberSpan",
         "type": "uint256"
       }
     ],
@@ -1413,6 +1433,21 @@
               },
               {
                 "internalType": "uint256",
+                "name": "installmentPrincipal",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "installmentRateAave",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "installmentRateFloowdy",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
                 "name": "amount",
                 "type": "uint256"
               },
@@ -1537,6 +1572,21 @@
               },
               {
                 "internalType": "uint256",
+                "name": "installmentPrincipal",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "installmentRateAave",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "installmentRateFloowdy",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
                 "name": "amount",
                 "type": "uint256"
               },
@@ -1657,6 +1707,21 @@
               {
                 "internalType": "uint256",
                 "name": "installment",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "installmentPrincipal",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "installmentRateAave",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "installmentRateFloowdy",
                 "type": "uint256"
               },
               {
@@ -1849,6 +1914,21 @@
               },
               {
                 "internalType": "uint256",
+                "name": "installmentPrincipal",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "installmentRateAave",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "installmentRateFloowdy",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
                 "name": "amount",
                 "type": "uint256"
               },
@@ -1973,6 +2053,21 @@
               },
               {
                 "internalType": "uint256",
+                "name": "installmentPrincipal",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "installmentRateAave",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "installmentRateFloowdy",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
                 "name": "amount",
                 "type": "uint256"
               },
@@ -2090,6 +2185,21 @@
             "internalType": "uint256",
             "name": "amountLocked",
             "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "amountLoss",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "currentYield",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "memberSpan",
+            "type": "uint256"
           }
         ],
         "indexed": false,
@@ -2154,6 +2264,21 @@
           {
             "internalType": "uint256",
             "name": "amountLocked",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "amountLoss",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "currentYield",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "memberSpan",
             "type": "uint256"
           }
         ],

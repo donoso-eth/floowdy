@@ -59,12 +59,12 @@ const doAllFaucet= async (erc20Under:any, supertokenContract:any, network_params
     supertokenContract
   )
 
-//   await faucet(
-//     user3,
-//     erc20Under,
-//     network_params.superToken,
-//     supertokenContract
-//   );
+  await faucet(
+    user3,
+    erc20Under,
+    network_params.superToken,
+    supertokenContract
+  );
 //   await faucet(
 //     user4,
 //     erc20Under,
@@ -115,6 +115,7 @@ const doAllFaucet= async (erc20Under:any, supertokenContract:any, network_params
 task('usecase-1', 'use-case-1').setAction(async ({}, hre) => {
 
 execSync("npm run deploy",{encoding: "utf8",stdio: 'inherit'})
+
 console.log('.....deployed')
 execSync("npm run task publish -- --only-address true",{encoding: "utf8",stdio: 'inherit'})
 console.log('.....publish to subgraph')
