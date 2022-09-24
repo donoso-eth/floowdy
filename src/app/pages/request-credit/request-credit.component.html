@@ -36,16 +36,26 @@
           </div>
           <p-divider layout="vertical"> </p-divider>
           <div class="col-12 lg:col-4 xl:col-5">
-      
+            
+            <div *ngIf="aaveLoading == 'found'"> 
+              <div class="input-block" >
+                <h6 style="width:100%">MAx Amount Pool: 221</h6>
+              </div>
+              <div class="input-block" >
+                <h6 style="width:100%">Your Max Amount (leverage 50%): 221</h6>
+              </div>
+            </div>
+
+            <div *ngIf="aaveLoading == 'none'">
+             </div>
+
+            <div *ngIf="aaveLoading == 'loading'">
+              <p-progressSpinner></p-progressSpinner>
+            </div>
               <!-- <h6>Credit Details</h6> -->
               <div style="padding: 20px;" class="grid p-fluid justify-content-center">
                 <div [formGroup]="requestCreditForm">
-                  <div class="input-block" >
-                    <h6 style="width:100%">MAx Amount Pool: 221</h6>
-                  </div>
-                  <div class="input-block" >
-                    <h6 style="width:100%">Your Max Amount (leverage 50%): 221</h6>
-                  </div>
+          
             
                   <div class="input-block" >
                   <h6 >

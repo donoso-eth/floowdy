@@ -20,6 +20,8 @@ export class RequestCreditComponent
 {
   lensLoading = true;
   lensProfile = false;
+  aaveLoading: 'loading' | 'found' | 'none' = 'loading';
+  aaveSettings = { };
   mockProfileActive = false;
   profiles:Array<ILENS_PROFILE> = [];
   requestCreditForm: FormGroup;
@@ -49,7 +51,8 @@ export class RequestCreditComponent
       installementsCtrl: [ 10,
         [Validators.required, Validators.min(1)],
       ],  
-      profileCtrl: [false, Validators.requiredTrue] 
+      profileCtrl: [false, Validators.requiredTrue],
+      aaveCtrl: [false, Validators.requiredTrue] 
    
     })
   }
@@ -115,11 +118,12 @@ export class RequestCreditComponent
 
       console.log(depositAPR, variableBorrowAPR, stableBorrowAPR)
 
-      // depositAPY = ((1 + (depositAPR / SECONDS_PER_YEAR)) ^ SECONDS_PER_YEAR) - 1
-      // variableBorrowAPY = ((1 + (variableBorrowAPR / SECONDS_PER_YEAR)) ^ SECONDS_PER_YEAR) - 1
-      // stableBorrowAPY = ((1 + (stableBorrowAPR / SECONDS_PER_YEAR)) ^ SECONDS_PER_YEAR) - 1
 
-    
+
+      let depositAPY = ((1 + (depositAPR/ SECONDS_PER_YEAR)) ** SECONDS_PER_YEAR) - 1
+      let stableBorrowAPY = ((1 + (stableBorrowAPR / SECONDS_PER_YEAR)) ** SECONDS_PER_YEAR) - 1
+
+      console.log(depositAPY, stableBorrowAPY)
 
 
 
@@ -152,9 +156,27 @@ export class RequestCreditComponent
   
     this.store.dispatch(Web3Actions.chainBusy({ status: true }));
     this.store.dispatch(Web3Actions.chainBusyWithMessage({message:{header:'Ein Moment Bitte', body:'Gettin last AAVE debt settings'}}))
-    let result = await this.dapp.defaultContract?.instance.getAaveData();
+  
+    try {
+      let result = await this.dapp.defaultContract?.instance.getAaveData();
+      this.aaveLoading = 'found';
+      console.log(result)
+      console.log(+result?.depositAPR!/10**27)
+      console.log(+result?.stableBorrowAPR!/10**27)
 
-    console.log(result)
+      let SECONDS_PER_YEAR = 31536000
+
+      let depositAPY = ((1 + (+result?.depositAPR!/10**27/ SECONDS_PER_YEAR)) ** SECONDS_PER_YEAR) - 1
+      let stableBorrowAPY = ((1 + (+result?.stableBorrowAPR!/10**27 / SECONDS_PER_YEAR)) ** SECONDS_PER_YEAR) - 1
+
+      console.log(depositAPY, stableBorrowAPY)
+      this.store.dispatch(Web3Actions.chainBusy({ status: false }));
+    } catch (error) {
+      this.aaveLoading = 'none';
+      this.store.dispatch(Web3Actions.chainBusy({ status: false }));
+    }
+
+
 
   }
 }

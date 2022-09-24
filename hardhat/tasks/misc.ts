@@ -38,7 +38,19 @@ task('misc', 'mint usdc aave').setAction(async ({}, hre) => {
  let network_params = networks_config["goerli"]
 
  let result =   await floowdy.getAaveData()  
- console.log(+result.depositAPR.toString()/10**8);
- console.log(+result.stableBorrowAPR.toString()/10**8);
+    console.log(result)
+
+    console.log(+result.depositAPR.toString()/10**8);
+    console.log(+result.stableBorrowAPR.toString()/10**8);
+    let RAY = 10**27 // 10 to the power 27
+    let SECONDS_PER_YEAR = 31536000
+
+    let depositAPY = (1 + ((+result.depositAPR.toString()/10**27 / SECONDS_PER_YEAR)) ** SECONDS_PER_YEAR) - 1
+    let stableBorrowAPY = (1 + ((+result.stableBorrowAPR.toString()/10**27/ SECONDS_PER_YEAR)) ** SECONDS_PER_YEAR) - 1
+
+console.log(depositAPY);
+console.log(stableBorrowAPY)
+
+
 
 });

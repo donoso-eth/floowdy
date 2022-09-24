@@ -602,7 +602,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
   // #endregion Task GElato CREDIT PHASE PERIOD
 
   function getAaveData() public view returns( uint256  totalDebtBase,
-      uint256 availableBorrowsBase,uint256  depositAPR,uint256 stableBorrowAPR   ) {
+      uint256 availableBorrowsBase, uint256 depositAPR,  uint256 stableBorrowAPR    ) {
 
       uint256 RAY = 10**17; // 10 to the power 27
       uint256 SECONDS_PER_YEAR = 31536000;
@@ -613,12 +613,12 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
 
     console.log(reserveData.currentLiquidityRate);
 
- depositAPR = reserveData.currentLiquidityRate/RAY;
-  stableBorrowAPR = reserveData.currentStableBorrowRate/RAY;
+  depositAPR = reserveData.currentLiquidityRate;
+  stableBorrowAPR = reserveData.currentStableBorrowRate;
 
 
-    // depositAPY = ((1 + (depositAPR / SECONDS_PER_YEAR)) ^ SECONDS_PER_YEAR) - 1;
-    // stableBorrowAPY  = ((1 + (stableBorrowAPR / SECONDS_PER_YEAR)) ^ SECONDS_PER_YEAR) - 1;
+    //  depositAPY = ((1 + (depositAPR / SECONDS_PER_YEAR)) ** SECONDS_PER_YEAR) - 1;
+    //  stableBorrowAPY  = (1 + ((stableBorrowAPR / SECONDS_PER_YEAR)) ** SECONDS_PER_YEAR) - 1;
 
 
 
