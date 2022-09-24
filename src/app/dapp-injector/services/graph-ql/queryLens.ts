@@ -35,8 +35,8 @@
     }
 `;
 
-export const GET_PROFILE = `{
-  profile(request: { profileId: "0x01" }) {
+export const GET_PROFILE = `query($id: ProfileId!) {
+  profile(request: { profileId: $id}) {
     id
     name
     bio

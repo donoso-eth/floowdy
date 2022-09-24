@@ -22,7 +22,7 @@ export enum Web3ActionTypes {
 
 const chainStatus = createAction('[Chain] Status', props<{ status: NETWORK_STATUS }>());
 const chainBusy = createAction('[Chain] Busy', props<{ status: boolean}>());
-const chainBusyWithMessage = createAction('[Chain] Busy with Message', props<{ status: boolean, message: {header:string,body:string} }>());
+const chainBusyWithMessage = createAction('[Chain] Busy with Message', props<{ message: {header:string,body:string} }>());
 const disconnectChain = createAction('[Disconnect] Chain',props<{status:'force-disconnect'}>());
 const refreshBalances = createAction('[Refresh] Balances',props<{refreshBalance:boolean}>());
 const setSignerNetwork = createAction('[Set] SignerNetwork', props<{ network: string }>());

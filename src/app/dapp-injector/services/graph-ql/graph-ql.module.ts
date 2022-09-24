@@ -62,6 +62,12 @@ export class GraphQlModule {
                   },
                 }
               },
+              aave: /* <-- these settings will be saved by name: lens*/ {
+                cache: new InMemoryCache(),
+                link: httpLink.create({
+                  uri: 'https://api.thegraph.com/subgraphs/name/aave/protocol-v3-polygon',
+                }),
+              },
               lens: /* <-- these settings will be saved by name: lens*/ {
                 cache: new InMemoryCache(),
                 link: httpLink.create({

@@ -11,6 +11,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
 
+import { InputSwitchModule } from 'primeng/inputswitch';
 @NgModule({
   declarations: [
     RequestCreditComponent
@@ -25,6 +26,7 @@ import { DropdownModule } from 'primeng/dropdown';
     DividerModule,
     ButtonModule,
     InputNumberModule, 
+    InputSwitchModule,
     DropdownModule
   ]
 })

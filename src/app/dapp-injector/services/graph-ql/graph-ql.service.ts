@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Apollo, QueryRef, gql } from 'apollo-angular';
+import { utils } from 'ethers';
 import { firstValueFrom, Subscription } from 'rxjs';
 import { DappInjector } from '../../dapp-injector.service';
+import { GET_AAVE_DATA } from './queryAave';
 import {
   GET_CREDIT,
   GET_CREDITS,
@@ -10,8 +12,8 @@ import {
   GET_MEMBER_CREDITS,
   GET_POOL,
   GET_SUMMARY,
-} from './queryDefinitions';
-import { GET_PROFILE, GET_PROFILES } from './querySuperFluid';
+} from './queryFloowdy';
+import { GET_PROFILE, GET_PROFILES } from './queryLens';
 
 export interface ProfilesRequest {
   profileIds?: string[];
@@ -111,14 +113,15 @@ export class GraphQlService {
       return {};
     }
   }
-  async getMemberCredits(): Promise<any> {
+
+
+  ///// AAVE QUERIES
+  async getReserveData(): Promise<any> {
     try {
-      //  const variables:ProfilesRequest =  { ownedBy: this.dapp.signerAddress! };
-      const variables = { address: '1' }; //"0x7A84b3CaAC4C00AFA0886cb2238dbb9788376581" };
+
       const profiles = await firstValueFrom(
-        this.apollo.query<any>({
-          query: gql(GET_MEMBER_CREDITS),
-          variables,
+        this.apollo.use('aave').query<any>({
+          query: gql(GET_AAVE_DATA)
         })
       );
 
@@ -129,11 +132,15 @@ export class GraphQlService {
     }
   }
 
-  async getProfileRequest(): Promise<any> {
+
+  ///// LENS QUERIES
+
+  async getMockProfile(): Promise<any> {
     try {
-      //  const variables:ProfilesRequest =  { ownedBy: this.dapp.signerAddress! };
+      let randomDecId = Math.floor(Math.random()*100)+1;
+      let id = utils.hexlify(randomDecId)
       const variables = {
-        address: '0xD2E808647D596F33Dcc3436E193A9566fc7aC07',
+        id
       }; //"0x7A84b3CaAC4C00AFA0886cb2238dbb9788376581" };
       const profiles = await firstValueFrom(
         this.apollo.use('lens').query<any>({
@@ -149,11 +156,11 @@ export class GraphQlService {
     }
   }
 
-  async getProfilesRequest(): Promise<any> {
+  async getProfilesRequest(address:string): Promise<any> {
     try {
       //  const variables:ProfilesRequest =  { ownedBy: this.dapp.signerAddress! };
       const variables = {
-        address: '0x7A84b3CaAC4C00AFA0886cb2238dbb9788376581',
+        address,
       }; //;//"0xD28E808647D596F33Dcc3436E193A9566fc7aC07"}//
       const profiles = await firstValueFrom(
         this.apollo.use('lens').query<any>({

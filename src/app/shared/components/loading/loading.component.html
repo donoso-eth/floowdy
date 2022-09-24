@@ -17,8 +17,8 @@ style="
   <div class="h-full w-full m-0 py-7 px-4" style="border-radius:53px; background: linear-gradient(180deg, var(--surface-50) 38.9%, var(--surface-0));">
       <div  *ngIf="isBusyMessage.header != ''" class="text-center mb-5">
        
-          <div class="text-900 text-3xl font-medium mb-3">Welcome!</div>
-          <span class="text-600 font-medium">Sign in to continue</span>
+          <div class="text-900 text-3xl font-medium mb-3">{{isBusyMessage.header}}</div>
+          <span class="text-600 font-medium">{{isBusyMessage.body}}</span>
       </div>
   
       <div class="w-full md:w-10 mx-auto">
