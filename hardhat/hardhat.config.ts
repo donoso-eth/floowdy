@@ -6,6 +6,7 @@ import '@nomiclabs/hardhat-waffle';
 import '@typechain/hardhat';
 import 'hardhat-gas-reporter';
 import 'solidity-coverage';
+import "hardhat-contract-sizer";
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import * as glob from 'glob';
 import { resolve } from 'path';

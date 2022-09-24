@@ -422,8 +422,6 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
         emit Events.PoolUpdated(poolByTimestamp[poolTimestamp]);
     }
 
-    function _calculateYield() public {}
-
     function _poolRebalance() internal {
         poolId++;
 
@@ -605,52 +603,9 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
 
     // #endregion Task GElato CREDIT PHASE PERIOD
 
-    function getAaveData()
-        public
-        view
-        returns (
-            uint256 totalDebtBase,
-            uint256 availableBorrowsBase,
-            uint256 depositAPR,
-            uint256 stableBorrowAPR
-        )
-    {
-        uint256 RAY = 10**17; // 10 to the power 27
-        uint256 SECONDS_PER_YEAR = 31536000;
 
-        (, totalDebtBase, availableBorrowsBase, , , ) = aavePool
-            .getUserAccountData(address(this));
 
-        DataTypesAAVE.ReserveData memory reserveData = aavePool.getReserveData(
-            address(token)
-        );
-
-        console.log(reserveData.currentLiquidityRate);
-
-        depositAPR = reserveData.currentLiquidityRate;
-        stableBorrowAPR = reserveData.currentStableBorrowRate;
-
-        //  depositAPY = ((1 + (depositAPR / SECONDS_PER_YEAR)) ** SECONDS_PER_YEAR) - 1;
-        //  stableBorrowAPY  = (1 + ((stableBorrowAPR / SECONDS_PER_YEAR)) ** SECONDS_PER_YEAR) - 1;
-    }
-
-    function aaveSupply() public {
-        uint256 poolSuperTokenBalance = (superToken.balanceOf(address(this)))
-            .div(10**12);
-
-        superToken.downgrade(poolSuperTokenBalance);
-
-        uint256 poolTokenBalance = token.balanceOf(address(this));
-
-        if (poolTokenBalance > 10000000000000) {
-            poolTokenBalance = 10000000000000;
-        }
-
-        aavePool.supply(address(token), poolTokenBalance, address(this), 0);
-    }
-
-    function delegateCreditToMember(uint256 _amount, address _to) internal {}
-
+  
     // #endregion Aave
 
     // ============= ============= Credit Delegation ============= ============= //
@@ -1033,22 +988,6 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
         );
     }
 
-    function testRepayment() public {
-
-      
-        DataTypes.Credit memory credit = creditsById[1];
-
-          uint256 balance = IERC20(debtToken).balanceOf(credit.requester);
-
-        console.log(balance);
-        console.log(credit.requester);
-        console.log(credit.repaymentOptions.installment);
-
-        IERC20(debtToken).transferFrom(
-               credit.requester,
-                address(this),
-                40182);
-    }
 
     /// called by Gelato
     function triggerRepayment(uint256 creditId) external onlyOps {
@@ -1068,8 +1007,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
 
         console.log(1068,balance);
 
-         testRepayment();   
-
+      
 
         if (
             credit.repaymentOptions.currentInstallment <=
