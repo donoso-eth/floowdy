@@ -36,6 +36,9 @@ library DataTypes {
         uint256 initTimestamp;
         uint256 yieldAccrued;
         uint256 amountLocked;
+        uint256 amountLoss;
+        uint256 currentYield;
+        uint256 memberSpan;
     }
 
     struct POOL_DELEGATION {
@@ -80,6 +83,9 @@ library DataTypes {
         uint256 nrInstallments;
         uint256 interval;
         uint256 installment;
+        uint256 installmentPrincipal;
+        uint256 installmentRateAave;
+        uint256 installmentRateFloowdy;
         uint256 amount;
         uint256 rate;
         uint256 totalYield;
@@ -90,7 +96,7 @@ library DataTypes {
     struct CreditDelegatorsOptions {
         uint256 delegatorsNr;
         uint256 delegatorsRequired;
-        address[] delegators;
+        address[] delegators; 
         uint256 delegatorsAmount;
         uint256 delegatorsGlobalFee;
     }

@@ -19,6 +19,7 @@ import {IPoolAddressesProvider} from "./aave/IPoolAddressesProvider.sol";
 import {IPool} from "./aave/IPool.sol";
 import {IAToken} from "./aave/IAToken.sol";
 import {IPoolDataProvider} from './aave/IPoolDataProvider.sol';
+import {DataTypesAAVE} from "./aave/DataTypes.sol";
 
 import {ISuperfluid, ISuperAgreement, ISuperToken, ISuperApp, SuperAppDefinitions} from "@superfluid-finance/ethereum-contracts/contracts/interfaces/superfluid/ISuperfluid.sol";
 import {IConstantFlowAgreementV1} from "@superfluid-finance/ethereum-contracts/contracts/interfaces/agreements/IConstantFlowAgreementV1.sol";
@@ -600,35 +601,27 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
 
   // #endregion Task GElato CREDIT PHASE PERIOD
 
-  function getAaveData() public view returns( uint256 totalCollateralBase,
-      uint256 totalDebtBase,
-      uint256 availableBorrowsBase,
-      uint256 currentLiquidationThreshold,
-      uint256 ltv,
-      uint256 healthFactor) {
-    (
-      totalCollateralBase,
-      totalDebtBase,
-      availableBorrowsBase,
-      currentLiquidationThreshold,
-      ltv,
-      healthFactor
-    ) = aavePool.getUserAccountData(address(this));
+  function getAaveData() public view returns( uint256  totalDebtBase,
+      uint256 availableBorrowsBase,uint256  depositAPR,uint256 stableBorrowAPR   ) {
 
-    // (
-    //   uint256 unbacked,
-    //   uint256 accruedToTreasuryScaled,
-    //   uint256 totalAToken,
-    //   uint256 totalStableDebt,
-    //   uint256 totalVariableDebt,
-    //   uint256 liquidityRate,
-    //   uint256 variableBorrowRate,
-    //   uint256 stableBorrowRate,
-    //   uint256 averageStableBorrowRate,
-    //   uint256 liquidityIndex,
-    //   uint256 variableBorrowIndex,
-    //   uint40 lastUpdateTimestamp
-    // ) = IPoolDataProvider(token).getReserveData(address(token));
+      uint256 RAY = 10**17; // 10 to the power 27
+      uint256 SECONDS_PER_YEAR = 31536000;
+
+    (, totalDebtBase,availableBorrowsBase,,,) = aavePool.getUserAccountData(address(this));
+
+    DataTypesAAVE.ReserveData memory reserveData = aavePool.getReserveData(address(token));
+
+    console.log(reserveData.currentLiquidityRate);
+
+ depositAPR = reserveData.currentLiquidityRate/RAY;
+  stableBorrowAPR = reserveData.currentStableBorrowRate/RAY;
+
+
+    // depositAPY = ((1 + (depositAPR / SECONDS_PER_YEAR)) ^ SECONDS_PER_YEAR) - 1;
+    // stableBorrowAPY  = ((1 + (stableBorrowAPR / SECONDS_PER_YEAR)) ^ SECONDS_PER_YEAR) - 1;
+
+
+
 
   }
 
@@ -682,6 +675,9 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
       CREDIT_PHASES_INTERVAL
     );
 
+    //// Getting aave 
+
+
     //// Repayment Options
     uint256 totalYield = (
       options.amount.mul(options.interval * options.nrInstallments.div(365 * 24 * 3600))
@@ -693,6 +689,9 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
         options.nrInstallments,
         options.interval,
         installment,
+        0,
+        0,
+        0,
         options.amount,
         options.rate,
         totalYield,

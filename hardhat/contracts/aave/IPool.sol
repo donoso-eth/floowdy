@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {IPoolAddressesProvider} from './IPoolAddressesProvider.sol';
-import {DataTypes} from './/DataTypes.sol';
+import {DataTypesAAVE} from './DataTypes.sol';
 
 /**
  * @title IPool
@@ -76,7 +76,7 @@ interface IPool {
     address user,
     address indexed onBehalfOf,
     uint256 amount,
-    DataTypes.InterestRateMode interestRateMode,
+    DataTypesAAVE.InterestRateMode interestRateMode,
     uint256 borrowRate,
     uint16 indexed referralCode
   );
@@ -106,7 +106,7 @@ interface IPool {
   event SwapBorrowRateMode(
     address indexed reserve,
     address indexed user,
-    DataTypes.InterestRateMode interestRateMode
+    DataTypesAAVE.InterestRateMode interestRateMode
   );
 
   /**
@@ -159,7 +159,7 @@ interface IPool {
     address initiator,
     address indexed asset,
     uint256 amount,
-    DataTypes.InterestRateMode interestRateMode,
+    DataTypesAAVE.InterestRateMode interestRateMode,
     uint256 premium,
     uint16 indexed referralCode
   );
@@ -538,7 +538,7 @@ interface IPool {
    * @param asset The address of the underlying asset of the reserve
    * @param configuration The new configuration bitmap
    **/
-  function setConfiguration(address asset, DataTypes.ReserveConfigurationMap calldata configuration)
+  function setConfiguration(address asset, DataTypesAAVE.ReserveConfigurationMap calldata configuration)
     external;
 
   /**
@@ -549,7 +549,7 @@ interface IPool {
   function getConfiguration(address asset)
     external
     view
-    returns (DataTypes.ReserveConfigurationMap memory);
+    returns (DataTypesAAVE.ReserveConfigurationMap memory);
 
   /**
    * @notice Returns the configuration of the user across all the reserves
@@ -559,7 +559,7 @@ interface IPool {
   function getUserConfiguration(address user)
     external
     view
-    returns (DataTypes.UserConfigurationMap memory);
+    returns (DataTypesAAVE.UserConfigurationMap memory);
 
   /**
    * @notice Returns the normalized income normalized income of the reserve
@@ -580,7 +580,7 @@ interface IPool {
    * @param asset The address of the underlying asset of the reserve
    * @return The state and configuration data of the reserve
    **/
-  function getReserveData(address asset) external view returns (DataTypes.ReserveData memory);
+  function getReserveData(address asset) external view returns (DataTypesAAVE.ReserveData memory);
 
   /**
    * @notice Validates and finalizes an aToken transfer
@@ -609,8 +609,8 @@ interface IPool {
   function getReservesList() external view returns (address[] memory);
 
   /**
-   * @notice Returns the address of the underlying asset of a reserve by the reserve id as stored in the DataTypes.ReserveData struct
-   * @param id The id of the reserve as stored in the DataTypes.ReserveData struct
+   * @notice Returns the address of the underlying asset of a reserve by the reserve id as stored in the DataTypesAAVE.ReserveData struct
+   * @param id The id of the reserve as stored in the DataTypesAAVE.ReserveData struct
    * @return The address of the reserve associated with id
    **/
   function getReserveAddressById(uint16 id) external view returns (address);
@@ -649,14 +649,14 @@ interface IPool {
    * @param id The id of the category
    * @param config The configuration of the category
    */
-  function configureEModeCategory(uint8 id, DataTypes.EModeCategory memory config) external;
+  function configureEModeCategory(uint8 id, DataTypesAAVE.EModeCategory memory config) external;
 
   /**
    * @notice Returns the data of an eMode category
    * @param id The id of the category
    * @return The configuration data of the category
    */
-  function getEModeCategoryData(uint8 id) external view returns (DataTypes.EModeCategory memory);
+  function getEModeCategoryData(uint8 id) external view returns (DataTypesAAVE.EModeCategory memory);
 
   /**
    * @notice Allows a user to use the protocol in eMode

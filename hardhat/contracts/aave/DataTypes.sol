@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.10;
 
-library DataTypes {
+library DataTypesAAVE {
   struct ReserveData {
     //stores the reserve configuration
     ReserveConfigurationMap configuration;

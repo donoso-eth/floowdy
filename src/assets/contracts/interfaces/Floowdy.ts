@@ -74,6 +74,9 @@ export type CreditRepaymentOptionsStruct = {
   nrInstallments: BigNumberish;
   interval: BigNumberish;
   installment: BigNumberish;
+  installmentPrincipal: BigNumberish;
+  installmentRateAave: BigNumberish;
+  installmentRateFloowdy: BigNumberish;
   amount: BigNumberish;
   rate: BigNumberish;
   totalYield: BigNumberish;
@@ -89,11 +92,17 @@ export type CreditRepaymentOptionsStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
   string
 ] & {
   nrInstallments: BigNumber;
   interval: BigNumber;
   installment: BigNumber;
+  installmentPrincipal: BigNumber;
+  installmentRateAave: BigNumber;
+  installmentRateFloowdy: BigNumber;
   amount: BigNumber;
   rate: BigNumber;
   totalYield: BigNumber;
@@ -773,13 +782,11 @@ export interface Floowdy extends BaseContract {
     getAaveData(
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
-        totalCollateralBase: BigNumber;
+      [BigNumber, BigNumber, BigNumber, BigNumber] & {
         totalDebtBase: BigNumber;
         availableBorrowsBase: BigNumber;
-        currentLiquidationThreshold: BigNumber;
-        ltv: BigNumber;
-        healthFactor: BigNumber;
+        depositAPR: BigNumber;
+        stableBorrowAPR: BigNumber;
       }
     >;
 
@@ -808,6 +815,9 @@ export interface Floowdy extends BaseContract {
         BigNumber,
         BigNumber,
         BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
         BigNumber
       ] & {
         id: BigNumber;
@@ -820,6 +830,9 @@ export interface Floowdy extends BaseContract {
         initTimestamp: BigNumber;
         yieldAccrued: BigNumber;
         amountLocked: BigNumber;
+        amountLoss: BigNumber;
+        currentYield: BigNumber;
+        memberSpan: BigNumber;
       }
     >;
 
@@ -1117,13 +1130,11 @@ export interface Floowdy extends BaseContract {
   getAaveData(
     overrides?: CallOverrides
   ): Promise<
-    [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
-      totalCollateralBase: BigNumber;
+    [BigNumber, BigNumber, BigNumber, BigNumber] & {
       totalDebtBase: BigNumber;
       availableBorrowsBase: BigNumber;
-      currentLiquidationThreshold: BigNumber;
-      ltv: BigNumber;
-      healthFactor: BigNumber;
+      depositAPR: BigNumber;
+      stableBorrowAPR: BigNumber;
     }
   >;
 
@@ -1150,6 +1161,9 @@ export interface Floowdy extends BaseContract {
       BigNumber,
       BigNumber,
       BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
       BigNumber
     ] & {
       id: BigNumber;
@@ -1162,6 +1176,9 @@ export interface Floowdy extends BaseContract {
       initTimestamp: BigNumber;
       yieldAccrued: BigNumber;
       amountLocked: BigNumber;
+      amountLoss: BigNumber;
+      currentYield: BigNumber;
+      memberSpan: BigNumber;
     }
   >;
 
@@ -1449,13 +1466,11 @@ export interface Floowdy extends BaseContract {
     getAaveData(
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
-        totalCollateralBase: BigNumber;
+      [BigNumber, BigNumber, BigNumber, BigNumber] & {
         totalDebtBase: BigNumber;
         availableBorrowsBase: BigNumber;
-        currentLiquidationThreshold: BigNumber;
-        ltv: BigNumber;
-        healthFactor: BigNumber;
+        depositAPR: BigNumber;
+        stableBorrowAPR: BigNumber;
       }
     >;
 
@@ -1482,6 +1497,9 @@ export interface Floowdy extends BaseContract {
         BigNumber,
         BigNumber,
         BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
         BigNumber
       ] & {
         id: BigNumber;
@@ -1494,6 +1512,9 @@ export interface Floowdy extends BaseContract {
         initTimestamp: BigNumber;
         yieldAccrued: BigNumber;
         amountLocked: BigNumber;
+        amountLoss: BigNumber;
+        currentYield: BigNumber;
+        memberSpan: BigNumber;
       }
     >;
 
