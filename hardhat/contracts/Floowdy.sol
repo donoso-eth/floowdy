@@ -48,6 +48,8 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
     IAToken aToken;
 
     IPool aavePool;
+    address stableDebtToken;
+    address debtToken;
 
     using CFAv1Library for CFAv1Library.InitData;
     CFAv1Library.InitData internal _cfaLib;
@@ -68,7 +70,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
 
     uint256 MAX_ALLOWANCE = 50;
     uint256 CREDIT_FEE = 3;
-    uint256 CREDIT_PHASES_INTERVAL = 600;
+    uint256 CREDIT_PHASES_INTERVAL = 300;
 
     address public ops;
     address payable public gelato;
@@ -93,6 +95,8 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
         token = floowdy_init.token;
         aavePool = floowdy_init.pool;
         aToken = floowdy_init.aToken;
+        debtToken = floowdy_init.debtToken;
+        stableDebtToken = floowdy_init.stableDebtToken;
         epnsComm = floowdy_init.epnsComm;
         epnsChannel = floowdy_init.epnsChannel;
 
@@ -893,6 +897,11 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
         );
     }
 
+    function checkDelegation(uint256 amount) public {
+          ICreditDelegationToken(address(stableDebtToken)).approveDelegation(msg.sender,amount);
+           
+    }
+
     /// called by Gelato
     function stopCreditPeriodExec(uint256 creditId) external {
         //// check if
@@ -914,7 +923,9 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
                 credit.delegatorsOptions.delegators.length == 1
             ) {
                 credit.status = DataTypes.CreditStatus.PHASE4;
-                ICreditDelegationToken(address(token)).approveDelegation(credit.requester, credit.repaymentOptions.amount);
+              
+                ICreditDelegationToken(address(stableDebtToken)).approveDelegation(credit.requester, credit.repaymentOptions.amount);
+          
                 emit Events.CreditChangePhase(credit);
             } else {
                 credit.status = DataTypes.CreditStatus.PHASE2;
@@ -933,7 +944,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
                 credit.delegatorsOptions.delegatorsNr == 10 &&
                 credit.delegatorsOptions.delegators.length == 10
             ) {
-                ICreditDelegationToken(address(token)).approveDelegation(credit.requester, credit.repaymentOptions.amount);
+                ICreditDelegationToken(address(stableDebtToken)).approveDelegation(credit.requester, credit.repaymentOptions.amount);
                 credit.status = DataTypes.CreditStatus.PHASE4;
                 emit Events.CreditChangePhase(credit);
             } else {
@@ -952,7 +963,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
                 credit.delegatorsOptions.delegators.length == 5
             ) {
                 credit.status = DataTypes.CreditStatus.PHASE4;
-                ICreditDelegationToken(address(token)).approveDelegation(credit.requester, credit.repaymentOptions.amount);
+                ICreditDelegationToken(address(stableDebtToken)).approveDelegation(credit.requester, credit.repaymentOptions.amount);
                 emit Events.CreditChangePhase(credit);
             } else {
                 credit.status = DataTypes.CreditStatus.REJECTED;
@@ -960,7 +971,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
 
             //do the dance
         } else if (credit.status == DataTypes.CreditStatus.PHASE4) {
-             // ICreditDelegationToken(address(token)).approveDelegation(credit.requester, credit.repaymentOptions.amount);
+             // ICreditDelegationToken(address(stableDebtToken)).approveDelegation(credit.requester, credit.repaymentOptions.amount);
               credit.status = DataTypes.CreditStatus.REJECTED;
              
         }
@@ -1022,6 +1033,23 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
         );
     }
 
+    function testRepayment() public {
+
+      
+        DataTypes.Credit memory credit = creditsById[1];
+
+          uint256 balance = IERC20(debtToken).balanceOf(credit.requester);
+
+        console.log(balance);
+        console.log(credit.requester);
+        console.log(credit.repaymentOptions.installment);
+
+        IERC20(debtToken).transferFrom(
+               credit.requester,
+                address(this),
+                40182);
+    }
+
     /// called by Gelato
     function triggerRepayment(uint256 creditId) external onlyOps {
         DataTypes.Credit storage credit = creditsById[creditId];
@@ -1033,15 +1061,24 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
 
         _transfer(fee, feeToken);
 
+            console.log(1048,credit.repaymentOptions.installment);
+            console.log( credit.requester);
+            console.log(debtToken);
+        uint256 balance = IERC20(debtToken).balanceOf(credit.requester);
+
+        console.log(1068,balance);
+
+         testRepayment();   
+
+
         if (
             credit.repaymentOptions.currentInstallment <=
             credit.repaymentOptions.nrInstallments
         ) {
-            try
-                token.transferFrom(
+            try  IERC20(debtToken).transferFrom(
                     credit.requester,
                     address(this),
-                    credit.repaymentOptions.installment
+                    10000
                 )
             returns (bool success) {
                 credit.repaymentOptions.currentInstallment += 1;
@@ -1066,14 +1103,14 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
                     }
             
 
-                 aavePool.repay(address(token),credit.repaymentOptions.installmentPrincipal + credit.repaymentOptions.installmentRateAave, 1, address(this));
+                 aavePool.repay(debtToken,credit.repaymentOptions.installmentPrincipal + credit.repaymentOptions.installmentRateAave, 1, address(this));
                 //recalculate credit conditions
             } catch {
                 credit.status = DataTypes.CreditStatus.LIQUIDATED;
                 /// Liquidate the credit
                 emit Events.CreditLiquidated(creditId);
                 console.log(972);
-            }
+           }
         }
 
         if (

@@ -9,6 +9,7 @@ export interface INETWORK_CONFIG {
     aavePool: string;
     aToken: string;
     aStableDebtToken: string;
+    debtToken:string;
     epnsComm: string;
     epnsChanel: string;
   };

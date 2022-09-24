@@ -118,7 +118,7 @@ task('gelato-repay', 'push to AAVE')
       )
     );
     
-    console.log(id);
+
     
       let fee = utils.parseEther("0.1")
      let moduleData = {

@@ -22,6 +22,8 @@ export type FloowdyInitStruct = {
   superToken: string;
   token: string;
   pool: string;
+  stableDebtToken: string;
+  debtToken: string;
   aToken: string;
   ops: string;
   epnsComm: string;
@@ -36,12 +38,16 @@ export type FloowdyInitStructOutput = [
   string,
   string,
   string,
+  string,
+  string,
   string
 ] & {
   host: string;
   superToken: string;
   token: string;
   pool: string;
+  stableDebtToken: string;
+  debtToken: string;
   aToken: string;
   ops: string;
   epnsComm: string;
@@ -76,7 +82,7 @@ export type CreditRepaymentOptionsStruct = {
   installment: BigNumberish;
   installmentPrincipal: BigNumberish;
   installmentRateAave: BigNumberish;
-  installmentRateFloowdy: BigNumberish;
+  installmentRatePool: BigNumberish;
   amount: BigNumberish;
   rateAave: BigNumberish;
   ratePool: BigNumberish;
@@ -104,7 +110,7 @@ export type CreditRepaymentOptionsStructOutput = [
   installment: BigNumber;
   installmentPrincipal: BigNumber;
   installmentRateAave: BigNumber;
-  installmentRateFloowdy: BigNumber;
+  installmentRatePool: BigNumber;
   amount: BigNumber;
   rateAave: BigNumber;
   ratePool: BigNumber;
@@ -137,7 +143,8 @@ export type POOLDELEGATIONStructOutput = [
 
 export type CreditRequestOptionsStruct = {
   amount: BigNumberish;
-  rate: BigNumberish;
+  rateAave: BigNumberish;
+  ratePool: BigNumberish;
   interval: BigNumberish;
   nrInstallments: BigNumberish;
   handle: string;
@@ -149,11 +156,13 @@ export type CreditRequestOptionsStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
+  BigNumber,
   string,
   string
 ] & {
   amount: BigNumber;
-  rate: BigNumber;
+  rateAave: BigNumber;
+  ratePool: BigNumber;
   interval: BigNumber;
   nrInstallments: BigNumber;
   handle: string;
@@ -176,6 +185,7 @@ export interface FloowdyInterface extends utils.Interface {
     "cancelTask(bytes32)": FunctionFragment;
     "cfa()": FunctionFragment;
     "checkCreditPeriod(uint256)": FunctionFragment;
+    "checkDelegation(uint256)": FunctionFragment;
     "checkRepayment(uint256)": FunctionFragment;
     "checkStakeAvailable()": FunctionFragment;
     "checkStopStream(address)": FunctionFragment;
@@ -202,7 +212,7 @@ export interface FloowdyInterface extends utils.Interface {
     "poolTimestamp()": FunctionFragment;
     "rejectCredit(uint256)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
-    "requestCredit((uint256,uint256,uint256,uint256,string,string))": FunctionFragment;
+    "requestCredit((uint256,uint256,uint256,uint256,uint256,string,string))": FunctionFragment;
     "sendNotif()": FunctionFragment;
     "setCreditFee(uint256)": FunctionFragment;
     "setMaxAllowance(uint256)": FunctionFragment;
@@ -210,6 +220,7 @@ export interface FloowdyInterface extends utils.Interface {
     "stopCreditPeriodExec(uint256)": FunctionFragment;
     "stopStreamExec(address)": FunctionFragment;
     "supplyStakeToAave()": FunctionFragment;
+    "testRepayment()": FunctionFragment;
     "tokensReceived(address,address,address,uint256,bytes,bytes)": FunctionFragment;
     "totalCredits()": FunctionFragment;
     "totalYieldStakeEarnedMember(address)": FunctionFragment;
@@ -266,6 +277,10 @@ export interface FloowdyInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "cfa", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "checkCreditPeriod",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "checkDelegation",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
@@ -381,6 +396,10 @@ export interface FloowdyInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "testRepayment",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "tokensReceived",
     values: [string, string, string, BigNumberish, BytesLike, BytesLike]
   ): string;
@@ -444,6 +463,10 @@ export interface FloowdyInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "cfa", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "checkCreditPeriod",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "checkDelegation",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -556,6 +579,10 @@ export interface FloowdyInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "supplyStakeToAave",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "testRepayment",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -710,6 +737,11 @@ export interface Floowdy extends BaseContract {
       _creditId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[boolean, string] & { canExec: boolean; execPayload: string }>;
+
+    checkDelegation(
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     checkRepayment(
       creditId: BigNumberish,
@@ -938,6 +970,10 @@ export interface Floowdy extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    testRepayment(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     tokensReceived(
       operator: string,
       from: string,
@@ -1058,6 +1094,11 @@ export interface Floowdy extends BaseContract {
     _creditId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<[boolean, string] & { canExec: boolean; execPayload: string }>;
+
+  checkDelegation(
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   checkRepayment(
     creditId: BigNumberish,
@@ -1281,6 +1322,10 @@ export interface Floowdy extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  testRepayment(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   tokensReceived(
     operator: string,
     from: string,
@@ -1394,6 +1439,11 @@ export interface Floowdy extends BaseContract {
       _creditId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[boolean, string] & { canExec: boolean; execPayload: string }>;
+
+    checkDelegation(
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     checkRepayment(
       creditId: BigNumberish,
@@ -1609,6 +1659,8 @@ export interface Floowdy extends BaseContract {
 
     supplyStakeToAave(overrides?: CallOverrides): Promise<void>;
 
+    testRepayment(overrides?: CallOverrides): Promise<void>;
+
     tokensReceived(
       operator: string,
       from: string,
@@ -1738,6 +1790,11 @@ export interface Floowdy extends BaseContract {
     checkCreditPeriod(
       _creditId: BigNumberish,
       overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    checkDelegation(
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     checkRepayment(
@@ -1871,6 +1928,10 @@ export interface Floowdy extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    testRepayment(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     tokensReceived(
       operator: string,
       from: string,
@@ -1991,6 +2052,11 @@ export interface Floowdy extends BaseContract {
     checkCreditPeriod(
       _creditId: BigNumberish,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    checkDelegation(
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     checkRepayment(
@@ -2126,6 +2192,10 @@ export interface Floowdy extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     supplyStakeToAave(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    testRepayment(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

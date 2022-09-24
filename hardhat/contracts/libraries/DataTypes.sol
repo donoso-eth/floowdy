@@ -19,6 +19,8 @@ library DataTypes {
         ISuperToken superToken;
         IERC20 token;
         IPool pool;
+        address stableDebtToken;
+        address debtToken;
         IAToken aToken;
         address ops;
         address epnsComm;
