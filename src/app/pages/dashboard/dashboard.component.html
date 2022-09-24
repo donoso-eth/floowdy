@@ -86,10 +86,10 @@
                 
                     <p style="width:150px;margin:unset;color:grey;">Locked:</p> 
                     <span 
-                      *ngIf="poolToken?.tokenBalance"
+              
                       style="color: var(--yellow-500)"
                     >
-                      ${{ poolToken?.tokenBalance! }}</span
+                      {{member?.amountLocked}}$</span
                     >
                   </div>
                 </div>

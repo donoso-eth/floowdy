@@ -119,9 +119,14 @@ export class RequestCreditComponent
       // variableBorrowAPY = ((1 + (variableBorrowAPR / SECONDS_PER_YEAR)) ^ SECONDS_PER_YEAR) - 1
       // stableBorrowAPY = ((1 + (stableBorrowAPR / SECONDS_PER_YEAR)) ^ SECONDS_PER_YEAR) - 1
 
+    
+
+
 
     })
    
+
+
 
     const val = await this.graphqlService.getProfilesRequest(this.dapp.signerAddress!);
 
@@ -144,7 +149,12 @@ export class RequestCreditComponent
       this.lensLoading = false;
     }
 
+  
+    this.store.dispatch(Web3Actions.chainBusy({ status: true }));
+    this.store.dispatch(Web3Actions.chainBusyWithMessage({message:{header:'Ein Moment Bitte', body:'Gettin last AAVE debt settings'}}))
+    let result = await this.dapp.defaultContract?.instance.getAaveData();
 
+    console.log(result)
 
   }
 }

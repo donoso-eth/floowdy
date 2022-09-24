@@ -27,6 +27,9 @@ export class Member extends Entity {
     this.set("flowDuration", Value.fromBigInt(BigInt.zero()));
     this.set("yieldAccrued", Value.fromBigInt(BigInt.zero()));
     this.set("amountLocked", Value.fromBigInt(BigInt.zero()));
+    this.set("amountLoss", Value.fromBigInt(BigInt.zero()));
+    this.set("currentYield", Value.fromBigInt(BigInt.zero()));
+    this.set("memberSpan", Value.fromBigInt(BigInt.zero()));
   }
 
   save(): void {
@@ -143,6 +146,33 @@ export class Member extends Entity {
 
   set amountLocked(value: BigInt) {
     this.set("amountLocked", Value.fromBigInt(value));
+  }
+
+  get amountLoss(): BigInt {
+    let value = this.get("amountLoss");
+    return value!.toBigInt();
+  }
+
+  set amountLoss(value: BigInt) {
+    this.set("amountLoss", Value.fromBigInt(value));
+  }
+
+  get currentYield(): BigInt {
+    let value = this.get("currentYield");
+    return value!.toBigInt();
+  }
+
+  set currentYield(value: BigInt) {
+    this.set("currentYield", Value.fromBigInt(value));
+  }
+
+  get memberSpan(): BigInt {
+    let value = this.get("memberSpan");
+    return value!.toBigInt();
+  }
+
+  set memberSpan(value: BigInt) {
+    this.set("memberSpan", Value.fromBigInt(value));
   }
 
   get creditsRequested(): Array<string> {
@@ -379,10 +409,14 @@ export class Credit extends Entity {
     this.set("nrInstallments", Value.fromBigInt(BigInt.zero()));
     this.set("interval", Value.fromBigInt(BigInt.zero()));
     this.set("installment", Value.fromBigInt(BigInt.zero()));
-    this.set("amount", Value.fromBigInt(BigInt.zero()));
-    this.set("rate", Value.fromBigInt(BigInt.zero()));
-    this.set("totalYield", Value.fromBigInt(BigInt.zero()));
     this.set("currentInstallment", Value.fromBigInt(BigInt.zero()));
+    this.set("installmentPrincipal", Value.fromBigInt(BigInt.zero()));
+    this.set("installmentRateAave", Value.fromBigInt(BigInt.zero()));
+    this.set("installmentRateFloowdy", Value.fromBigInt(BigInt.zero()));
+    this.set("amount", Value.fromBigInt(BigInt.zero()));
+    this.set("rateAave", Value.fromBigInt(BigInt.zero()));
+    this.set("ratePool", Value.fromBigInt(BigInt.zero()));
+    this.set("totalYield", Value.fromBigInt(BigInt.zero()));
     this.set("GelatoRepaymentTaskId", Value.fromString(""));
     this.set("delegatorsNr", Value.fromBigInt(BigInt.zero()));
     this.set("delegatorsRequired", Value.fromBigInt(BigInt.zero()));
@@ -513,6 +547,15 @@ export class Credit extends Entity {
     this.set("interval", Value.fromBigInt(value));
   }
 
+  get installments(): Array<string> {
+    let value = this.get("installments");
+    return value!.toStringArray();
+  }
+
+  set installments(value: Array<string>) {
+    this.set("installments", Value.fromStringArray(value));
+  }
+
   get installment(): BigInt {
     let value = this.get("installment");
     return value!.toBigInt();
@@ -520,33 +563,6 @@ export class Credit extends Entity {
 
   set installment(value: BigInt) {
     this.set("installment", Value.fromBigInt(value));
-  }
-
-  get amount(): BigInt {
-    let value = this.get("amount");
-    return value!.toBigInt();
-  }
-
-  set amount(value: BigInt) {
-    this.set("amount", Value.fromBigInt(value));
-  }
-
-  get rate(): BigInt {
-    let value = this.get("rate");
-    return value!.toBigInt();
-  }
-
-  set rate(value: BigInt) {
-    this.set("rate", Value.fromBigInt(value));
-  }
-
-  get totalYield(): BigInt {
-    let value = this.get("totalYield");
-    return value!.toBigInt();
-  }
-
-  set totalYield(value: BigInt) {
-    this.set("totalYield", Value.fromBigInt(value));
   }
 
   get currentInstallment(): BigInt {
@@ -558,13 +574,67 @@ export class Credit extends Entity {
     this.set("currentInstallment", Value.fromBigInt(value));
   }
 
-  get installments(): Array<string> {
-    let value = this.get("installments");
-    return value!.toStringArray();
+  get installmentPrincipal(): BigInt {
+    let value = this.get("installmentPrincipal");
+    return value!.toBigInt();
   }
 
-  set installments(value: Array<string>) {
-    this.set("installments", Value.fromStringArray(value));
+  set installmentPrincipal(value: BigInt) {
+    this.set("installmentPrincipal", Value.fromBigInt(value));
+  }
+
+  get installmentRateAave(): BigInt {
+    let value = this.get("installmentRateAave");
+    return value!.toBigInt();
+  }
+
+  set installmentRateAave(value: BigInt) {
+    this.set("installmentRateAave", Value.fromBigInt(value));
+  }
+
+  get installmentRateFloowdy(): BigInt {
+    let value = this.get("installmentRateFloowdy");
+    return value!.toBigInt();
+  }
+
+  set installmentRateFloowdy(value: BigInt) {
+    this.set("installmentRateFloowdy", Value.fromBigInt(value));
+  }
+
+  get amount(): BigInt {
+    let value = this.get("amount");
+    return value!.toBigInt();
+  }
+
+  set amount(value: BigInt) {
+    this.set("amount", Value.fromBigInt(value));
+  }
+
+  get rateAave(): BigInt {
+    let value = this.get("rateAave");
+    return value!.toBigInt();
+  }
+
+  set rateAave(value: BigInt) {
+    this.set("rateAave", Value.fromBigInt(value));
+  }
+
+  get ratePool(): BigInt {
+    let value = this.get("ratePool");
+    return value!.toBigInt();
+  }
+
+  set ratePool(value: BigInt) {
+    this.set("ratePool", Value.fromBigInt(value));
+  }
+
+  get totalYield(): BigInt {
+    let value = this.get("totalYield");
+    return value!.toBigInt();
+  }
+
+  set totalYield(value: BigInt) {
+    this.set("totalYield", Value.fromBigInt(value));
   }
 
   get GelatoRepaymentTaskId(): string {

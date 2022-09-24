@@ -87,7 +87,8 @@ library DataTypes {
         uint256 installmentRateAave;
         uint256 installmentRateFloowdy;
         uint256 amount;
-        uint256 rate;
+        uint256 rateAave;
+        uint256 ratePool;
         uint256 totalYield;
         uint256 currentInstallment;
         bytes32 GelatoRepaymentTaskId;

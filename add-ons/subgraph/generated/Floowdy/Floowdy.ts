@@ -141,20 +141,24 @@ export class CreditApprovedCreditRepaymentOptionsStruct extends ethereum.Tuple {
     return this[6].toBigInt();
   }
 
-  get rate(): BigInt {
+  get rateAave(): BigInt {
     return this[7].toBigInt();
   }
 
-  get totalYield(): BigInt {
+  get ratePool(): BigInt {
     return this[8].toBigInt();
   }
 
-  get currentInstallment(): BigInt {
+  get totalYield(): BigInt {
     return this[9].toBigInt();
   }
 
+  get currentInstallment(): BigInt {
+    return this[10].toBigInt();
+  }
+
   get GelatoRepaymentTaskId(): Bytes {
-    return this[10].toBytes();
+    return this[11].toBytes();
   }
 }
 
@@ -267,20 +271,24 @@ export class CreditCancelledCreditRepaymentOptionsStruct extends ethereum.Tuple 
     return this[6].toBigInt();
   }
 
-  get rate(): BigInt {
+  get rateAave(): BigInt {
     return this[7].toBigInt();
   }
 
-  get totalYield(): BigInt {
+  get ratePool(): BigInt {
     return this[8].toBigInt();
   }
 
-  get currentInstallment(): BigInt {
+  get totalYield(): BigInt {
     return this[9].toBigInt();
   }
 
+  get currentInstallment(): BigInt {
+    return this[10].toBigInt();
+  }
+
   get GelatoRepaymentTaskId(): Bytes {
-    return this[10].toBytes();
+    return this[11].toBytes();
   }
 }
 
@@ -393,20 +401,24 @@ export class CreditChangePhaseCreditRepaymentOptionsStruct extends ethereum.Tupl
     return this[6].toBigInt();
   }
 
-  get rate(): BigInt {
+  get rateAave(): BigInt {
     return this[7].toBigInt();
   }
 
-  get totalYield(): BigInt {
+  get ratePool(): BigInt {
     return this[8].toBigInt();
   }
 
-  get currentInstallment(): BigInt {
+  get totalYield(): BigInt {
     return this[9].toBigInt();
   }
 
+  get currentInstallment(): BigInt {
+    return this[10].toBigInt();
+  }
+
   get GelatoRepaymentTaskId(): Bytes {
-    return this[10].toBytes();
+    return this[11].toBytes();
   }
 }
 
@@ -599,20 +611,24 @@ export class CreditRejectedCreditRepaymentOptionsStruct extends ethereum.Tuple {
     return this[6].toBigInt();
   }
 
-  get rate(): BigInt {
+  get rateAave(): BigInt {
     return this[7].toBigInt();
   }
 
-  get totalYield(): BigInt {
+  get ratePool(): BigInt {
     return this[8].toBigInt();
   }
 
-  get currentInstallment(): BigInt {
+  get totalYield(): BigInt {
     return this[9].toBigInt();
   }
 
+  get currentInstallment(): BigInt {
+    return this[10].toBigInt();
+  }
+
   get GelatoRepaymentTaskId(): Bytes {
-    return this[10].toBytes();
+    return this[11].toBytes();
   }
 }
 
@@ -725,20 +741,24 @@ export class CreditRequestedCreditRepaymentOptionsStruct extends ethereum.Tuple 
     return this[6].toBigInt();
   }
 
-  get rate(): BigInt {
+  get rateAave(): BigInt {
     return this[7].toBigInt();
   }
 
-  get totalYield(): BigInt {
+  get ratePool(): BigInt {
     return this[8].toBigInt();
   }
 
-  get currentInstallment(): BigInt {
+  get totalYield(): BigInt {
     return this[9].toBigInt();
   }
 
+  get currentInstallment(): BigInt {
+    return this[10].toBigInt();
+  }
+
   get GelatoRepaymentTaskId(): Bytes {
-    return this[10].toBytes();
+    return this[11].toBytes();
   }
 }
 
@@ -1131,20 +1151,24 @@ export class Floowdy__creditsByIdResultRepaymentOptionsStruct extends ethereum.T
     return this[6].toBigInt();
   }
 
-  get rate(): BigInt {
+  get rateAave(): BigInt {
     return this[7].toBigInt();
   }
 
-  get totalYield(): BigInt {
+  get ratePool(): BigInt {
     return this[8].toBigInt();
   }
 
-  get currentInstallment(): BigInt {
+  get totalYield(): BigInt {
     return this[9].toBigInt();
   }
 
+  get currentInstallment(): BigInt {
+    return this[10].toBigInt();
+  }
+
   get GelatoRepaymentTaskId(): Bytes {
-    return this[10].toBytes();
+    return this[11].toBytes();
   }
 }
 
@@ -1878,7 +1902,7 @@ export class Floowdy extends ethereum.SmartContract {
   creditsById(param0: BigInt): Floowdy__creditsByIdResult {
     let result = super.call(
       "creditsById",
-      "creditsById(uint256):(uint256,address,uint256,uint256,uint8,bytes32,(uint256,uint256,address[],uint256,uint256),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,bytes32))",
+      "creditsById(uint256):(uint256,address,uint256,uint256,uint8,bytes32,(uint256,uint256,address[],uint256,uint256),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,bytes32))",
       [ethereum.Value.fromUnsignedBigInt(param0)]
     );
 
@@ -1903,7 +1927,7 @@ export class Floowdy extends ethereum.SmartContract {
   ): ethereum.CallResult<Floowdy__creditsByIdResult> {
     let result = super.tryCall(
       "creditsById",
-      "creditsById(uint256):(uint256,address,uint256,uint256,uint8,bytes32,(uint256,uint256,address[],uint256,uint256),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,bytes32))",
+      "creditsById(uint256):(uint256,address,uint256,uint256,uint8,bytes32,(uint256,uint256,address[],uint256,uint256),(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,bytes32))",
       [ethereum.Value.fromUnsignedBigInt(param0)]
     );
     if (result.reverted) {

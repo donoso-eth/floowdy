@@ -118,11 +118,15 @@ export function handleCreditRequested(event:CreditRequested):void {
     credit.nrInstallments = eventObject.repaymentOptions.nrInstallments;
     credit.interval = eventObject.repaymentOptions.interval;
     credit.amount = eventObject.repaymentOptions.amount;
-    credit.rate = eventObject.repaymentOptions.rate;
     credit.totalYield = eventObject.repaymentOptions.totalYield;
     credit.currentInstallment = eventObject.repaymentOptions.currentInstallment;
     credit.installment = eventObject.repaymentOptions.installment;
-   
+    credit.installmentPrincipal = eventObject.repaymentOptions.installmentPrincipal;
+    credit.installmentRateAave = eventObject.repaymentOptions.installmentRateAave;
+    credit.installmentRateFloowdy = eventObject.repaymentOptions.installmentRateFloowdy;
+
+    credit.rateAave = eventObject.repaymentOptions.rateAave;
+    credit.ratePool = eventObject.repaymentOptions.ratePool;
 
     credit.delegatorsNr = eventObject.delegatorsOptions.delegatorsNr;
     credit.delegatorsRequired = eventObject.delegatorsOptions.delegatorsRequired;

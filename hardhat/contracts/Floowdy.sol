@@ -694,6 +694,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient, Ownable {
         0,
         options.amount,
         options.rate,
+         options.rate,
         totalYield,
         0,
         bytes32(0)

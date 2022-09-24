@@ -25,6 +25,10 @@ export function handleMemberDeposit(event:MemberDeposit ):void {
     member.initTimestamp =  event.params.member.initTimestamp;
     member.yieldAccrued =  event.params.member.yieldAccrued;
     member.amountLocked = event.params.member.amountLocked;
+    member.amountLoss = event.params.member.amountLoss;
+    member.currentYield = event.params.member.currentYield;
+    member.memberSpan = event.params.member.memberSpan;
+    
     member.save()
   }
   

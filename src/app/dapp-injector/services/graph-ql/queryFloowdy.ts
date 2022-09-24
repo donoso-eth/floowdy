@@ -105,15 +105,19 @@ export const GET_MEMBER = `
   query($address: String!){
       member(id:$address) {
     
-       deposit,
-       flow,
-       timestamp,
+       deposit
+       flow
+       timestamp
+       amountLocked
+       amountLoss
+       
        creditsRequested {
         id
         status
         finishPhaseTimestamp
         amount
-        rate
+        rateAave
+        ratePool
         delegatorsNr
         gelatoTaskId
        }
@@ -124,7 +128,8 @@ export const GET_MEMBER = `
               delegatorsAmount
               delegatorsNr
               delegatorsRequired
-              rate
+              rateAave
+              ratePool
               status
               requester {
                 member

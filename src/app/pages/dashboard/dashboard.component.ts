@@ -141,6 +141,7 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
                 deposit:queryMember.deposit,
                 timestamp: queryMember.timestamp,
                 flow:queryMember.flow,
+                amountLocked: queryMember.amountLocked,
                 creditsRequested : queryMember.creditsRequested,
                 creditsDelegated: queryMember.creditsDelegated.map((map:any)=> map.credit)
             }
@@ -180,7 +181,8 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
           timestamp:'0',
           flow:'0',
           creditsDelegated:[],
-          creditsRequested:[]
+          creditsRequested:[],
+          amountLocked:'0'
         }
         this.twoDec = '0.00';
         this.fourDec = '0000';

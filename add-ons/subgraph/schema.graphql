@@ -9,7 +9,10 @@ type Member @entity {
   flowGelatoId: String!
   flowDuration: BigInt!
   yieldAccrued: BigInt!
-  amountLocked:BigInt!
+  amountLocked: BigInt!
+  amountLoss: BigInt!
+  currentYield: BigInt!
+  memberSpan: BigInt!
   creditsRequested: [Credit!]! @derivedFrom(field: "requester")
   creditsDelegated: [MemberCredit!] @derivedFrom(field: "member")
 }
@@ -23,18 +26,16 @@ type Pool @entity {
   totalYieldStake: BigInt!
   depositIndex: BigInt!
   flowIndex: BigInt!
-  totalStaked:BigInt!
-  totalDelegated:BigInt!
-  percentageLocked:BigInt!
-  totalYieldCredit:BigInt!
-  liquidatedIndex:BigInt!
-  totalLiquidated:BigInt!
+  totalStaked: BigInt!
+  totalDelegated: BigInt!
+  percentageLocked: BigInt!
+  totalYieldCredit: BigInt!
+  liquidatedIndex: BigInt!
+  totalLiquidated: BigInt!
   nrMembers: BigInt!
-  apy:BigInt!
-  apySpan:BigInt!
+  apy: BigInt!
+  apySpan: BigInt!
 }
-
-
 
 type Credit @entity {
   id: ID!
@@ -46,46 +47,47 @@ type Credit @entity {
   gelatoTaskId: String!
   status: BigInt!
 
-  nrInstallments:BigInt!
-  interval:BigInt!
-  installment:BigInt!
-  amount:BigInt!
-  rate:BigInt!
-  totalYield:BigInt!
-  currentInstallment:BigInt!
+  nrInstallments: BigInt!
+  interval: BigInt!
   installments: [Installment!]! @derivedFrom(field: "credit")
-  GelatoRepaymentTaskId:String!
+  installment: BigInt!
+  currentInstallment: BigInt!
+  installmentPrincipal: BigInt!
+  installmentRateAave: BigInt!
+  installmentRateFloowdy: BigInt!
+  amount: BigInt!
+  rateAave: BigInt!
+  ratePool: BigInt!
+
+  totalYield: BigInt!
+
+  GelatoRepaymentTaskId: String!
 
   delegatorsNr: BigInt!
-  delegatorsRequired:BigInt!
+  delegatorsRequired: BigInt!
   delegators: [MemberCredit!]! @derivedFrom(field: "credit")
   delegatorsAmount: BigInt!
-  delegatorsGlobalFee:BigInt!
-
- 
+  delegatorsGlobalFee: BigInt!
 }
 
 type MemberCredit @entity {
-  id: ID! 
+  id: ID!
   member: Member!
   credit: Credit!
 }
 
 type Installment @entity {
-id:ID!
-nr:BigInt!
-credit: Credit!
-timestamp: BigInt!
+  id: ID!
+  nr: BigInt!
+  credit: Credit!
+  timestamp: BigInt!
 }
-
 
 type ChartMonth @entity {
-id:ID!
-month: String!
-year: String!
-timestamp: BigInt!
-balance: BigInt!
-staked: BigInt!
-
+  id: ID!
+  month: String!
+  year: String!
+  timestamp: BigInt!
+  balance: BigInt!
+  staked: BigInt!
 }
-

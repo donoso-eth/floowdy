@@ -65,12 +65,12 @@ const doAllFaucet= async (erc20Under:any, supertokenContract:any, network_params
     network_params.superToken,
     supertokenContract
   );
-//   await faucet(
-//     user4,
-//     erc20Under,
-//     network_params.superToken,
-//     supertokenContract
-//   );
+  await faucet(
+    user4,
+    erc20Under,
+    network_params.superToken,
+    supertokenContract
+  );
 //   await faucet(
 //     user5,
 //     erc20Under,
@@ -200,6 +200,14 @@ await printPool(hre,floowdy)
 await waitForTx(
   supertokenContract.connect(user2).send(floowdyAddress, amount, '0x')
   )
+
+  await waitForTx(
+    supertokenContract.connect(user3).send(floowdyAddress, amount, '0x')
+    )
+
+  await waitForTx(
+    supertokenContract.connect(user4).send(floowdyAddress, amount, '0x')
+    )
 
 await printPool(hre,floowdy)
 

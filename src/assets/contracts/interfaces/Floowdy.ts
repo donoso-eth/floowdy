@@ -78,13 +78,15 @@ export type CreditRepaymentOptionsStruct = {
   installmentRateAave: BigNumberish;
   installmentRateFloowdy: BigNumberish;
   amount: BigNumberish;
-  rate: BigNumberish;
+  rateAave: BigNumberish;
+  ratePool: BigNumberish;
   totalYield: BigNumberish;
   currentInstallment: BigNumberish;
   GelatoRepaymentTaskId: BytesLike;
 };
 
 export type CreditRepaymentOptionsStructOutput = [
+  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -104,7 +106,8 @@ export type CreditRepaymentOptionsStructOutput = [
   installmentRateAave: BigNumber;
   installmentRateFloowdy: BigNumber;
   amount: BigNumber;
-  rate: BigNumber;
+  rateAave: BigNumber;
+  ratePool: BigNumber;
   totalYield: BigNumber;
   currentInstallment: BigNumber;
   GelatoRepaymentTaskId: string;
