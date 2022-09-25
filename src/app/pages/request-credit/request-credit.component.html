@@ -38,12 +38,16 @@
           <div class="col-12 lg:col-4 xl:col-5">
             
             <div *ngIf="aaveLoading == 'found'"> 
-              <div class="input-block" >
-                <h6 style="width:100%">MAx Amount Pool: 221</h6>
+              <div class="aave" >
+                <div><img height="80" src="assets/images/aave.svg" />
+                  </div>
+                  <div style="position:relative; top:-20px;">
+                <h6 style="width:100%">StableRate <span>{{(stableBorrowAPY*100).toFixed(2)}}%</span></h6>
+                <h6 style="width:100%">Available Debt <span>{{ formatSmallEther(availableBorrowsBase/100)}}$</span></h6>
+          
+                <h6 style="width:100%">Your Max Allowance (50% balance) <span>{{ ( amountMax)}}$</span></h6>
               </div>
-              <div class="input-block" >
-                <h6 style="width:100%">Your Max Amount (leverage 50%): 221</h6>
-              </div>
+            </div>
             </div>
 
             <div *ngIf="aaveLoading == 'none'">
@@ -73,7 +77,7 @@
                  
                 </div>
                 <div class="input-block" >
-                  <h6>Proposed rate (>=3%)</h6>
+                  <h6>Proposed rate ( > Aave Stable  + 3%)</h6>
                   <p-inputNumber
                     formControlName="rateCtrl"
                     placeholder="Credit Amount"

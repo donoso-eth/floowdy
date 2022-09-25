@@ -3,9 +3,12 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { DappBaseComponent, DappInjector, Web3Actions } from 'angular-web3';
-import { ethers } from 'ethers';
+import { ethers, utils } from 'ethers';
+import { firstValueFrom } from 'rxjs';
 import { doSignerTransaction } from 'src/app/dapp-injector/classes/transactor';
 import { GraphQlService } from 'src/app/dapp-injector/services/graph-ql/graph-ql.service';
+import { mockMember1 } from 'src/app/dapp-injector/services/graph-ql/mockQueries';
+import { formatSmallEther } from 'src/app/shared/helpers/helpers';
 import { ILENS_PROFILE } from 'src/app/shared/models/models';
 import { CreditRequestOptionsStruct } from 'src/assets/contracts/interfaces/Floowdy';
 
@@ -31,6 +34,9 @@ export class RequestCreditComponent
     { name: 'months', id: 3, factor: 2592000 },
   ];
   profile!: ILENS_PROFILE;
+  stableBorrowAPY!: number;
+  availableBorrowsBase!:number;
+  amountMax!: string;
   constructor(
     dapp: DappInjector,
     store: Store,
@@ -56,6 +62,8 @@ export class RequestCreditComponent
    
     })
   }
+
+  formatSmallEther  = formatSmallEther ;
 
   ngOnInit(): void {}
 
@@ -131,7 +139,13 @@ export class RequestCreditComponent
     })
    
 
+    //let valMember =  await firstValueFrom(this.graphqlService.watchMember(this.dapp.signerAddress!));
+    //console.log(valMember);
 
+    let member = mockMember1;
+    console.log(member)
+
+    this.amountMax =  utils.formatEther(member.deposit);
 
     const val = await this.graphqlService.getProfilesRequest(this.dapp.signerAddress!);
 
@@ -164,13 +178,16 @@ export class RequestCreditComponent
       console.log(result)
       console.log(+result?.depositAPR!/10**27)
       console.log(+result?.stableBorrowAPR!/10**27)
+      console.log(+result?.availableBorrowsBase!)
+
+      this.availableBorrowsBase = +result?.availableBorrowsBase!;
 
       let SECONDS_PER_YEAR = 31536000
 
       let depositAPY = ((1 + (+result?.depositAPR!/10**27/ SECONDS_PER_YEAR)) ** SECONDS_PER_YEAR) - 1
-      let stableBorrowAPY = ((1 + (+result?.stableBorrowAPR!/10**27 / SECONDS_PER_YEAR)) ** SECONDS_PER_YEAR) - 1
+      this.stableBorrowAPY = ((1 + (+result?.stableBorrowAPR!/10**27 / SECONDS_PER_YEAR)) ** SECONDS_PER_YEAR) - 1
 
-      console.log(depositAPY, stableBorrowAPY)
+      console.log(depositAPY, this.stableBorrowAPY)
       this.requestCreditForm.controls.aaveCtrl.setValue(true);
       this.store.dispatch(Web3Actions.chainBusy({ status: false }));
     } catch (error) {

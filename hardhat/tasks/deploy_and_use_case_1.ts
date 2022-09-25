@@ -71,18 +71,18 @@ const doAllFaucet= async (erc20Under:any, supertokenContract:any, network_params
     network_params.superToken,
     supertokenContract
   );
-//   await faucet(
-//     user5,
-//     erc20Under,
-//     network_params.superToken,
-//     supertokenContract
-//   );
-//   await faucet(
-//     user6,
-//     erc20Under,
-//     network_params.superToken,
-//   supertokenContract
-// );
+  await faucet(
+    user5,
+    erc20Under,
+    network_params.superToken,
+    supertokenContract
+  );
+  await faucet(
+    user6,
+    erc20Under,
+    network_params.superToken,
+  supertokenContract
+);
 
 // await faucet(
 //   user7,
@@ -117,10 +117,10 @@ task('usecase-1', 'use-case-1').setAction(async ({}, hre) => {
 execSync("npm run deploy",{encoding: "utf8",stdio: 'inherit'})
 
 console.log('.....deployed')
-execSync("npm run task publish -- --only-address true",{encoding: "utf8",stdio: 'inherit'})
-console.log('.....publish to subgraph')
-execSync("npm run deploy-graph-local",{encoding: "utf8",stdio: 'inherit'})
-console.log('.....graph deployed')
+// execSync("npm run task publish -- --only-address true",{encoding: "utf8",stdio: 'inherit'})
+// console.log('.....publish to subgraph')
+// execSync("npm run deploy-graph-local",{encoding: "utf8",stdio: 'inherit'})
+// console.log('.....graph deployed')
 
 
 
@@ -312,6 +312,35 @@ t0 = +(await getTimestamp(hre)) + (i)*3600
 console.log(311,i)
 await hre.run('gelato-repay',{interval:3600,credit:creditNr,t0})
 }
+
+await waitForTx(
+  supertokenContract.connect(user4).send(floowdyAddress, amount, '0x')
+  )
+  await hre.run('gelato-aave',{interval: 30 * 24 * 3600})
+  await waitForTx(
+    supertokenContract.connect(user5).send(floowdyAddress, amount, '0x')
+    )
+    await hre.run('gelato-aave',{interval: 30 * 24 * 3600})
+
+creditNr = 2;
+
+ creditReQuest = {
+  amount:3000000000,
+  rateAave:3,
+  ratePool:4,
+  nrInstallments:12,
+  interval:3600,
+  handle:'javier',
+  bio:'javier'
+}
+
+await waitForTx(floowdy.connect(user3).requestCredit(creditReQuest));
+
+await waitForTx(floowdy.connect(user4).creditCheckIn(creditNr));
+t0 = +(await getTimestamp(hre));
+
+await hre.run('gelato-phases',{interval:600, credit:creditNr, t0:t0})
+
 
 
 });
