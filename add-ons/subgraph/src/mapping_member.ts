@@ -1,6 +1,6 @@
 // #region =========== MEMBER =================
 
-import { MemberDeposit } from "../generated/Floowdy/Floowdy";
+import { MemberDelegateCredit, MemberDeposit, MemberWithdraw } from "../generated/Floowdy/Floowdy";
 import { Member } from "../generated/schema";
 
 export function handleMemberDeposit(event:MemberDeposit ):void {
@@ -11,6 +11,21 @@ export function handleMemberDeposit(event:MemberDeposit ):void {
     _updateMember(event)
   }
   
+  export function handleMemberWithdraw(event:MemberWithdraw ):void {
+    let id = event.params.member.toHexString();
+    let member = _getMember(id)
+    member.deposit = member.deposit.minus(event.params.amount);
+    member.save();
+  }
+
+
+  export function handleMemberDelegateCredit(event:MemberDelegateCredit ):void {
+    let id = event.params.member.toHexString();
+    let member = _getMember(id)
+    member.amountLocked = member.amountLocked.plus(event.params.amountLocked);
+    member.save();
+  }
+
   
   function _updateMember(event: MemberDeposit):void {
     let id = event.params.member.member.toHexString();

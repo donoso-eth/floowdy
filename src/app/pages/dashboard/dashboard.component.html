@@ -101,10 +101,8 @@
                 
                     <p style="width:150px;margin:unset;color:grey;">Loss:</p> 
                     <span 
-                      *ngIf="poolToken?.tokenBalance"
-                      style="color: 'red'"
                     >
-                      ${{ poolToken?.tokenBalance! }}</span
+                    {{member?.amountLoss}}$</span
                     >
                   </div>
                 </div>
@@ -202,7 +200,7 @@
 
                 <!-- #endregion REALTIME ////  -->
 
-                <div class="col-12 flex justify-content-around">
+                <div class="col-6 flex justify-content-around">
                   <button
                     pButton
                     pRipple
@@ -210,6 +208,17 @@
                     (click)="deposit()"
                     type="button"
                     label="Deposit"
+                    class="p-button-rounded mr-2 mb-2"
+                  ></button>
+                </div>
+                <div class="col-6 flex justify-content-around">
+                  <button
+                    pButton
+                    pRipple
+                    style="width: fit-content"
+                    (click)="withdraw()"
+                    type="button"
+                    label="Withdraw"
                     class="p-button-rounded mr-2 mb-2"
                   ></button>
                 </div>

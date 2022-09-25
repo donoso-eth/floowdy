@@ -12,14 +12,15 @@ import {DataTypes} from "./DataTypes.sol";
 library Events {
     event MemberDeposit(DataTypes.Member member);
 
+    event MemberWithdraw(  address member,
+        uint256 amount);
+
     event MemberStream(DataTypes.Member member);
 
     event MemberDelegateCredit(
-        uint256 creditId,
         address member,
         uint256 amountLocked
     );
-
 
     event CreditRequested(DataTypes.Credit credit);
 

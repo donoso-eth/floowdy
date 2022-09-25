@@ -25,11 +25,17 @@ export function handlePoolUpdated(event:PoolUpdated):void {
       let lastPool = _getPool(lastId.toString())
 
     
+      if (event.params.pool.poolSpan == BigInt.fromI32(0)){
+        pool.apy = lastPool.apy;
+        pool.apySpan = lastPool.apySpan;
+      } else {
 
       pool.apy =  ((lastPool.apy.times(lastPool.apySpan))
       .plus(event.params.pool.poolSpan.times(event.params.pool.yieldPeriod)))
       .div((lastPool.apySpan).plus(event.params.pool.poolSpan));
       pool.apySpan = (lastPool.apySpan).plus(event.params.pool.poolSpan);
+
+      }
 
         let incrementDate = (event.params.pool.timestamp.minus(lastPool.timestamp)).toI32()
       let initDate = 2010673891 + incrementDate;

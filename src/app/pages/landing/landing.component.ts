@@ -129,7 +129,7 @@ this.barOptions = {
     this.graphqlService.watchPool().subscribe(val=> {
         if (!!val && !!val.data && !!val.data.pools) { 
         
-            console.log(val.data.pools)
+            console.log(JSON.stringify(val.data.pools))
             let staked =  val.data.pools.map((map:any)=> map.totalStaked);
             console.log(staked);
             let balance=  val.data.pools.map((map:any)=> map.totalDeposit/10**12);
@@ -156,7 +156,7 @@ this.barOptions = {
 
             let currentTimestamp = new Date().getTime()/1000;
             console.log(BigNumber.from(this.currentPool.totalDeposit))
-            this.totalYieldStake = +this.currentPool.totalYieldStake / 10**6;
+            this.totalYieldStake = +this.currentPool.totalYieldStake;
 
            this.totalTvl = utils.formatEther(BigNumber.from(this.currentPool.totalDeposit))
              
@@ -165,7 +165,7 @@ this.barOptions = {
                 labels: ['aave','credit'],
                 datasets: [
                     {
-                        data: [ +this.currentPool.totalYieldStake,+this.currentPool.totalYieldCredit],
+                        data: [ this.totalYieldStake,+this.currentPool.totalYieldCredit],
                         backgroundColor: [
                             "#37c5f4",
                             "#9d63a2",

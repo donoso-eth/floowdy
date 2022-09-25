@@ -200,6 +200,7 @@ export interface FloowdyInterface extends utils.Interface {
     "getMaxAmount()": FunctionFragment;
     "host()": FunctionFragment;
     "memberAdressById(uint256)": FunctionFragment;
+    "memberWithdraw(uint256)": FunctionFragment;
     "members(address)": FunctionFragment;
     "ops()": FunctionFragment;
     "parseLoanData(bytes)": FunctionFragment;
@@ -209,9 +210,6 @@ export interface FloowdyInterface extends utils.Interface {
     "poolTimestamp()": FunctionFragment;
     "rejectCredit(uint256)": FunctionFragment;
     "requestCredit((uint256,uint256,uint256,uint256,uint256,string,string))": FunctionFragment;
-    "setCreditFee(uint256)": FunctionFragment;
-    "setMaxAllowance(uint256)": FunctionFragment;
-    "setVotingPeriod(uint256)": FunctionFragment;
     "stopCreditPeriodExec(uint256)": FunctionFragment;
     "stopStreamExec(address)": FunctionFragment;
     "supplyStakeToAave()": FunctionFragment;
@@ -323,6 +321,10 @@ export interface FloowdyInterface extends utils.Interface {
     functionFragment: "memberAdressById",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "memberWithdraw",
+    values: [BigNumberish]
+  ): string;
   encodeFunctionData(functionFragment: "members", values: [string]): string;
   encodeFunctionData(functionFragment: "ops", values?: undefined): string;
   encodeFunctionData(
@@ -349,18 +351,6 @@ export interface FloowdyInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "requestCredit",
     values: [CreditRequestOptionsStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setCreditFee",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setMaxAllowance",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setVotingPeriod",
-    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "stopCreditPeriodExec",
@@ -490,6 +480,10 @@ export interface FloowdyInterface extends utils.Interface {
     functionFragment: "memberAdressById",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "memberWithdraw",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "members", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "ops", data: BytesLike): Result;
   decodeFunctionResult(
@@ -515,18 +509,6 @@ export interface FloowdyInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "requestCredit",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setCreditFee",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setMaxAllowance",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setVotingPeriod",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -768,6 +750,11 @@ export interface Floowdy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
+    memberWithdraw(
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     members(
       arg0: string,
       overrides?: CallOverrides
@@ -860,21 +847,6 @@ export interface Floowdy extends BaseContract {
 
     requestCredit(
       options: CreditRequestOptionsStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    setCreditFee(
-      _CREDIT_FEE: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    setMaxAllowance(
-      _MAX_ALLOWANCE: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    setVotingPeriod(
-      _CREDIT_PHASES_INTERVAL: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -1096,6 +1068,11 @@ export interface Floowdy extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
+  memberWithdraw(
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   members(
     arg0: string,
     overrides?: CallOverrides
@@ -1185,21 +1162,6 @@ export interface Floowdy extends BaseContract {
 
   requestCredit(
     options: CreditRequestOptionsStruct,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setCreditFee(
-    _CREDIT_FEE: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setMaxAllowance(
-    _MAX_ALLOWANCE: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setVotingPeriod(
-    _CREDIT_PHASES_INTERVAL: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1418,6 +1380,11 @@ export interface Floowdy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
+    memberWithdraw(
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     members(
       arg0: string,
       overrides?: CallOverrides
@@ -1508,21 +1475,6 @@ export interface Floowdy extends BaseContract {
 
     requestCredit(
       options: CreditRequestOptionsStruct,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setCreditFee(
-      _CREDIT_FEE: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setMaxAllowance(
-      _MAX_ALLOWANCE: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setVotingPeriod(
-      _CREDIT_PHASES_INTERVAL: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1709,6 +1661,11 @@ export interface Floowdy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    memberWithdraw(
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     members(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     ops(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1738,21 +1695,6 @@ export interface Floowdy extends BaseContract {
 
     requestCredit(
       options: CreditRequestOptionsStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setCreditFee(
-      _CREDIT_FEE: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setMaxAllowance(
-      _MAX_ALLOWANCE: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setVotingPeriod(
-      _CREDIT_PHASES_INTERVAL: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1946,6 +1888,11 @@ export interface Floowdy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    memberWithdraw(
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     members(
       arg0: string,
       overrides?: CallOverrides
@@ -1978,21 +1925,6 @@ export interface Floowdy extends BaseContract {
 
     requestCredit(
       options: CreditRequestOptionsStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setCreditFee(
-      _CREDIT_FEE: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setMaxAllowance(
-      _MAX_ALLOWANCE: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setVotingPeriod(
-      _CREDIT_PHASES_INTERVAL: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

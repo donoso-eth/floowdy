@@ -753,16 +753,12 @@ export class MemberDelegateCredit__Params {
     this._event = event;
   }
 
-  get creditId(): BigInt {
-    return this._event.parameters[0].value.toBigInt();
-  }
-
   get member(): Address {
-    return this._event.parameters[1].value.toAddress();
+    return this._event.parameters[0].value.toAddress();
   }
 
   get amountLocked(): BigInt {
-    return this._event.parameters[2].value.toBigInt();
+    return this._event.parameters[1].value.toBigInt();
   }
 }
 
@@ -911,6 +907,28 @@ export class MemberStreamMemberStruct extends ethereum.Tuple {
 
   get memberSpan(): BigInt {
     return this[12].toBigInt();
+  }
+}
+
+export class MemberWithdraw extends ethereum.Event {
+  get params(): MemberWithdraw__Params {
+    return new MemberWithdraw__Params(this);
+  }
+}
+
+export class MemberWithdraw__Params {
+  _event: MemberWithdraw;
+
+  constructor(event: MemberWithdraw) {
+    this._event = event;
+  }
+
+  get member(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get amount(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
   }
 }
 
@@ -2749,6 +2767,36 @@ export class CreditCheckOutCall__Outputs {
   }
 }
 
+export class MemberWithdrawCall extends ethereum.Call {
+  get inputs(): MemberWithdrawCall__Inputs {
+    return new MemberWithdrawCall__Inputs(this);
+  }
+
+  get outputs(): MemberWithdrawCall__Outputs {
+    return new MemberWithdrawCall__Outputs(this);
+  }
+}
+
+export class MemberWithdrawCall__Inputs {
+  _call: MemberWithdrawCall;
+
+  constructor(call: MemberWithdrawCall) {
+    this._call = call;
+  }
+
+  get amount(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+}
+
+export class MemberWithdrawCall__Outputs {
+  _call: MemberWithdrawCall;
+
+  constructor(call: MemberWithdrawCall) {
+    this._call = call;
+  }
+}
+
 export class PoolRebalanceCall extends ethereum.Call {
   get inputs(): PoolRebalanceCall__Inputs {
     return new PoolRebalanceCall__Inputs(this);
@@ -2864,96 +2912,6 @@ export class RequestCreditCallOptionsStruct extends ethereum.Tuple {
 
   get bio(): string {
     return this[6].toString();
-  }
-}
-
-export class SetCreditFeeCall extends ethereum.Call {
-  get inputs(): SetCreditFeeCall__Inputs {
-    return new SetCreditFeeCall__Inputs(this);
-  }
-
-  get outputs(): SetCreditFeeCall__Outputs {
-    return new SetCreditFeeCall__Outputs(this);
-  }
-}
-
-export class SetCreditFeeCall__Inputs {
-  _call: SetCreditFeeCall;
-
-  constructor(call: SetCreditFeeCall) {
-    this._call = call;
-  }
-
-  get _CREDIT_FEE(): BigInt {
-    return this._call.inputValues[0].value.toBigInt();
-  }
-}
-
-export class SetCreditFeeCall__Outputs {
-  _call: SetCreditFeeCall;
-
-  constructor(call: SetCreditFeeCall) {
-    this._call = call;
-  }
-}
-
-export class SetMaxAllowanceCall extends ethereum.Call {
-  get inputs(): SetMaxAllowanceCall__Inputs {
-    return new SetMaxAllowanceCall__Inputs(this);
-  }
-
-  get outputs(): SetMaxAllowanceCall__Outputs {
-    return new SetMaxAllowanceCall__Outputs(this);
-  }
-}
-
-export class SetMaxAllowanceCall__Inputs {
-  _call: SetMaxAllowanceCall;
-
-  constructor(call: SetMaxAllowanceCall) {
-    this._call = call;
-  }
-
-  get _MAX_ALLOWANCE(): BigInt {
-    return this._call.inputValues[0].value.toBigInt();
-  }
-}
-
-export class SetMaxAllowanceCall__Outputs {
-  _call: SetMaxAllowanceCall;
-
-  constructor(call: SetMaxAllowanceCall) {
-    this._call = call;
-  }
-}
-
-export class SetVotingPeriodCall extends ethereum.Call {
-  get inputs(): SetVotingPeriodCall__Inputs {
-    return new SetVotingPeriodCall__Inputs(this);
-  }
-
-  get outputs(): SetVotingPeriodCall__Outputs {
-    return new SetVotingPeriodCall__Outputs(this);
-  }
-}
-
-export class SetVotingPeriodCall__Inputs {
-  _call: SetVotingPeriodCall;
-
-  constructor(call: SetVotingPeriodCall) {
-    this._call = call;
-  }
-
-  get _CREDIT_PHASES_INTERVAL(): BigInt {
-    return this._call.inputValues[0].value.toBigInt();
-  }
-}
-
-export class SetVotingPeriodCall__Outputs {
-  _call: SetVotingPeriodCall;
-
-  constructor(call: SetVotingPeriodCall) {
-    this._call = call;
   }
 }
 

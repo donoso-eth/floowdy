@@ -155,27 +155,29 @@ export class RequestCreditComponent
     }
 
   
-    // this.store.dispatch(Web3Actions.chainBusy({ status: true }));
-    // this.store.dispatch(Web3Actions.chainBusyWithMessage({message:{header:'Ein Moment Bitte', body:'Gettin last AAVE debt settings'}}))
+    this.store.dispatch(Web3Actions.chainBusy({ status: true }));
+    this.store.dispatch(Web3Actions.chainBusyWithMessage({message:{header:'Ein Moment Bitte', body:'Gettin last AAVE debt settings'}}))
   
-   // try {
-    //   let result = await this.dapp.defaultContract?.instance.getAaveData();
-    //   this.aaveLoading = 'found';
-    //   console.log(result)
-    //   console.log(+result?.depositAPR!/10**27)
-    //   console.log(+result?.stableBorrowAPR!/10**27)
+   try {
+      let result = await this.dapp.defaultContract?.instance.getAaveData();
+      this.aaveLoading = 'found';
+      console.log(result)
+      console.log(+result?.depositAPR!/10**27)
+      console.log(+result?.stableBorrowAPR!/10**27)
 
-    //   let SECONDS_PER_YEAR = 31536000
+      let SECONDS_PER_YEAR = 31536000
 
-    //   let depositAPY = ((1 + (+result?.depositAPR!/10**27/ SECONDS_PER_YEAR)) ** SECONDS_PER_YEAR) - 1
-    //   let stableBorrowAPY = ((1 + (+result?.stableBorrowAPR!/10**27 / SECONDS_PER_YEAR)) ** SECONDS_PER_YEAR) - 1
+      let depositAPY = ((1 + (+result?.depositAPR!/10**27/ SECONDS_PER_YEAR)) ** SECONDS_PER_YEAR) - 1
+      let stableBorrowAPY = ((1 + (+result?.stableBorrowAPR!/10**27 / SECONDS_PER_YEAR)) ** SECONDS_PER_YEAR) - 1
 
-    //   console.log(depositAPY, stableBorrowAPY)
-    //   this.store.dispatch(Web3Actions.chainBusy({ status: false }));
-    // } catch (error) {
-    //   this.aaveLoading = 'none';
-    //   this.store.dispatch(Web3Actions.chainBusy({ status: false }));
-    // }
+      console.log(depositAPY, stableBorrowAPY)
+      this.requestCreditForm.controls.aaveCtrl.setValue(true);
+      this.store.dispatch(Web3Actions.chainBusy({ status: false }));
+    } catch (error) {
+      this.aaveLoading = 'none';
+      this.requestCreditForm.controls.aaveCtrl.setValue(false)
+      this.store.dispatch(Web3Actions.chainBusy({ status: false }));
+    }
 
 
 

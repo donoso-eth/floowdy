@@ -8,13 +8,12 @@ import { MessageService } from 'primeng/api';
 import { interval, takeUntil, async, Subject } from 'rxjs';
 import { doSignerTransaction } from 'src/app/dapp-injector/classes/transactor';
 import { GraphQlService } from 'src/app/dapp-injector/services/graph-ql/graph-ql.service';
-import { mockMember1, mockMember2 } from 'src/app/dapp-injector/services/graph-ql/mockQueries';
+import { mockMember1 } from 'src/app/dapp-injector/services/graph-ql/mockQueries';
 import { SuperFluidService } from 'src/app/dapp-injector/services/super-fluid/super-fluid-service.service';
 import { IPOOL_STATE, IPOOL_TOKEN } from 'src/app/shared/models/models';
 import { ERC777Service } from 'src/app/shared/services/erc777.service';
 
 import { GlobalService } from 'src/app/shared/services/global.service';
-import { Floowdy } from 'src/assets/contracts/interfaces/Floowdy';
 
 @Component({
   selector: 'app-dashboard',
@@ -81,6 +80,14 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
     this.store.dispatch(Web3Actions.chainBusy({ status: false }));
   }
 
+  async withdraw() {
+  
+    let amount = utils.parseEther(this.depositAmountCtrl.value.toString());
+    this.store.dispatch(Web3Actions.chainBusy({ status: true }));
+    await doSignerTransaction(this.dapp.defaultContract?.instance?.memberWithdraw(amount)!)
+  
+  }
+
   async deposit() {
     if (this.depositAmountCtrl.invalid) {
       this.msg.add({
@@ -137,11 +144,13 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
           console.log(val)
           if (!!val && !!val.data && !!val.data.member) {
             let queryMember = val.data.member;
+            console.log(JSON.stringify(queryMember))
             this.member =  {
                 deposit:queryMember.deposit,
                 timestamp: queryMember.timestamp,
                 flow:queryMember.flow,
                 amountLocked: queryMember.amountLocked,
+                amountLoss: queryMember.amountLoss,
                 creditsRequested : queryMember.creditsRequested,
                 creditsDelegated: queryMember.creditsDelegated.map((map:any)=> map.credit)
             }
@@ -182,7 +191,8 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
           flow:'0',
           creditsDelegated:[],
           creditsRequested:[],
-          amountLocked:'0'
+          amountLocked:'0',
+          amountLoss:'0'
         }
         this.twoDec = '0.00';
         this.fourDec = '0000';

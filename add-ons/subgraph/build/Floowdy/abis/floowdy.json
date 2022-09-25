@@ -825,6 +825,19 @@
   {
     "inputs": [
       {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "memberWithdraw",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
         "name": "",
         "type": "address"
@@ -1131,45 +1144,6 @@
       }
     ],
     "name": "requestCredit",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_CREDIT_FEE",
-        "type": "uint256"
-      }
-    ],
-    "name": "setCreditFee",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_MAX_ALLOWANCE",
-        "type": "uint256"
-      }
-    ],
-    "name": "setMaxAllowance",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_CREDIT_PHASES_INTERVAL",
-        "type": "uint256"
-      }
-    ],
-    "name": "setVotingPeriod",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -2096,12 +2070,6 @@
     "inputs": [
       {
         "indexed": false,
-        "internalType": "uint256",
-        "name": "creditId",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
         "internalType": "address",
         "name": "member",
         "type": "address"
@@ -2274,6 +2242,25 @@
       }
     ],
     "name": "MemberStream",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "member",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "MemberWithdraw",
     "type": "event"
   },
   {

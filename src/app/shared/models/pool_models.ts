@@ -3,6 +3,7 @@ export interface IMEMBER_QUERY {
   flow: string;
   timestamp:string;
   amountLocked: string;
+  amountLoss:string;
   creditsRequested: Array<ICREDIT_REQUESTED>
   creditsDelegated: Array<ICREDIT_DELEGATED>;
 }
