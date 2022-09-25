@@ -7,7 +7,7 @@ Floowdy helps web3 on the one hand being more robust and secure fostering the mo
 
 Webb app deployed under [https://floowdy.web.app](https://floowdy.web.app)
 
-//https://goerli.etherscan.io/address/0x873c13A496865A0E0f930261e90aA722a554Dde4#c
+Contract verified con goerli [0x04cDA7798c506d961906C0Cb55967ac12AA08a81](https://goerli.etherscan.io/address/0x04cda7798c506d961906c0cb55967ac12aa08a81)
 
 ## Pool
 The pool accepts deposits or streams of Superfluid Supertoken and will after a threshold is met, recursively downgrade the  supertokens to erc-20 tokens and supply to the aave protocol.
@@ -68,10 +68,29 @@ We use the graph for storing our data and querying with appollo client in front 
 ## Detail description of techmology/protocols used
 
 ### SuperFluid
-
+For this project we have developped a new subgraph 
+It uses 5 entities:
+        - Member
+        - Pool
+        - Credit
+        - MemberCredit
+        - Installment
+Between the entities we have 1-1, 1 to many, and many to many relationshipps
+and compute 31 events for maintaining the state up to date.
+For local devellopment wwe have used docker for creating a local node.
+We query the data with apollo client and uses waatchquery/uery depending of the use case
 
 ### Aave
+We use aave to stake stable coins and yield, distribute the yield among the pool members
+aave.supply()
+aave.getReservaData()
+atoken.balnceOf() for yield-- acrued
 
+We also use aave to credit delegation from the pool to members in Dai, for that we pick uo the lens profile to have a certain reputation
+we use stabledebttoken.approve(delegation)
+
+aave.borrow()
+aave.reapy()
 
 ### The Graph
 For this project we hace developpen a new subgraph 
@@ -82,7 +101,19 @@ It uses 5 entities:
         - MemberCredit
         - Installment
 Between the entities we have 1-1, 1 to many, and many to many relationshipps
-and compute 11 events for maintaining the state up to date.
+and compute 31 events for maintaining the state up to date.
 For local devellopment wwe have used docker for creating a local node.
 We query the data with apollo client and uses waatchquery/uery depending of the use case
+
+## devs
+
+If you want to test locally we have a use case that create several members, request cerdits approve etc.
+
+you will have to:
+open 4 terminals and do the commnds sync
+1) nmp run fork to spin goerli forked hardhat node
+2) npm run run-graph-node
+3) npm run create-graph-local
+4) npm run task usecase-1
+5) ng serve (with angular of course)
 

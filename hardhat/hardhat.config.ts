@@ -30,7 +30,7 @@ if (existsSync('./typechain-types')) {
 const mainnetGwei = 21;
 
 let defaultNetwork = 'goerli';
-//defaultNetwork = 'localhost';
+defaultNetwork = 'localhost';
 
 const config: HardhatUserConfig = {
   solidity: {

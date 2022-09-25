@@ -279,7 +279,7 @@ t0 = +(await getTimestamp(hre));
 
 let result = await pool.getUserAccountData(floowdyAddress)
 
-console.log(result);
+
 // await floowdy.checkDelegation(1000000000)
 // await hre.run('gelato-aave',{interval: 30 * 24 * 3600})
 
@@ -299,7 +299,7 @@ await waitForTx(floowdy.connect(user1).creditApproved(creditNr));
 
 await waitForTx(debtToken.connect(user1).approve(floowdyAddress, constants.MaxUint256));
 
-console.log('boorweaando')
+
 
 let balancedai = await debtToken.balanceOf(user1.address) 
 console.log(285,balancedai.toString())
@@ -307,9 +307,7 @@ console.log(285,balancedai.toString())
 await waitForTx(pool.borrow(network_params.debtToken,1000*10**6,1,0,floowdyAddress));
 
 balancedai = await debtToken.balanceOf(user1.address) 
-console.log(289,balancedai.toString())
-console.log(user1.address);
-console.log(debtToken.address);
+
 
 // 83340182
 // 800000000
@@ -317,7 +315,7 @@ console.log(debtToken.address);
 // 83340182
 // 500000000
 balance = await hre.ethers.provider.getBalance(floowdyAddress);
-console.log(297,balance.toString())
+
 
 await  waitForTx(debtToken.connect(user1)["mint(uint256)"](2000000000000))
 
