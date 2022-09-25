@@ -187,6 +187,21 @@ contract Floowdy is SuperAppBase, IERC777Recipient {
         emit Events.PoolUpdated(poolByTimestamp[poolTimestamp]);
     }
 
+
+    function withdraw(uint256 amount) onlyMember external {
+        uint256 available = _getMemberAvailable(msg.sender);
+        require(amount < available, 'NOT_ENOUGH:BALANCE');
+        _poolRebalance();
+        _memberUpdate(msg.sender);
+        DataTypes.Member storage member = members[msg.sender];
+        member.deposit = member.deposit - amount;
+        aavePool.withdraw(address(token), amount.div(10**12), address(this));
+        superToken.upgrade(amount);
+        IERC20(address(superToken)).transfer(msg.sender,amount);
+
+    }
+
+
     // #region Task Close Stream scdellued by member
 
     function createStopStreamTask(address _member, uint256 _duration)
@@ -554,9 +569,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient {
             uint256 stableBorrowAPR
         )
     {
-        uint256 RAY = 10**17; // 10 to the power 27
-        uint256 SECONDS_PER_YEAR = 31536000;
-
+  
         (, totalDebtBase, availableBorrowsBase, , , ) = aavePool
             .getUserAccountData(address(this));
 
@@ -938,29 +951,31 @@ contract Floowdy is SuperAppBase, IERC777Recipient {
                 credit.status = DataTypes.CreditStatus.PHASE4;
                 emit Events.CreditChangePhase(credit);
             } else {
-                credit.status = DataTypes.CreditStatus.PHASE3;
-                credit.delegatorsOptions.delegatorsRequired = 5;
-                credit.delegatorsOptions.delegatorsAmount = credit
-                    .repaymentOptions
-                    .amount
-                    .div(5);
-            }
-
-            //do the dance
-        } else if (credit.status == DataTypes.CreditStatus.PHASE3) {
-            if (
-                credit.delegatorsOptions.delegatorsNr == 5 &&
-                credit.delegatorsOptions.delegators.length == 5
-            ) {
-                credit.status = DataTypes.CreditStatus.PHASE4;
-                ICreditDelegationToken(address(stableDebtToken)).approveDelegation(credit.requester, credit.repaymentOptions.amount);
-                emit Events.CreditChangePhase(credit);
-            } else {
                 credit.status = DataTypes.CreditStatus.REJECTED;
+                // credit.delegatorsOptions.delegatorsRequired = 5;
+                // credit.delegatorsOptions.delegatorsAmount = credit
+                //     .repaymentOptions
+                //     .amount
+                //     .div(5);
             }
 
             //do the dance
-        } else if (credit.status == DataTypes.CreditStatus.PHASE4) {
+        } 
+        // else if (credit.status == DataTypes.CreditStatus.PHASE3) {
+        //     if (
+        //         credit.delegatorsOptions.delegatorsNr == 5 &&
+        //         credit.delegatorsOptions.delegators.length == 5
+        //     ) {
+        //         credit.status = DataTypes.CreditStatus.PHASE4;
+        //         ICreditDelegationToken(address(stableDebtToken)).approveDelegation(credit.requester, credit.repaymentOptions.amount);
+        //         emit Events.CreditChangePhase(credit);
+        //     } else {
+        //         credit.status = DataTypes.CreditStatus.REJECTED;
+        //     }
+
+        //     //do the dance
+        // }
+         else if (credit.status == DataTypes.CreditStatus.PHASE4) {
              // ICreditDelegationToken(address(stableDebtToken)).approveDelegation(credit.requester, credit.repaymentOptions.amount);
               credit.status = DataTypes.CreditStatus.REJECTED;
              
@@ -1041,9 +1056,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient {
             credit.repaymentOptions.currentInstallment <=
             credit.repaymentOptions.nrInstallments
         ) {
-               uint256 bal = IERC20(debtToken).balanceOf(credit.requester); 
-                 console.log(1045,bal);
-                 console.log(1046,credit.repaymentOptions.installment);
+        
   
             try  IERC20(debtToken).transferFrom(
                     credit.requester,
@@ -1302,32 +1315,32 @@ contract Floowdy is SuperAppBase, IERC777Recipient {
         _;
     }
 
-    function setCreditFee(uint256 _CREDIT_FEE) external onlyOwner {
-        require(
-            _CREDIT_FEE > 0 && _CREDIT_FEE < 100,
-            "CREDIT_FEE_MUS_BE_BETWEEN_0_100"
-        );
-        CREDIT_FEE = _CREDIT_FEE;
-    }
+    // function setCreditFee(uint256 _CREDIT_FEE) external onlyOwner {
+    //     require(
+    //         _CREDIT_FEE > 0 && _CREDIT_FEE < 100,
+    //         "CREDIT_FEE_MUS_BE_BETWEEN_0_100"
+    //     );
+    //     CREDIT_FEE = _CREDIT_FEE;
+    // }
 
-    function setMaxAllowance(uint256 _MAX_ALLOWANCE) external onlyOwner {
-        require(
-            _MAX_ALLOWANCE > 0 && _MAX_ALLOWANCE < 100,
-            "MAX_ALLOWANCE_MUS_BE_BETWEEN_0_100"
-        );
-        MAX_ALLOWANCE = _MAX_ALLOWANCE;
-    }
+    // function setMaxAllowance(uint256 _MAX_ALLOWANCE) external onlyOwner {
+    //     require(
+    //         _MAX_ALLOWANCE > 0 && _MAX_ALLOWANCE < 100,
+    //         "MAX_ALLOWANCE_MUS_BE_BETWEEN_0_100"
+    //     );
+    //     MAX_ALLOWANCE = _MAX_ALLOWANCE;
+    // }
 
-    function setVotingPeriod(uint256 _CREDIT_PHASES_INTERVAL)
-        external
-        onlyOwner
-    {
-        require(
-            _CREDIT_PHASES_INTERVAL > 600,
-            "CREDIT_PHASES_INTERVALE_GREATER_THAN_10_MINUTS"
-        );
-        CREDIT_PHASES_INTERVAL = _CREDIT_PHASES_INTERVAL;
-    }
+    // function setVotingPeriod(uint256 _CREDIT_PHASES_INTERVAL)
+    //     external
+    //     onlyOwner
+    // {
+    //     require(
+    //         _CREDIT_PHASES_INTERVAL > 600,
+    //         "CREDIT_PHASES_INTERVALE_GREATER_THAN_10_MINUTS"
+    //     );
+    //     CREDIT_PHASES_INTERVAL = _CREDIT_PHASES_INTERVAL;
+    // }
 
     // #endregion
 }
