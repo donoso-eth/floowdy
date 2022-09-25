@@ -252,12 +252,12 @@
           label="Request Credit Delegation"
           class="p-button-rounded mt-3 mr-2 mb-2"
         ></button>
-          <credit-table *ngIf="member!= undefined && member.creditsRequested.length > 0" [creditType]="'requested'" [credits]="member.creditsRequested"  ></credit-table>
+          <credit-table *ngIf="member!= undefined && member.creditsRequested.length > 0" [creditType]="'none'" [credits]="member.creditsRequested"  ></credit-table>
       
        
           </p-tabPanel>
           <p-tabPanel header="Credits Delegated" class="line-height-3 m-0">
-            <credit-table *ngIf="member!= undefined"  [creditType]="'delegated'" [credits]="member.creditsDelegated"  ></credit-table>
+            <credit-table *ngIf="member!= undefined"  [creditType]="'none'" [credits]="member.creditsDelegated"  ></credit-table>
           </p-tabPanel>
         </p-tabView>
       </div>

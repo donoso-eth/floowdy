@@ -1,7 +1,7 @@
 // #region =========== CREDIT =================
 
 import { store } from "@graphprotocol/graph-ts";
-import { CreditRequested, CreditCheckIn, CreditCheckOut, CreditApproved, CreditRejected, CreditChangePhase, CreditInstallment, CreditLiquidated } from "../generated/Floowdy/Floowdy";
+import { CreditRequested, CreditCheckIn, CreditCheckOut, CreditApproved, CreditRejected, CreditChangePhase, CreditInstallment, CreditLiquidated, CreditCancelled, CreditRepayed } from "../generated/Floowdy/Floowdy";
 import { MemberCredit, Credit, Installment, Member } from "../generated/schema";
 import { BigDecimal, BigInt } from '@graphprotocol/graph-ts';
 import { _getMember } from "./mapping_member";
@@ -55,14 +55,8 @@ export function handleCreditRequested(event:CreditRequested):void {
   export function handleCreditRejected(event:CreditRejected):void {
     let id = event.params.credit.id.toString()
     let credit = _getCredit(id);
-    // for (let i = 0; i < credit.delegators.length; ++i) {
-    //    let delegatorId:string =  credit.delegators[i];
-    //    let delegator:Member = _getMember(delegatorId);
-    //    delegator.amountLocked = delegator.amountLocked.plus(credit.delegatorsAmount); 
-    //    delegator.save()
-    //    store.remove('MemberCredit', id)
-    // }
-    credit.status = BigInt.fromI32(event.params.credit.status);
+
+    credit.status = BigInt.fromI32(6);
     credit.save()
   }
 
@@ -98,7 +92,20 @@ export function handleCreditRequested(event:CreditRequested):void {
 
   }
 
- 
+  export function handleCreditCancelled(event:CreditCancelled):void {
+    let id = event.params.credit.id.toString();
+    let credit = _getCredit(id);
+    credit.status = BigInt.fromI32(7);
+    credit.save()
+  }
+
+  export function handleCreditRepayed(event:CreditRepayed):void {
+    let id = event.params.creditId.toString();
+    let credit = _getCredit(id);
+    credit.status = BigInt.fromI32(8);
+    credit.save()
+  }
+  
 
 
   function _getCredit(creditId:string): Credit {

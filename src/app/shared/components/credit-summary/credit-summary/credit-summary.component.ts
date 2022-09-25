@@ -1,11 +1,12 @@
 import { Component, OnInit, Input, OnChanges } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { CreditStatus, DappBaseComponent, DappInjector, ICREDIT_DELEGATED, ROLE, settings, Web3Actions } from 'angular-web3';
-import { Contract } from 'ethers';
+import { constants, Contract } from 'ethers';
 import { doSignerTransaction } from 'src/app/dapp-injector/classes/transactor';
 import { aavePool_abi } from 'src/app/shared/helpers/abis/aavePool';
-import { blockTimeToTime, displayAdress, formatSmallEther } from 'src/app/shared/helpers/helpers';
+import { blockTimeToTime, createERC20Instance, displayAdress, formatSmallEther } from 'src/app/shared/helpers/helpers';
 import { IPool } from 'src/assets/contracts/interfaces/IAAVEPool';
+import { IERC20 } from 'src/assets/contracts/interfaces/IERC20';
 
 
 @Component({
@@ -58,9 +59,17 @@ export class CreditSummaryComponent  extends DappBaseComponent implements OnChan
     this.store.dispatch(Web3Actions.chainBusyWithMessage({message: {header:'A Moment please...', body:'We are executing the credit!'}}))
     let poolContract = new Contract(settings['goerli'].aavePool, aavePool_abi,this.dapp.signer!) as IPool;
 
-   await doSignerTransaction(poolContract.borrow(settings['goerli'].token,this.credit.amount,1,0,this.defaultContract.address));
+      await doSignerTransaction(this.dapp.defaultContract?.instance.creditApproved(+this.credit.id)!)
 
-   await doSignerTransaction(this.dapp.defaultContract?.instance.creditApproved(+this.credit.id)!)
+
+    let erc20debt = createERC20Instance(settings['goerli'].debtToken,this.dapp.signer!) as IERC20;
+
+    await doSignerTransaction(erc20debt.approve(this.defaultContract.address,constants.MaxUint256))
+
+
+   await doSignerTransaction(poolContract.borrow(settings['goerli'].debtToken,this.credit.amount,1,0,this.defaultContract.address));
+
+
 
   }
 

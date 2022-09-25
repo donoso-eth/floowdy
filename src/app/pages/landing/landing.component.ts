@@ -3,8 +3,10 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { AngularContract, DappBaseComponent, DappInjector, IPOOL, Web3Actions } from 'angular-web3';
 import { BigNumber, utils } from 'ethers';
+import { interval, Subject, takeUntil } from 'rxjs';
 import { GraphQlService } from 'src/app/dapp-injector/services/graph-ql/graph-ql.service';
-import { blockTimeToTime } from 'src/app/shared/helpers/helpers';
+import { blockTimeToTime, formatSmallEther } from 'src/app/shared/helpers/helpers';
+import { GlobalService } from 'src/app/shared/services/global.service';
 
 @Component({
   selector: 'app-landing',
@@ -20,8 +22,14 @@ export class LandingComponent extends DappBaseComponent implements OnInit{
   currentPool!:IPOOL
     totalTvl: any;
     totalYieldStake!: any;
+    totalCredit!: String;
+    twoDec: any;
+    fourDec: any;
+    destroyFormatting: Subject<void> = new Subject();
 
-  constructor(private router: Router, store: Store, dapp: DappInjector, public graphqlService:GraphQlService
+  constructor(private router: Router, store: Store, dapp: DappInjector, 
+    public global:GlobalService,
+    public graphqlService:GraphQlService
     
     ) {
     super(dapp, store);
@@ -106,7 +114,7 @@ this.barOptions = {
 
 
 
-
+  formatSmallEther =  formatSmallEther
 
 
 
@@ -129,9 +137,9 @@ this.barOptions = {
     this.graphqlService.watchPool().subscribe(val=> {
         if (!!val && !!val.data && !!val.data.pools) { 
         
-            console.log(JSON.stringify(val.data.pools))
+      
             let staked =  val.data.pools.map((map:any)=> map.totalStaked);
-            console.log(staked);
+        
             let balance=  val.data.pools.map((map:any)=> map.totalDeposit/10**12);
             let labels=  val.data.pools.map((map:any)=> blockTimeToTime(map.timestamp));
             this.currentPool = val.data.pools[0];
@@ -152,14 +160,43 @@ this.barOptions = {
               };
 
           
-            console.log(this.currentPool);
+         
 
             let currentTimestamp = new Date().getTime()/1000;
-            console.log(BigNumber.from(this.currentPool.totalDeposit))
+        
             this.totalYieldStake = +this.currentPool.totalYieldStake;
 
            this.totalTvl = utils.formatEther(BigNumber.from(this.currentPool.totalDeposit))
              
+           let value = +this.currentPool.totalFlow * ( (new Date().getTime() / 1000)- +this.currentPool.timestamp);
+           console.log(value)
+           let formated = this.global.prepareNumbers(
+             +this.currentPool.totalDeposit + value 
+           );
+           this.twoDec = formated.twoDec;
+           this.fourDec = formated.fourDec;
+        
+     
+   
+           if (+this.currentPool.totalFlow > 0) {
+         
+             this.destroyFormatting.next();
+             let source = interval(500);
+             source.pipe(takeUntil(this.destroyFormatting)).subscribe((val) => {
+               const todayms = (new Date().getTime() / 1000)- +this.currentPool.timestamp;
+              
+       
+               let formated = this.global.prepareNumbers(
+                 +todayms * +this.currentPool.totalFlow +  +this.currentPool.totalDeposit
+               );
+               this.twoDec = formated.twoDec;
+               this.fourDec = formated.fourDec;
+             });
+           }
+     
+
+
+           this.totalCredit = this.currentPool.totalDelegated;
     
             this.pieData = {
                 labels: ['aave','credit'],
@@ -187,4 +224,12 @@ this.barOptions = {
   ngOnInit() {
     this.getPool()
   }
+
+  override ngOnDestroy(): void {
+    this.destroyFormatting.next();
+ 
+    this.destroyFormatting.complete();
+
+    super.ngOnDestroy()
+}
 }

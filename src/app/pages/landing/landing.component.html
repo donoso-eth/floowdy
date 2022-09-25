@@ -7,7 +7,7 @@
           <i class="pi pi-lock"></i>
           <span style="margin-left:15px;font-size:30px;text-align: left;color:var(--primary-color);"> TVL</span>
           <span style="margin-left:15px;font-size: 15px;text-align: left;" class="text-pink-400">
-            <span style="font-size: 30px"> {{ totalTvl }}</span>{{ '0000' }}
+            <span style="font-size: 30px"> {{ twoDec }}</span>{{ fourDec }}
           </span>
         </div>
       </div>
@@ -27,7 +27,7 @@
                   <span style="font-size:20px;text-align: left;color:grey;"> YIELD</span>
                   <div class="text-900 font-medium">
                     <span style="font-size: 30px;text-align: left;" class="text-pink-400">
-                      {{ totalYieldStake?.toFixed(4)}}$
+                      {{ formatSmallEther(totalYieldStake)}}$
 
                     </span>
                   </div>
@@ -35,14 +35,14 @@
               </div>
             </div>
 
-            <div class="col-6 call-out justify-content-center">
+            <div   class="col-6 call-out justify-content-center">
               <div class="flex align-items-center justify-content-center">
                 <i class="pi pi-percentage"></i>
                 <div class="flex justify-content-between flex-column text-center">
                   <span style="font-size:20px;text-align: left;color:var(--primary-color);"> APY</span>
                   <div class="text-900 font-medium">
                     <span style="font-size: 30px;text-align: left;" class="text-pink-400">
-                      {{ '1.02' }}%
+                      tbd
 
                     </span>
                   </div>
@@ -51,7 +51,7 @@
             </div>
 
         
-            <div class="col-4 call-out justify-content-center">
+            <div class="col-6 call-out justify-content-center">
               <div class="flex align-items-center justify-content-center">
                 <i class="pi pi-users"></i>
                 <div class="flex justify-content-between flex-column text-center">
@@ -65,21 +65,21 @@
                 </div>
               </div>
             </div>
-            <div class="col-4 call-out">
+            <div class="col-6 call-out">
               <div class="flex align-items-center justify-content-center">
                 <i class="pi pi-wallet"></i>
                 <div class="flex justify-content-between flex-column text-center">
                   <span style="font-size:20px;text-align: left;color:var(--primary-color);"> CREDIT</span>
                   <div class="text-900 font-medium">
                     <span style="font-size: 15px;text-align: left;" class="text-pink-400">
-                      <span style="font-size: 30px"> {{ '00' }}</span>{{ '0000' }}
+                      <span style="font-size: 30px"> {{  formatSmallEther(+totalCredit) }}</span>
                     </span>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div class="col-4 call-out justify-content-center">
+            <div  *ngIf="false" class="col-4 call-out justify-content-center">
               <div class="flex align-items-center justify-content-center">
                 <i class="pi pi-bolt"></i>
                 <div class="flex justify-content-between flex-column text-center">

@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: UnlicenseIERC20
 pragma solidity >=0.4.22 <0.9.0;
 
-import "hardhat/console.sol";
+// import "hardhat/console.sol";
 
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
@@ -1051,9 +1051,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient {
             .div(credit.delegatorsOptions.delegatorsNr);
         }
 
-        if (credit.delegatorsOptions.delegatorsRequired == 5) {
-          _poolRebalance();
-        }
+ 
 
         // uint256 bal = IERC20(debtToken).balanceOf(address(this));
         aavePool.repay(
@@ -1072,7 +1070,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient {
 
         // recalculate credit conditions
       } catch {
-        console.log(972);
+        // console.log(972);
         credit.status = DataTypes.CreditStatus.LIQUIDATED;
         /// Liquidate the credit
         emit Events.CreditLiquidated(creditId);
@@ -1085,6 +1083,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient {
       credit.status == DataTypes.CreditStatus.APPROVED
     ) {
       credit.status = DataTypes.CreditStatus.REPAYED;
+       emit Events.CreditRepayed(creditId);
       //credit done
     }
   }

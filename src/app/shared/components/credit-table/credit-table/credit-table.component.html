@@ -48,7 +48,7 @@
                         <td style="width: 5%; min-width: 5rem;">
                             {{credit.id}}
                         </td>
-                        <td style="width: 15%; ">{{displayAddress(credit.requester.member)}}</td>
+                        <td style="width: 15%; ">{{displayAddress(credit.requester?.member)}}</td>
                         <td style="width: 10%; ">{{formatSmallEther(credit.amount)}}$</td>
                         <td style="width: 5%;">{{credit.rate}}%</td>
                         <td style="width: 10%;">{{formatSmallEther(credit.delegatorsAmount)}}$</td>
@@ -66,7 +66,8 @@
 
                      
                         <td style="width: 5%; min-width: 5rem;text-align:center">
-                            <div [style.background]=" [1,2,3,4].indexOf(credit.status) != 1 ? 'orange' : credit.status == 5 ?  'green' : 'red'"
+              
+                            <div [style.background]="  ['6','7','9'].indexOf(credit.status) != -1 ? 'red' : credit.status == '8' ? 'green' : credit.status == '5' ? 'orange' :  ['1','2','3','4'].indexOf(credit.status) != -1 ?  'yellow' : 'red'"
                                 style="height:40px;width:40px;border-radius:20px;margin: auto;background: green;"></div>
                         </td>
 

@@ -25,7 +25,8 @@ export enum CreditStatus {
 export interface ICREDIT_DELEGATED {
   id: string;
   amount: string;
-  rate: string;
+  rateAave: string;
+  ratePool: string;
   status: string;
   finishPhaseTimestamp:string,
   delegatorsAmount:string,
@@ -59,5 +60,6 @@ export interface ICREDIT_REQUESTED  {
   totalFlow:string;
   totalYieldStake:string;
   totalYieldCredit:string;
+  totalDelegated:String;
   nrMembers:string;
  }

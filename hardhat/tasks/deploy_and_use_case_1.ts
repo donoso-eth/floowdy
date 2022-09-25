@@ -114,13 +114,30 @@ const doAllFaucet= async (erc20Under:any, supertokenContract:any, network_params
 
 task('usecase-1', 'use-case-1').setAction(async ({}, hre) => {
 
+
+  // await hre.network.provider.request({
+  //   method: 'hardhat_reset',
+  //   params: [
+  //     {
+  //       // forking: {
+  //       //   jsonRpcUrl: `https://polygon-mumbai.g.alchemy.com/v2/P2lEQkjFdNjdN0M_mpZKB8r3fAa2M0vT`,
+  //       //   blockNumber: 28154232,
+  //       // }
+  //       forking: {
+  //         jsonRpcUrl: `https://goerli.infura.io/v3/1e43f3d31eea4244bf25ed4c13bfde0e`,
+  //         blockNumber: 7631671,
+  //       },
+  //     },
+  //   ],
+  // });
+
 execSync("npm run deploy",{encoding: "utf8",stdio: 'inherit'})
 
 console.log('.....deployed')
-// execSync("npm run task publish -- --only-address true",{encoding: "utf8",stdio: 'inherit'})
-// console.log('.....publish to subgraph')
-// execSync("npm run deploy-graph-local",{encoding: "utf8",stdio: 'inherit'})
-// console.log('.....graph deployed')
+execSync("npm run task publish -- --only-address true",{encoding: "utf8",stdio: 'inherit'})
+console.log('.....publish to subgraph')
+execSync("npm run deploy-graph-local",{encoding: "utf8",stdio: 'inherit'})
+console.log('.....graph deployed')
 
 
 
@@ -161,7 +178,7 @@ let debtToken = new hre.ethers.Contract(
   network_params.debtToken,
   abi_erc20mint,
   deployer
-) as IERC20;
+) 
 
 
 
@@ -302,12 +319,10 @@ console.log(debtToken.address);
 balance = await hre.ethers.provider.getBalance(floowdyAddress);
 console.log(297,balance.toString())
 
-console.log('boorweaandorewrwr')
+await  waitForTx(debtToken.connect(user1)["mint(uint256)"](2000000000000))
 
 
-console.log('jua jua jua')
-
-for (let i = 0;i<5; i++) {
+for (let i = 0;i<12; i++) {
 t0 = +(await getTimestamp(hre)) + (i)*3600
 console.log(311,i)
 await hre.run('gelato-repay',{interval:3600,credit:creditNr,t0})
@@ -341,6 +356,30 @@ t0 = +(await getTimestamp(hre));
 
 await hre.run('gelato-phases',{interval:600, credit:creditNr, t0:t0})
 
+
+await waitForTx(
+  supertokenContract.connect(user5).send(floowdyAddress, amount, '0x')
+  )
+  await hre.run('gelato-aave',{interval: 30 * 24 * 3600})
+
+creditNr = 3;
+
+creditReQuest = {
+amount:1000000000,
+rateAave:3,
+ratePool:4,
+nrInstallments:12,
+interval:3600,
+handle:'javier',
+bio:'javier'
+}
+
+await waitForTx(floowdy.connect(user4).requestCredit(creditReQuest));
+
+await waitForTx(floowdy.connect(user3).creditCheckIn(creditNr));
+t0 = +(await getTimestamp(hre));
+
+await hre.run('gelato-phases',{interval:600, credit:creditNr, t0:t0})
 
 
 });

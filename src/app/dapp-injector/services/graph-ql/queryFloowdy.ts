@@ -50,7 +50,7 @@ export const GET_POOL = `
 
 export const GET_CREDITS = `
     {
-      credits(first: 5,  where: {status_in:["1","2","3","4","5"]}, orderBy: initTimestamp, orderDirection: desc) {
+      credits(first: 5,  orderBy: initTimestamp, orderDirection: desc) {
         id
         initTimestamp
         finishPhaseTimestamp
@@ -92,7 +92,7 @@ export const GET_CREDIT = `
       interval
       installment
       currentInstallment
-      installments (orderBy: timestamp, orderDirection: desc) {
+      installments (orderBy: nr, orderDirection: desc) {
           nr
           timestamp
       }
@@ -134,6 +134,9 @@ export const GET_MEMBER = `
         ratePool
         delegatorsNr
         gelatoTaskId
+        requester {
+          member
+        }
        }
        creditsDelegated {
           credit {

@@ -610,6 +610,24 @@ export class CreditRejectedCreditRepaymentOptionsStruct extends ethereum.Tuple {
   }
 }
 
+export class CreditRepayed extends ethereum.Event {
+  get params(): CreditRepayed__Params {
+    return new CreditRepayed__Params(this);
+  }
+}
+
+export class CreditRepayed__Params {
+  _event: CreditRepayed;
+
+  constructor(event: CreditRepayed) {
+    this._event = event;
+  }
+
+  get creditId(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+}
+
 export class CreditRequested extends ethereum.Event {
   get params(): CreditRequested__Params {
     return new CreditRequested__Params(this);

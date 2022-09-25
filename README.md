@@ -7,6 +7,8 @@ Floowdy helps web3 on the one hand being more robust and secure fostering the mo
 
 Webb app deployed under [https://floowdy.web.app](https://floowdy.web.app)
 
+//https://goerli.etherscan.io/address/0x873c13A496865A0E0f930261e90aA722a554Dde4#c
+
 ## Pool
 The pool accepts deposits or streams of Superfluid Supertoken and will after a threshold is met, recursively downgrade the  supertokens to erc-20 tokens and supply to the aave protocol.
 

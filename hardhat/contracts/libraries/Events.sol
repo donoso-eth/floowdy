@@ -40,5 +40,7 @@ library Events {
 
    event CreditLiquidated(uint256 creditId);
 
+    event CreditRepayed(uint256 creditId);
+
     event PoolUpdated(DataTypes.Pool pool);
 }

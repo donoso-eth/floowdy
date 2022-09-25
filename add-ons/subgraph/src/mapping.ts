@@ -4,6 +4,8 @@ export {
   handleCreditCheckIn,
   handleCreditCheckOut,
   handleCreditRejected,
+  handleCreditRepayed,
+  handleCreditCancelled,
   handleCreditRequested,
   handleCreditInstallment,
   handleCreditLiquidated

@@ -143,7 +143,6 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
         .subscribe((val: any) => {
           console.log(val)
 
-          val.data.member = mockMember1;
 
           if (!!val && !!val.data && !!val.data.member) {
             let queryMember = val.data.member;
