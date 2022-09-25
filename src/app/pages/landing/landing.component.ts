@@ -4,6 +4,7 @@ import { Store } from '@ngrx/store';
 import { AngularContract, DappBaseComponent, DappInjector, IPOOL, Web3Actions } from 'angular-web3';
 import { BigNumber, utils } from 'ethers';
 import { GraphQlService } from 'src/app/dapp-injector/services/graph-ql/graph-ql.service';
+import { blockTimeToTime } from 'src/app/shared/helpers/helpers';
 
 @Component({
   selector: 'app-landing',
@@ -29,7 +30,7 @@ export class LandingComponent extends DappBaseComponent implements OnInit{
       labels: ['aave','credit'],
       datasets: [
           {
-              data: [ 33, 66],
+              data: [ 0,0],
               backgroundColor: [
                   "#37c5f4",
                   "#9d63a2",
@@ -59,12 +60,12 @@ this.barData = {
       {
           label: 'pool balance',
           backgroundColor: '#2f4860',
-          data: [65, 59, 80, 81, 56, 70, 40]
+          data: []
       },
       {
           label: 'staked',
           backgroundColor: '#00bb7e',
-          data: [28, 48, 40, 19, 30, 37, 25]
+          data: []
       }
   ]
 };
@@ -91,7 +92,8 @@ this.barOptions = {
       },
       y: {
           ticks: {
-              color: 'white'
+              color: 'white',
+              callback: (label:any) => `$ ${label>1000000 ? label/10**6 : 0}`,
           },
           grid: {
               color:  '#1d3351',
@@ -122,13 +124,34 @@ this.barOptions = {
   }
 
   getPool(){
+
+
     this.graphqlService.watchPool().subscribe(val=> {
         if (!!val && !!val.data && !!val.data.pools) { 
         
             console.log(val.data.pools)
-
+            let staked =  val.data.pools.map((map:any)=> map.totalStaked);
+            console.log(staked);
+            let balance=  val.data.pools.map((map:any)=> map.totalDeposit/10**12);
+            let labels=  val.data.pools.map((map:any)=> blockTimeToTime(map.timestamp));
             this.currentPool = val.data.pools[0];
+            this.barData = {
+                labels:labels.reverse(),
+                datasets: [
+                    {
+                        label: 'pool balance',
+                        backgroundColor: '#2f4860',
+                        data: balance.reverse()
+                    },
+                    {
+                        label: 'staked',
+                        backgroundColor: '#00bb7e',
+                        data: staked.reverse()
+                    }
+                ]
+              };
 
+          
             console.log(this.currentPool);
 
             let currentTimestamp = new Date().getTime()/1000;
@@ -137,7 +160,25 @@ this.barOptions = {
 
            this.totalTvl = utils.formatEther(BigNumber.from(this.currentPool.totalDeposit))
              
-            console.log(this.totalYieldStake)
+    
+            this.pieData = {
+                labels: ['aave','credit'],
+                datasets: [
+                    {
+                        data: [ +this.currentPool.totalYieldStake,+this.currentPool.totalYieldCredit],
+                        backgroundColor: [
+                            "#37c5f4",
+                            "#9d63a2",
+                          
+                        ],
+                        hoverBackgroundColor: [
+                            "#37c5f4",
+                            "#9d63a2",
+                         
+                        ]
+                    }
+                ]
+            };
 
         }
     })

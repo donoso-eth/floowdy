@@ -1,13 +1,25 @@
+export const GET_CHARTS = `
+    {
+      chartMonths(first: 5, orderBy: id, orderDirection: desc) {
+        id
+     month
+     year
+      }
+    }
+  `;
+
 export const GET_POOL = `
     {
-      pools(first: 4, orderBy: id, orderDirection: desc) {
+      pools(first: 10, orderBy: id, orderDirection: desc) {
         id
         totalFlow
         totalDeposit
         nrMembers
         timestamp
-        totalYieldStake
         totalStaked
+        totalYieldStake
+        totalYieldCredit
+        totalDelegated
         apy
         apySpan
       }
@@ -43,9 +55,10 @@ export const GET_CREDITS = `
         initTimestamp
         finishPhaseTimestamp
         amount
-        handle
         status
-        rate
+        handle
+        rateAave
+        ratePool
         delegatorsNr
         delegatorsRequired
         delegatorsAmount
@@ -66,7 +79,8 @@ export const GET_CREDIT = `
       finishPhaseTimestamp
       amount
       status
-      rate
+      rateAave
+      ratePool
       delegatorsNr
       delegatorsRequired
       delegatorsAmount

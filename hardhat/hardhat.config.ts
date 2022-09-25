@@ -30,7 +30,7 @@ if (existsSync('./typechain-types')) {
 const mainnetGwei = 21;
 
 let defaultNetwork = 'goerli';
-//defaultNetwork = 'localhost';
+defaultNetwork = 'localhost';
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -74,8 +74,8 @@ const config: HardhatUserConfig = {
     //   blockNumber: 28154232,
     // },
       forking: {
-        url: `https://eth-goerli.g.alchemy.com/v2/VzTmruc2Hki6YOQEVGeAb7ZZOWlWXy_E`,
-      blockNumber: 7652390,
+        url: `https://goerli.infura.io/v3/1e43f3d31eea4244bf25ed4c13bfde0e`,
+        blockNumber: 7631671,
       },
     },
     localhost: {

@@ -117,10 +117,10 @@ task('usecase-1', 'use-case-1').setAction(async ({}, hre) => {
 execSync("npm run deploy",{encoding: "utf8",stdio: 'inherit'})
 
 console.log('.....deployed')
-// execSync("npm run task publish -- --only-address true",{encoding: "utf8",stdio: 'inherit'})
-// console.log('.....publish to subgraph')
-// execSync("npm run deploy-graph-local",{encoding: "utf8",stdio: 'inherit'})
-// console.log('.....graph deployed')
+execSync("npm run task publish -- --only-address true",{encoding: "utf8",stdio: 'inherit'})
+console.log('.....publish to subgraph')
+execSync("npm run deploy-graph-local",{encoding: "utf8",stdio: 'inherit'})
+console.log('.....graph deployed')
 
 
 
@@ -191,7 +191,7 @@ if(creditNr == 1){
 await doAllFaucet(erc20Under, supertokenContract, network_params,deployer, user1, user2, user3, user4, user5, user6, user7, user8, user9, user10)
 }
 
-let amount = utils.parseEther("200000")
+let amount = utils.parseEther("250000")
 let t0 = +(await getTimestamp(hre));
 
 
@@ -228,7 +228,7 @@ await printPool(hre,floowdy)
 
 
 
- await hre.run('gelato-aave',{interval: 365 * 24 * 3600})
+ await hre.run('gelato-aave',{interval: 30 * 24 * 3600})
 
 //await waitForTx(floowdy.poolRebalance());
 
@@ -250,6 +250,9 @@ let creditReQuest: CreditRequestOptionsStruct = {
 }
 
 await waitForTx(floowdy.connect(user1).requestCredit(creditReQuest));
+
+await hre.run('gelato-aave',{interval: 30 * 24 * 3600})
+
 t0 = +(await getTimestamp(hre));
 await waitForTx(
   supertokenContract.connect(deployer).send(floowdyAddress, amount  ,'0x')
@@ -261,7 +264,7 @@ let result = await pool.getUserAccountData(floowdyAddress)
 
 console.log(result);
 // await floowdy.checkDelegation(1000000000)
-
+await hre.run('gelato-aave',{interval: 30 * 24 * 3600})
 
 // throw new Error("");
 
@@ -293,6 +296,7 @@ console.log(debtToken.address);
 
 // 83340182
 // 800000000
+
 // 83340182
 // 500000000
 balance = await hre.ethers.provider.getBalance(floowdyAddress);
@@ -300,12 +304,13 @@ console.log(297,balance.toString())
 
 console.log('boorweaandorewrwr')
 
-await waitForTx(floowdy.testRepayment())
+
 console.log('jua jua jua')
 
-for (let i = 0;i<1; i++) {
-t0 = +(await getTimestamp(hre));
-await hre.run('gelato-repay',{interval:3600,credit:creditNr, t0})
+for (let i = 0;i<4; i++) {
+t0 = +(await getTimestamp(hre)) + (i)*3600
+console.log(311,i)
+await hre.run('gelato-repay',{interval:3600,credit:creditNr,t0})
 }
 
 

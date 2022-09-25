@@ -45,8 +45,7 @@ task('gelato-aave', 'push to AAVE')
     let interval = taskArgs.interval;
 
     //const  [deployer, user1, user2, user3, user4, user5, user6, user7, user8, user9, user10]= await initEnv(hre); console.log(user1.address);
-    let t0 = +(await getTimestamp(hre));
-    await setNextBlockTimestamp(hre, t0 + interval);
+  
 
     const [
       deployer
@@ -107,9 +106,12 @@ task('gelato-aave', 'push to AAVE')
       modules: [Module.RESOLVER],
       args: [encodeResolverArgs(hre, floowdyAddress, resolverData)],
     };
-
+  
+    let canExec = (await floowdy.checkStakeAvailable())[0]
+    console.log('XXXXXXXXXXXXXXXXx')
+     console.log(canExec)
     //    await waitForTx(floowdy.connect(user1).stopStream({gasLimit:100000}))
-
+    if (canExec== true) {
     await ops
       .connect(executor)
       .exec(
@@ -122,4 +124,9 @@ task('gelato-aave', 'push to AAVE')
         false,
         true
       );
+      }
+
+      let t0 = +(await getTimestamp(hre));
+      await setNextBlockTimestamp(hre, t0 + interval);
+
   });

@@ -54,7 +54,7 @@ type Credit @entity {
   currentInstallment: BigInt!
   installmentPrincipal: BigInt!
   installmentRateAave: BigInt!
-  installmentRateFloowdy: BigInt!
+  installmentRatePool: BigInt!
   amount: BigInt!
   rateAave: BigInt!
   ratePool: BigInt!

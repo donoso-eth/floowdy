@@ -13,7 +13,7 @@ import {
   Signer,
   utils,
 } from "ethers";
-import { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
+import { FunctionFragment, Result } from "@ethersproject/abi";
 import { Listener, Provider } from "@ethersproject/providers";
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
@@ -196,19 +196,18 @@ export interface FloowdyInterface extends utils.Interface {
     "epnsChannel()": FunctionFragment;
     "epnsComm()": FunctionFragment;
     "gelato()": FunctionFragment;
+    "getAaveData()": FunctionFragment;
     "getMaxAmount()": FunctionFragment;
     "host()": FunctionFragment;
     "memberAdressById(uint256)": FunctionFragment;
     "members(address)": FunctionFragment;
     "ops()": FunctionFragment;
-    "owner()": FunctionFragment;
     "parseLoanData(bytes)": FunctionFragment;
     "poolByTimestamp(uint256)": FunctionFragment;
     "poolId()": FunctionFragment;
     "poolRebalance()": FunctionFragment;
     "poolTimestamp()": FunctionFragment;
     "rejectCredit(uint256)": FunctionFragment;
-    "renounceOwnership()": FunctionFragment;
     "requestCredit((uint256,uint256,uint256,uint256,uint256,string,string))": FunctionFragment;
     "setCreditFee(uint256)": FunctionFragment;
     "setMaxAllowance(uint256)": FunctionFragment;
@@ -219,7 +218,6 @@ export interface FloowdyInterface extends utils.Interface {
     "tokensReceived(address,address,address,uint256,bytes,bytes)": FunctionFragment;
     "totalCredits()": FunctionFragment;
     "totalYieldStakeEarnedMember(address)": FunctionFragment;
-    "transferOwnership(address)": FunctionFragment;
     "triggerRepayment(uint256)": FunctionFragment;
     "withdraw()": FunctionFragment;
   };
@@ -313,6 +311,10 @@ export interface FloowdyInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "epnsComm", values?: undefined): string;
   encodeFunctionData(functionFragment: "gelato", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "getAaveData",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "getMaxAmount",
     values?: undefined
   ): string;
@@ -323,7 +325,6 @@ export interface FloowdyInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "members", values: [string]): string;
   encodeFunctionData(functionFragment: "ops", values?: undefined): string;
-  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "parseLoanData",
     values: [BytesLike]
@@ -344,10 +345,6 @@ export interface FloowdyInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "rejectCredit",
     values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "renounceOwnership",
-    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "requestCredit",
@@ -387,10 +384,6 @@ export interface FloowdyInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "totalYieldStakeEarnedMember",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "transferOwnership",
     values: [string]
   ): string;
   encodeFunctionData(
@@ -485,6 +478,10 @@ export interface FloowdyInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "epnsComm", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "gelato", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "getAaveData",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getMaxAmount",
     data: BytesLike
   ): Result;
@@ -495,7 +492,6 @@ export interface FloowdyInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "members", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "ops", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "parseLoanData",
     data: BytesLike
@@ -515,10 +511,6 @@ export interface FloowdyInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "rejectCredit",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "renounceOwnership",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -562,29 +554,13 @@ export interface FloowdyInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "transferOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "triggerRepayment",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
 
-  events: {
-    "OwnershipTransferred(address,address)": EventFragment;
-  };
-
-  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  events: {};
 }
-
-export type OwnershipTransferredEvent = TypedEvent<
-  [string, string],
-  { previousOwner: string; newOwner: string }
->;
-
-export type OwnershipTransferredEventFilter =
-  TypedEventFilter<OwnershipTransferredEvent>;
 
 export interface Floowdy extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -770,6 +746,17 @@ export interface Floowdy extends BaseContract {
 
     gelato(overrides?: CallOverrides): Promise<[string]>;
 
+    getAaveData(
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber, BigNumber] & {
+        totalDebtBase: BigNumber;
+        availableBorrowsBase: BigNumber;
+        depositAPR: BigNumber;
+        stableBorrowAPR: BigNumber;
+      }
+    >;
+
     getMaxAmount(
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { maxAmount: BigNumber }>;
@@ -817,8 +804,6 @@ export interface Floowdy extends BaseContract {
     >;
 
     ops(overrides?: CallOverrides): Promise<[string]>;
-
-    owner(overrides?: CallOverrides): Promise<[string]>;
 
     parseLoanData(
       data: BytesLike,
@@ -873,10 +858,6 @@ export interface Floowdy extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     requestCredit(
       options: CreditRequestOptionsStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -927,11 +908,6 @@ export interface Floowdy extends BaseContract {
       _member: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { yieldMember: BigNumber }>;
-
-    transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
 
     triggerRepayment(
       creditId: BigNumberish,
@@ -1100,6 +1076,17 @@ export interface Floowdy extends BaseContract {
 
   gelato(overrides?: CallOverrides): Promise<string>;
 
+  getAaveData(
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber, BigNumber, BigNumber] & {
+      totalDebtBase: BigNumber;
+      availableBorrowsBase: BigNumber;
+      depositAPR: BigNumber;
+      stableBorrowAPR: BigNumber;
+    }
+  >;
+
   getMaxAmount(overrides?: CallOverrides): Promise<BigNumber>;
 
   host(overrides?: CallOverrides): Promise<string>;
@@ -1145,8 +1132,6 @@ export interface Floowdy extends BaseContract {
   >;
 
   ops(overrides?: CallOverrides): Promise<string>;
-
-  owner(overrides?: CallOverrides): Promise<string>;
 
   parseLoanData(data: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1195,10 +1180,6 @@ export interface Floowdy extends BaseContract {
 
   rejectCredit(
     creditId: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  renounceOwnership(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1252,11 +1233,6 @@ export interface Floowdy extends BaseContract {
     _member: string,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
-
-  transferOwnership(
-    newOwner: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
 
   triggerRepayment(
     creditId: BigNumberish,
@@ -1422,6 +1398,17 @@ export interface Floowdy extends BaseContract {
 
     gelato(overrides?: CallOverrides): Promise<string>;
 
+    getAaveData(
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber, BigNumber] & {
+        totalDebtBase: BigNumber;
+        availableBorrowsBase: BigNumber;
+        depositAPR: BigNumber;
+        stableBorrowAPR: BigNumber;
+      }
+    >;
+
     getMaxAmount(overrides?: CallOverrides): Promise<BigNumber>;
 
     host(overrides?: CallOverrides): Promise<string>;
@@ -1467,8 +1454,6 @@ export interface Floowdy extends BaseContract {
     >;
 
     ops(overrides?: CallOverrides): Promise<string>;
-
-    owner(overrides?: CallOverrides): Promise<string>;
 
     parseLoanData(
       data: BytesLike,
@@ -1521,8 +1506,6 @@ export interface Floowdy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    renounceOwnership(overrides?: CallOverrides): Promise<void>;
-
     requestCredit(
       options: CreditRequestOptionsStruct,
       overrides?: CallOverrides
@@ -1569,11 +1552,6 @@ export interface Floowdy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    transferOwnership(
-      newOwner: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     triggerRepayment(
       creditId: BigNumberish,
       overrides?: CallOverrides
@@ -1582,16 +1560,7 @@ export interface Floowdy extends BaseContract {
     withdraw(overrides?: CallOverrides): Promise<boolean>;
   };
 
-  filters: {
-    "OwnershipTransferred(address,address)"(
-      previousOwner?: string | null,
-      newOwner?: string | null
-    ): OwnershipTransferredEventFilter;
-    OwnershipTransferred(
-      previousOwner?: string | null,
-      newOwner?: string | null
-    ): OwnershipTransferredEventFilter;
-  };
+  filters: {};
 
   estimateGas: {
     ETH(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1729,6 +1698,8 @@ export interface Floowdy extends BaseContract {
 
     gelato(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getAaveData(overrides?: CallOverrides): Promise<BigNumber>;
+
     getMaxAmount(overrides?: CallOverrides): Promise<BigNumber>;
 
     host(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1741,8 +1712,6 @@ export interface Floowdy extends BaseContract {
     members(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     ops(overrides?: CallOverrides): Promise<BigNumber>;
-
-    owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     parseLoanData(
       data: BytesLike,
@@ -1764,10 +1733,6 @@ export interface Floowdy extends BaseContract {
 
     rejectCredit(
       creditId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1820,11 +1785,6 @@ export interface Floowdy extends BaseContract {
     totalYieldStakeEarnedMember(
       _member: string,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     triggerRepayment(
@@ -1975,6 +1935,8 @@ export interface Floowdy extends BaseContract {
 
     gelato(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    getAaveData(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     getMaxAmount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     host(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1990,8 +1952,6 @@ export interface Floowdy extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     ops(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     parseLoanData(
       data: BytesLike,
@@ -2013,10 +1973,6 @@ export interface Floowdy extends BaseContract {
 
     rejectCredit(
       creditId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2069,11 +2025,6 @@ export interface Floowdy extends BaseContract {
     totalYieldStakeEarnedMember(
       _member: string,
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     triggerRepayment(

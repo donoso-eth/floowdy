@@ -10,28 +10,6 @@ import {
   BigInt
 } from "@graphprotocol/graph-ts";
 
-export class OwnershipTransferred extends ethereum.Event {
-  get params(): OwnershipTransferred__Params {
-    return new OwnershipTransferred__Params(this);
-  }
-}
-
-export class OwnershipTransferred__Params {
-  _event: OwnershipTransferred;
-
-  constructor(event: OwnershipTransferred) {
-    this._event = event;
-  }
-
-  get previousOwner(): Address {
-    return this._event.parameters[0].value.toAddress();
-  }
-
-  get newOwner(): Address {
-    return this._event.parameters[1].value.toAddress();
-  }
-}
-
 export class CreditApproved extends ethereum.Event {
   get params(): CreditApproved__Params {
     return new CreditApproved__Params(this);
@@ -133,7 +111,7 @@ export class CreditApprovedCreditRepaymentOptionsStruct extends ethereum.Tuple {
     return this[4].toBigInt();
   }
 
-  get installmentRateFloowdy(): BigInt {
+  get installmentRatePool(): BigInt {
     return this[5].toBigInt();
   }
 
@@ -263,7 +241,7 @@ export class CreditCancelledCreditRepaymentOptionsStruct extends ethereum.Tuple 
     return this[4].toBigInt();
   }
 
-  get installmentRateFloowdy(): BigInt {
+  get installmentRatePool(): BigInt {
     return this[5].toBigInt();
   }
 
@@ -393,7 +371,7 @@ export class CreditChangePhaseCreditRepaymentOptionsStruct extends ethereum.Tupl
     return this[4].toBigInt();
   }
 
-  get installmentRateFloowdy(): BigInt {
+  get installmentRatePool(): BigInt {
     return this[5].toBigInt();
   }
 
@@ -603,7 +581,7 @@ export class CreditRejectedCreditRepaymentOptionsStruct extends ethereum.Tuple {
     return this[4].toBigInt();
   }
 
-  get installmentRateFloowdy(): BigInt {
+  get installmentRatePool(): BigInt {
     return this[5].toBigInt();
   }
 
@@ -733,7 +711,7 @@ export class CreditRequestedCreditRepaymentOptionsStruct extends ethereum.Tuple 
     return this[4].toBigInt();
   }
 
-  get installmentRateFloowdy(): BigInt {
+  get installmentRatePool(): BigInt {
     return this[5].toBigInt();
   }
 
@@ -1143,7 +1121,7 @@ export class Floowdy__creditsByIdResultRepaymentOptionsStruct extends ethereum.T
     return this[4].toBigInt();
   }
 
-  get installmentRateFloowdy(): BigInt {
+  get installmentRatePool(): BigInt {
     return this[5].toBigInt();
   }
 
@@ -2185,21 +2163,6 @@ export class Floowdy extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
-  owner(): Address {
-    let result = super.call("owner", "owner():(address)", []);
-
-    return result[0].toAddress();
-  }
-
-  try_owner(): ethereum.CallResult<Address> {
-    let result = super.tryCall("owner", "owner():(address)", []);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddress());
-  }
-
   parseLoanData(data: Bytes): BigInt {
     let result = super.call("parseLoanData", "parseLoanData(bytes):(uint256)", [
       ethereum.Value.fromBytes(data)
@@ -2224,7 +2187,7 @@ export class Floowdy extends ethereum.SmartContract {
   poolByTimestamp(param0: BigInt): Floowdy__poolByTimestampResult {
     let result = super.call(
       "poolByTimestamp",
-      "poolByTimestamp(uint256):(uint256,uint256,int96,uint256,uint256,uint256,uint256,uint256,uint256,(uint256,uint256,uint256,uint256,uint256),uint256,uint256,uint256)",
+      "poolByTimestamp(uint256):(uint256,uint64,int96,uint256,uint256,uint256,uint256,uint256,uint256,(uint256,uint256,uint256,uint256,uint256),uint256,uint256,uint256)",
       [ethereum.Value.fromUnsignedBigInt(param0)]
     );
 
@@ -2252,7 +2215,7 @@ export class Floowdy extends ethereum.SmartContract {
   ): ethereum.CallResult<Floowdy__poolByTimestampResult> {
     let result = super.tryCall(
       "poolByTimestamp",
-      "poolByTimestamp(uint256):(uint256,uint256,int96,uint256,uint256,uint256,uint256,uint256,uint256,(uint256,uint256,uint256,uint256,uint256),uint256,uint256,uint256)",
+      "poolByTimestamp(uint256):(uint256,uint64,int96,uint256,uint256,uint256,uint256,uint256,uint256,(uint256,uint256,uint256,uint256,uint256),uint256,uint256,uint256)",
       [ethereum.Value.fromUnsignedBigInt(param0)]
     );
     if (result.reverted) {
@@ -2419,72 +2382,28 @@ export class ConstructorCallFloowdy_initStruct extends ethereum.Tuple {
     return this[3].toAddress();
   }
 
-  get aToken(): Address {
+  get stableDebtToken(): Address {
     return this[4].toAddress();
   }
 
-  get ops(): Address {
+  get debtToken(): Address {
     return this[5].toAddress();
   }
 
-  get epnsComm(): Address {
+  get aToken(): Address {
     return this[6].toAddress();
   }
 
-  get epnsChannel(): Address {
+  get ops(): Address {
     return this[7].toAddress();
   }
-}
 
-export class _calculateYieldCall extends ethereum.Call {
-  get inputs(): _calculateYieldCall__Inputs {
-    return new _calculateYieldCall__Inputs(this);
+  get epnsComm(): Address {
+    return this[8].toAddress();
   }
 
-  get outputs(): _calculateYieldCall__Outputs {
-    return new _calculateYieldCall__Outputs(this);
-  }
-}
-
-export class _calculateYieldCall__Inputs {
-  _call: _calculateYieldCall;
-
-  constructor(call: _calculateYieldCall) {
-    this._call = call;
-  }
-}
-
-export class _calculateYieldCall__Outputs {
-  _call: _calculateYieldCall;
-
-  constructor(call: _calculateYieldCall) {
-    this._call = call;
-  }
-}
-
-export class AaveSupplyCall extends ethereum.Call {
-  get inputs(): AaveSupplyCall__Inputs {
-    return new AaveSupplyCall__Inputs(this);
-  }
-
-  get outputs(): AaveSupplyCall__Outputs {
-    return new AaveSupplyCall__Outputs(this);
-  }
-}
-
-export class AaveSupplyCall__Inputs {
-  _call: AaveSupplyCall;
-
-  constructor(call: AaveSupplyCall) {
-    this._call = call;
-  }
-}
-
-export class AaveSupplyCall__Outputs {
-  _call: AaveSupplyCall;
-
-  constructor(call: AaveSupplyCall) {
-    this._call = call;
+  get epnsChannel(): Address {
+    return this[9].toAddress();
   }
 }
 
@@ -2710,6 +2629,36 @@ export class CancelTaskCall__Outputs {
   }
 }
 
+export class CheckDelegationCall extends ethereum.Call {
+  get inputs(): CheckDelegationCall__Inputs {
+    return new CheckDelegationCall__Inputs(this);
+  }
+
+  get outputs(): CheckDelegationCall__Outputs {
+    return new CheckDelegationCall__Outputs(this);
+  }
+}
+
+export class CheckDelegationCall__Inputs {
+  _call: CheckDelegationCall;
+
+  constructor(call: CheckDelegationCall) {
+    this._call = call;
+  }
+
+  get amount(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+}
+
+export class CheckDelegationCall__Outputs {
+  _call: CheckDelegationCall;
+
+  constructor(call: CheckDelegationCall) {
+    this._call = call;
+  }
+}
+
 export class CreditApprovedCall extends ethereum.Call {
   get inputs(): CreditApprovedCall__Inputs {
     return new CreditApprovedCall__Inputs(this);
@@ -2856,32 +2805,6 @@ export class RejectCreditCall__Outputs {
   }
 }
 
-export class RenounceOwnershipCall extends ethereum.Call {
-  get inputs(): RenounceOwnershipCall__Inputs {
-    return new RenounceOwnershipCall__Inputs(this);
-  }
-
-  get outputs(): RenounceOwnershipCall__Outputs {
-    return new RenounceOwnershipCall__Outputs(this);
-  }
-}
-
-export class RenounceOwnershipCall__Inputs {
-  _call: RenounceOwnershipCall;
-
-  constructor(call: RenounceOwnershipCall) {
-    this._call = call;
-  }
-}
-
-export class RenounceOwnershipCall__Outputs {
-  _call: RenounceOwnershipCall;
-
-  constructor(call: RenounceOwnershipCall) {
-    this._call = call;
-  }
-}
-
 export class RequestCreditCall extends ethereum.Call {
   get inputs(): RequestCreditCall__Inputs {
     return new RequestCreditCall__Inputs(this);
@@ -2919,50 +2842,28 @@ export class RequestCreditCallOptionsStruct extends ethereum.Tuple {
     return this[0].toBigInt();
   }
 
-  get rate(): BigInt {
+  get rateAave(): BigInt {
     return this[1].toBigInt();
   }
 
-  get interval(): BigInt {
+  get ratePool(): BigInt {
     return this[2].toBigInt();
   }
 
-  get nrInstallments(): BigInt {
+  get interval(): BigInt {
     return this[3].toBigInt();
   }
 
+  get nrInstallments(): BigInt {
+    return this[4].toBigInt();
+  }
+
   get handle(): string {
-    return this[4].toString();
+    return this[5].toString();
   }
 
   get bio(): string {
-    return this[5].toString();
-  }
-}
-
-export class SendNotifCall extends ethereum.Call {
-  get inputs(): SendNotifCall__Inputs {
-    return new SendNotifCall__Inputs(this);
-  }
-
-  get outputs(): SendNotifCall__Outputs {
-    return new SendNotifCall__Outputs(this);
-  }
-}
-
-export class SendNotifCall__Inputs {
-  _call: SendNotifCall;
-
-  constructor(call: SendNotifCall) {
-    this._call = call;
-  }
-}
-
-export class SendNotifCall__Outputs {
-  _call: SendNotifCall;
-
-  constructor(call: SendNotifCall) {
-    this._call = call;
+    return this[6].toString();
   }
 }
 
@@ -3188,36 +3089,6 @@ export class TokensReceivedCall__Outputs {
   _call: TokensReceivedCall;
 
   constructor(call: TokensReceivedCall) {
-    this._call = call;
-  }
-}
-
-export class TransferOwnershipCall extends ethereum.Call {
-  get inputs(): TransferOwnershipCall__Inputs {
-    return new TransferOwnershipCall__Inputs(this);
-  }
-
-  get outputs(): TransferOwnershipCall__Outputs {
-    return new TransferOwnershipCall__Outputs(this);
-  }
-}
-
-export class TransferOwnershipCall__Inputs {
-  _call: TransferOwnershipCall;
-
-  constructor(call: TransferOwnershipCall) {
-    this._call = call;
-  }
-
-  get newOwner(): Address {
-    return this._call.inputValues[0].value.toAddress();
-  }
-}
-
-export class TransferOwnershipCall__Outputs {
-  _call: TransferOwnershipCall;
-
-  constructor(call: TransferOwnershipCall) {
     this._call = call;
   }
 }

@@ -24,7 +24,17 @@
             "type": "address"
           },
           {
-            "internalType": "contract IAToken",
+            "internalType": "address",
+            "name": "stableDebtToken",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "debtToken",
+            "type": "address"
+          },
+          {
+            "internalType": "contract IERC20",
             "name": "aToken",
             "type": "address"
           },
@@ -53,25 +63,6 @@
     "type": "constructor"
   },
   {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "previousOwner",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
-      }
-    ],
-    "name": "OwnershipTransferred",
-    "type": "event"
-  },
-  {
     "inputs": [],
     "name": "ETH",
     "outputs": [
@@ -82,13 +73,6 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "_calculateYield",
-    "outputs": [],
-    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -108,13 +92,6 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "aaveSupply",
-    "outputs": [],
-    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -433,6 +410,19 @@
     "inputs": [
       {
         "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "checkDelegation",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
         "name": "creditId",
         "type": "uint256"
       }
@@ -654,7 +644,7 @@
           },
           {
             "internalType": "uint256",
-            "name": "installmentRateFloowdy",
+            "name": "installmentRatePool",
             "type": "uint256"
           },
           {
@@ -925,19 +915,6 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "owner",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "bytes",
@@ -972,9 +949,9 @@
         "type": "uint256"
       },
       {
-        "internalType": "uint256",
+        "internalType": "uint64",
         "name": "timestamp",
-        "type": "uint256"
+        "type": "uint64"
       },
       {
         "internalType": "int96",
@@ -1109,13 +1086,6 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "renounceOwnership",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "components": [
@@ -1126,7 +1096,12 @@
           },
           {
             "internalType": "uint256",
-            "name": "rate",
+            "name": "rateAave",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "ratePool",
             "type": "uint256"
           },
           {
@@ -1156,13 +1131,6 @@
       }
     ],
     "name": "requestCredit",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "sendNotif",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1312,19 +1280,6 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
-      }
-    ],
-    "name": "transferOwnership",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "uint256",
         "name": "creditId",
         "type": "uint256"
@@ -1448,7 +1403,7 @@
               },
               {
                 "internalType": "uint256",
-                "name": "installmentRateFloowdy",
+                "name": "installmentRatePool",
                 "type": "uint256"
               },
               {
@@ -1592,7 +1547,7 @@
               },
               {
                 "internalType": "uint256",
-                "name": "installmentRateFloowdy",
+                "name": "installmentRatePool",
                 "type": "uint256"
               },
               {
@@ -1736,7 +1691,7 @@
               },
               {
                 "internalType": "uint256",
-                "name": "installmentRateFloowdy",
+                "name": "installmentRatePool",
                 "type": "uint256"
               },
               {
@@ -1944,7 +1899,7 @@
               },
               {
                 "internalType": "uint256",
-                "name": "installmentRateFloowdy",
+                "name": "installmentRatePool",
                 "type": "uint256"
               },
               {
@@ -2088,7 +2043,7 @@
               },
               {
                 "internalType": "uint256",
-                "name": "installmentRateFloowdy",
+                "name": "installmentRatePool",
                 "type": "uint256"
               },
               {
@@ -2332,9 +2287,9 @@
             "type": "uint256"
           },
           {
-            "internalType": "uint256",
+            "internalType": "uint64",
             "name": "timestamp",
-            "type": "uint256"
+            "type": "uint64"
           },
           {
             "internalType": "int96",

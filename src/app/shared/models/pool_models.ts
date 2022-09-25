@@ -57,5 +57,6 @@ export interface ICREDIT_REQUESTED  {
   totalDeposit: string;
   totalFlow:string;
   totalYieldStake:string;
+  totalYieldCredit:string;
   nrMembers:string;
  }

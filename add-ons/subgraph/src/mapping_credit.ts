@@ -2,8 +2,9 @@
 
 import { store } from "@graphprotocol/graph-ts";
 import { CreditRequested, CreditCheckIn, CreditCheckOut, CreditApproved, CreditRejected, CreditChangePhase, CreditInstallment, CreditLiquidated } from "../generated/Floowdy/Floowdy";
-import { MemberCredit, Credit, Installment } from "../generated/schema";
+import { MemberCredit, Credit, Installment, Member } from "../generated/schema";
 import { BigDecimal, BigInt } from '@graphprotocol/graph-ts';
+import { _getMember } from "./mapping_member";
 
 
 export function handleCreditRequested(event:CreditRequested):void {
@@ -79,6 +80,8 @@ export function handleCreditRequested(event:CreditRequested):void {
       installment.credit = id;
       installment.save()
     }
+
+    
     credit.save()
 
   }
@@ -123,7 +126,7 @@ export function handleCreditRequested(event:CreditRequested):void {
     credit.installment = eventObject.repaymentOptions.installment;
     credit.installmentPrincipal = eventObject.repaymentOptions.installmentPrincipal;
     credit.installmentRateAave = eventObject.repaymentOptions.installmentRateAave;
-    credit.installmentRateFloowdy = eventObject.repaymentOptions.installmentRateFloowdy;
+    credit.installmentRatePool = eventObject.repaymentOptions.installmentRatePool;
 
     credit.rateAave = eventObject.repaymentOptions.rateAave;
     credit.ratePool = eventObject.repaymentOptions.ratePool;

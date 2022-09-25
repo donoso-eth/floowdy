@@ -412,7 +412,7 @@ export class Credit extends Entity {
     this.set("currentInstallment", Value.fromBigInt(BigInt.zero()));
     this.set("installmentPrincipal", Value.fromBigInt(BigInt.zero()));
     this.set("installmentRateAave", Value.fromBigInt(BigInt.zero()));
-    this.set("installmentRateFloowdy", Value.fromBigInt(BigInt.zero()));
+    this.set("installmentRatePool", Value.fromBigInt(BigInt.zero()));
     this.set("amount", Value.fromBigInt(BigInt.zero()));
     this.set("rateAave", Value.fromBigInt(BigInt.zero()));
     this.set("ratePool", Value.fromBigInt(BigInt.zero()));
@@ -592,13 +592,13 @@ export class Credit extends Entity {
     this.set("installmentRateAave", Value.fromBigInt(value));
   }
 
-  get installmentRateFloowdy(): BigInt {
-    let value = this.get("installmentRateFloowdy");
+  get installmentRatePool(): BigInt {
+    let value = this.get("installmentRatePool");
     return value!.toBigInt();
   }
 
-  set installmentRateFloowdy(value: BigInt) {
-    this.set("installmentRateFloowdy", Value.fromBigInt(value));
+  set installmentRatePool(value: BigInt) {
+    this.set("installmentRatePool", Value.fromBigInt(value));
   }
 
   get amount(): BigInt {

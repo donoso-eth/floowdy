@@ -5,6 +5,7 @@ import { firstValueFrom, Subscription } from 'rxjs';
 import { DappInjector } from '../../dapp-injector.service';
 import { GET_AAVE_DATA } from './queryAave';
 import {
+  GET_CHARTS,
   GET_CREDIT,
   GET_CREDITS,
   GET_FULL_TEXT,
@@ -82,6 +83,12 @@ export class GraphQlService {
     }
   }
 
+  watchCharts() {
+       return this.apollo.watchQuery<any>({
+        query: gql(GET_CHARTS),
+        pollInterval: 500
+      }).valueChanges
+}
 
 
   watchCredit(id: string) {
@@ -91,9 +98,6 @@ export class GraphQlService {
           variables,
           pollInterval: 500
         }).valueChanges
-   
-
-
   }
 
   async getCredits(): Promise<any> {

@@ -31,6 +31,22 @@ export function handlePoolUpdated(event:PoolUpdated):void {
       .div((lastPool.apySpan).plus(event.params.pool.poolSpan));
       pool.apySpan = (lastPool.apySpan).plus(event.params.pool.poolSpan);
 
+        let incrementDate = (event.params.pool.timestamp.minus(lastPool.timestamp)).toI32()
+      let initDate = 2010673891 + incrementDate;
+
+      let date = new  Date(initDate * 1000);
+  
+      let monthString =  ("0" + (date.getUTCMonth() + 1).toString());
+      let month  = monthString.substring(monthString.length -2, monthString.length);
+      let year= (date.getUTCFullYear()).toString();
+      let chartMonthId =  month.toString().concat(year);
+      //pool.date = date;
+      let chartMonth= _getChartMonth(chartMonthId, pool.timestamp, month, year);
+  
+      chartMonth.staked = pool.totalDeposit;
+      chartMonth.balance = pool.totalFlow;
+      chartMonth.save()
+
     }
 
     pool.poolId=   event.params.pool.id.toString();
@@ -51,18 +67,9 @@ export function handlePoolUpdated(event:PoolUpdated):void {
 
     pool.nrMembers= event.params.pool.nrMembers
 
-    let date = (new Date(event.params.pool.timestamp.toI32() * 1000))
+    //let date = new Date(event.params.pool.timestamp.toI32() * 1000)
  
-    let monthString =  ("0" + date.getUTCMonth().toString());
-    let month  = monthString.substring(monthString.length -2, monthString.length);
-    let year= (date.getUTCFullYear()).toString();
-    let chartMonthId =  month.toString().concat(year);
-    //pool.date = date;
-    let chartMonth= _getChartMonth(chartMonthId, pool.timestamp, month, year);
 
-    chartMonth.staked = pool.totalDeposit;
-    chartMonth.balance = pool.totalFlow;
-    
 
     pool.save()
   }

@@ -33,7 +33,7 @@ export function handleMemberDeposit(event:MemberDeposit ):void {
   }
   
   
-  function _getMember( id:string): Member {
+ export function _getMember( id:string): Member {
   
       let member = Member.load(id);
       if (member === null) {

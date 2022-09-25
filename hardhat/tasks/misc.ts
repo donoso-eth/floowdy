@@ -33,6 +33,14 @@ task('misc', 'mint usdc aave').setAction(async ({}, hre) => {
  
   let floowdy:Floowdy = Floowdy__factory.connect(floowdyAddress, user1);
  
+
+  let result2 = (await floowdy.checkStakeAvailable())[0]
+  console.log(result2)
+
+
+
+  throw new Error("");
+  
   let networks_config = JSON.parse(readFileSync( join(processDir,'networks.config.json'),'utf-8')) as INETWORK_CONFIG;
  
  let network_params = networks_config["goerli"]

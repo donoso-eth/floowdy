@@ -6,9 +6,9 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: Floowdy
-    network: goerli
+    network: localhost
     source:
-      address: '0xf71aF83b930Ba2cA4B93aE7D04C5f95568F6D2F4'
+      address: '0x115686C5B6256B7b8Aa426d75fC4DEa6354A59De'
       abi: Floowdy
       startBlock: 7588383
     mapping:
@@ -58,6 +58,6 @@ dataSources:
             MemberStream((uint256,address,int96,bytes32,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))
           handler: handleMemberStream
         - event: >-
-            PoolUpdated((uint256,uint256,int96,uint256,uint256,uint256,uint256,uint256,uint256,(uint256,uint256,uint256,uint256,uint256),uint256,uint256,uint256))
+            PoolUpdated((uint256,uint64,int96,uint256,uint256,uint256,uint256,uint256,uint256,(uint256,uint256,uint256,uint256,uint256),uint256,uint256,uint256))
           handler: handlePoolUpdated
       file: ./src/mapping.ts
