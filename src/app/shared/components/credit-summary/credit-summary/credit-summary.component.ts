@@ -45,6 +45,7 @@ export class CreditSummaryComponent  extends DappBaseComponent implements OnChan
   //}
   async checkInPhase(){
     this.store.dispatch(Web3Actions.chainBusy({ status: true }));
+    this.store.dispatch(Web3Actions.chainBusyWithMessage({message: {body:'Is good to suppert pool members!!', header:'Un momento'}}))
    await doSignerTransaction(this.dapp.defaultContract?.instance.creditCheckIn(+this.credit.id)!)
     
     
@@ -75,6 +76,7 @@ export class CreditSummaryComponent  extends DappBaseComponent implements OnChan
 
   async cancelCredit() {
     this.store.dispatch(Web3Actions.chainBusy({ status: true }));
+    this.store.dispatch(Web3Actions.chainBusyWithMessage({message: {body:'No Prob, credit cancelled', header:'Un momento'}}))
     await doSignerTransaction(this.dapp.defaultContract?.instance.cancelCredit(+this.credit.id)!)
      
      

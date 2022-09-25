@@ -26,7 +26,8 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
   poolState!: IPOOL_STATE;
   twoDec: string = "00";
   fourDec: string = "0000";
-
+  twoDecAva: string = "00";
+  fourDecAva: string = "0000";
   isFlowAvailable = false;
 
   destroyQueries: Subject<void> = new Subject();
@@ -40,6 +41,7 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
   member!:IMEMBER_QUERY;
 
   memberDisplay: any;  
+  niceFlow!: string;
 
   constructor(
     store: Store,
@@ -61,6 +63,7 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
 
  async stopFlow(){
   this.store.dispatch(Web3Actions.chainBusy({ status: true }));
+  this.store.dispatch(Web3Actions.chainBusyWithMessage({message: {body:'stopping your flow', header:'Un momento'}}))
   await this.superFluidService.stopStream({
     receiver:this.dapp.defaultContract?.address!,
     superToken:this.global.poolToken.superToken,
@@ -75,7 +78,9 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
 
   async mint() {
     this.store.dispatch(Web3Actions.chainBusy({ status: true }));
+    this.store.dispatch(Web3Actions.chainBusyWithMessage({message: {body:'Minting your tokens', header:'Un momento'}}))
     await this.global.mint();
+    this.store.dispatch(Web3Actions.chainBusyWithMessage({message: {body:'Querying your balances', header:'Un momento'}}))
     await this.refreshBalance();
     this.store.dispatch(Web3Actions.chainBusy({ status: false }));
   }
@@ -84,6 +89,7 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
   
     let amount = utils.parseEther(this.depositAmountCtrl.value.toString());
     this.store.dispatch(Web3Actions.chainBusy({ status: true }));
+    this.store.dispatch(Web3Actions.chainBusyWithMessage({message: {body:'it is ok to need hte money....', header:'Un momento'}}))
     await doSignerTransaction(this.dapp.defaultContract?.instance?.memberWithdraw(amount)!)
   
   }
@@ -103,6 +109,7 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
     let amount = utils.parseEther(this.depositAmountCtrl.value.toString());
     console.log(amount);
     this.store.dispatch(Web3Actions.chainBusy({ status: true }));
+    this.store.dispatch(Web3Actions.chainBusyWithMessage({message: {body:'Yes, yes your deposit is on the way', header:'Un momento'}}))
     await  this.erc777.depositIntoPool(amount);
   
 
@@ -125,6 +132,7 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
 
   ngOnInit(): void {
     this.store.dispatch(Web3Actions.chainBusy({ status: true }));
+    this.store.dispatch(Web3Actions.chainBusyWithMessage({message:{header:'A momnet...',body:'we are fetching last data for you'}}))
     if (this.blockchain_status == 'wallet-connected'){
      // this.getMember()
     }
@@ -146,7 +154,7 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
 
           if (!!val && !!val.data && !!val.data.member) {
             let queryMember = val.data.member;
-            console.log(JSON.stringify(queryMember))
+          
             this.member =  {
                 deposit:queryMember.deposit,
                 timestamp: queryMember.timestamp,
@@ -157,18 +165,29 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
                 creditsDelegated: queryMember.creditsDelegated.map((map:any)=> map.credit)
             }
 
+            console.log(this.member)
+
+            console.log(this.member.amountLocked);
 
         let value = +this.member.flow * ( (new Date().getTime() / 1000)- +this.member.timestamp);
         console.log(value)
+
         let formated = this.global.prepareNumbers(
           +this.member.deposit + value
         );
         this.twoDec = formated.twoDec;
         this.fourDec = formated.fourDec;
+
+          let formattedAva =  this.global.prepareNumbers(
+            +this.member.deposit + value -(+this.member.amountLocked*10**12)
+          );
+          this.twoDecAva = formattedAva.twoDec;
+          this.fourDecAva = formattedAva.fourDec;
         this.isFlowAvailable = false;
   
 
         if (+this.member.flow > 0) {
+          this.niceFlow = (+this.member?.flow!*(30*24*3600)/(10**18)).toFixed(2)
           this.isFlowAvailable = true;
           this.destroyFormatting.next();
           let source = interval(500);
@@ -181,7 +200,17 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
             );
             this.twoDec = formated.twoDec;
             this.fourDec = formated.fourDec;
+
+            let formattedAva =  this.global.prepareNumbers(
+              +todayms * +this.member.flow +  +this.member.deposit -(+this.member.amountLocked*10**12)
+            );
+            this.twoDecAva = formattedAva.twoDec;
+            this.fourDecAva = formattedAva.fourDec;
+
+
           });
+        } else {
+          this.niceFlow = '0';
         }
         this.store.dispatch(Web3Actions.chainBusy({ status: false }));
       }

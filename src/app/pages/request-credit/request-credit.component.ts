@@ -84,13 +84,14 @@ export class RequestCreditComponent
 
   async requestCredit() {
     
-    let amount = this.requestCreditForm.controls.amountCtrl.value;
+    let amount = this.requestCreditForm.controls.amountCtrl.value * 10 ** 6 ;
     let rate = this.requestCreditForm.controls.rateCtrl.value;
     let interval = this.requestCreditForm.controls.durationInCtrl.value.factor;
     let nrInstallments = this.requestCreditForm.controls.installementsCtrl.value;
 
 
     this.store.dispatch(Web3Actions.chainBusy({ status: true }));
+    this.store.dispatch(Web3Actions.chainBusyWithMessage({message: {body:'Is going to take a while, credit almost dispatched', header:'Un momento'}}))
 
     let creditRequest: CreditRequestOptionsStruct = {
       amount,

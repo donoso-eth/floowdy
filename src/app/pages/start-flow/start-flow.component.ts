@@ -20,6 +20,12 @@ export class StartFlowComponent  extends DappBaseComponent implements OnInit {
     { condition: 'Stop after amount',  id: 2 },
   ];
 
+  perDurations = [
+    { name: 'per hour', id: 1, factor: 3600 },
+    { name: 'per day', id: 2, factor: 86400 },
+    { name: 'per month', id: 3, factor: 2592000 },
+  ];
+
   durations = [
     { name: 'hours', id: 1, factor: 3600 },
     { name: 'days', id: 2, factor: 86400 },
@@ -36,7 +42,7 @@ export class StartFlowComponent  extends DappBaseComponent implements OnInit {
 
       flowRateAmountCtrl: [10, [Validators.required, Validators.min(1)]],
       flowRateTimeCtrl: [
-        { name: 'months', id: 3, factor: 2592000 },
+        { name: 'per month', id: 3, factor: 2592000 },
         [Validators.required],
       ],
       flowRateConditionCtrl: [
@@ -78,12 +84,14 @@ export class StartFlowComponent  extends DappBaseComponent implements OnInit {
 
  async  startFlow() {
     this.store.dispatch(Web3Actions.chainBusy({ status: true }));
+    this.store.dispatch(Web3Actions.chainBusyWithMessage({message: {body:'Yeap... the stream is going to come', header:'Un momento'}}))
     
     let amount = this.startStreamForm.controls.flowRateAmountCtrl.value;
     
-    let flowRate = ((amount * 10 ** 18) / this.startStreamForm.controls.flowRateTimeCtrl.value.factor).toFixed(0); // 10 tokens per day
+    let flowRate = ((amount *  10 ** 18) / this.startStreamForm.controls.flowRateTimeCtrl.value.factor).toFixed(0); // 10 tokens per day
    
 
+  
     const config: {
       flowRate: string;
       receiver: string;

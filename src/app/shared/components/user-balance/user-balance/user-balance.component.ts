@@ -44,6 +44,7 @@ export class UserBalanceComponent implements OnChanges {
     }
     this.showTransferState = false;
     this.store.dispatch(Web3Actions.chainBusy({ status: true }));
+    this.store.dispatch(Web3Actions.chainBusyWithMessage({message: {body:'Almost there, the streaming power of your supertokens', header:'Un momento'}}))
     const value = utils.parseEther(this.toUpgradeAmountCtrl.value.toString());
 
     const resultApprove = await doSignerTransaction(createERC20Instance(this.poolToken.token, this.dapp.signer!).approve(this.poolToken.superToken, value));
@@ -78,6 +79,7 @@ export class UserBalanceComponent implements OnChanges {
     }
     this.showTransferState = false;
     this.store.dispatch(Web3Actions.chainBusy({ status: true }));
+    this.store.dispatch(Web3Actions.chainBusyWithMessage({message: {body:'The supertokens will be "decent" erc20 in a moment', header:'Un momento'}}))
     const value = utils.parseEther(this.toDowngradeAmountCtrl.value.toString());
 
     const superToken = createSupertokenInstance(this.poolToken.superToken, this.dapp.signer!);

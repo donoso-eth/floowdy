@@ -51,8 +51,8 @@
                   <div class="flex justify-content-between flex-column mb-3">
                     <div class="text-900 font-medium text-lg">
                       <span class="text-green-500">
-                        <span style="font-size: 40px"> {{ twoDec }}</span
-                        >{{ fourDec }}
+                        <span style="font-size: 40px"> {{ twoDecAva }}</span
+                        >{{ fourDecAva }}
                       </span>
                     </div>
                   </div>
@@ -121,6 +121,9 @@
               *ngIf="poolToken !== undefined"
               [poolToken]="poolToken"
             ></user-balance>
+            <p-progressSpinner   style="position: relative;
+            left: 158px;
+            top: 50px;" *ngIf="poolToken == undefined"></p-progressSpinner>
           </div>
 
           <div class="col-12 lg:col-4 xl:col-4">
@@ -139,8 +142,8 @@
                   <div class="flex justify-content-between flex-column mb-3">
                     <div class="text-900 font-medium text-lg">
                       <span class="text-green-500">
-                        <span style="font-size: 40px"> {{ twoDec }}</span
-                        >{{ fourDec }}
+                        <span style="font-size: 20px">  {{niceFlow}}$/month </span>
+                
                       </span>
                     </div>
                   </div>

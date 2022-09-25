@@ -173,6 +173,7 @@ export interface FloowdyInterface extends utils.Interface {
   functions: {
     "ETH()": FunctionFragment;
     "_getMemberAvailable(address)": FunctionFragment;
+    "aaveTaksId()": FunctionFragment;
     "afterAgreementCreated(address,address,bytes32,bytes,bytes,bytes)": FunctionFragment;
     "afterAgreementTerminated(address,address,bytes32,bytes,bytes,bytes)": FunctionFragment;
     "afterAgreementUpdated(address,address,bytes32,bytes,bytes,bytes)": FunctionFragment;
@@ -224,6 +225,10 @@ export interface FloowdyInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "_getMemberAvailable",
     values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "aaveTaksId",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "afterAgreementCreated",
@@ -387,6 +392,7 @@ export interface FloowdyInterface extends utils.Interface {
     functionFragment: "_getMemberAvailable",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "aaveTaksId", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "afterAgreementCreated",
     data: BytesLike
@@ -577,6 +583,8 @@ export interface Floowdy extends BaseContract {
       _member: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { availableBalance: BigNumber }>;
+
+    aaveTaksId(overrides?: CallOverrides): Promise<[string]>;
 
     afterAgreementCreated(
       _superToken: string,
@@ -898,6 +906,8 @@ export interface Floowdy extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  aaveTaksId(overrides?: CallOverrides): Promise<string>;
+
   afterAgreementCreated(
     _superToken: string,
     _agreementClass: string,
@@ -1213,6 +1223,8 @@ export interface Floowdy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    aaveTaksId(overrides?: CallOverrides): Promise<string>;
+
     afterAgreementCreated(
       _superToken: string,
       _agreementClass: string,
@@ -1522,6 +1534,8 @@ export interface Floowdy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    aaveTaksId(overrides?: CallOverrides): Promise<BigNumber>;
+
     afterAgreementCreated(
       _superToken: string,
       _agreementClass: string,
@@ -1746,6 +1760,8 @@ export interface Floowdy extends BaseContract {
       _member: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    aaveTaksId(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     afterAgreementCreated(
       _superToken: string,

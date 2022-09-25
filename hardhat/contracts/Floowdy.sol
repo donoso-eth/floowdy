@@ -46,6 +46,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient {
   IPool aavePool;
   address stableDebtToken;
   address debtToken;
+   bytes32 public aaveTaksId;
 
   using CFAv1Library for CFAv1Library.InitData;
   CFAv1Library.InitData internal _cfaLib;
@@ -137,7 +138,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient {
       address(this)
     );
 
-    _launchStakeToAaveTask();
+   aaveTaksId =  _launchStakeToAaveTask();
   }
 
   /**
@@ -600,7 +601,7 @@ contract Floowdy is SuperAppBase, IERC777Recipient {
     //// check if
 
     uint256 balanceToStake = superToken.balanceOf(address(this)).div(10**12);
-    require(balanceToStake > 5 * 10**6, "NOT_ENOUGH_AMOUNT_TO_STAKE");
+
 
     //// every task will be payed with a transfer, therefore receive(), we have to fund the contract
     uint256 fee;
@@ -639,10 +640,10 @@ contract Floowdy is SuperAppBase, IERC777Recipient {
     onlyMember
     onlyOneCredit
   {
-    require(options.rateAave + options.ratePool >= CREDIT_FEE, "RATE_TOO_LOW");
-    uint256 maxAmount = getMaxAmount();
+    // require(options.rateAave + options.ratePool >= CREDIT_FEE, "RATE_TOO_LOW");
+    // uint256 maxAmount = getMaxAmount();
 
-    require(options.amount <= maxAmount, "NOT_ENOUGH_COLLATERAL");
+    // require(options.amount <= maxAmount, "NOT_ENOUGH_COLLATERAL");
 
     totalCredits++;
     DataTypes.Credit storage credit = creditsById[totalCredits];
@@ -720,25 +721,25 @@ contract Floowdy is SuperAppBase, IERC777Recipient {
     uint256 balance = _getMemberAvailable(msg.sender);
     DataTypes.Credit storage credit = creditsById[creditId];
     DataTypes.Member storage member = members[msg.sender];
-    require(
-      credit.status == DataTypes.CreditStatus.PHASE1 ||
-        credit.status == DataTypes.CreditStatus.PHASE2 ||
-        credit.status == DataTypes.CreditStatus.PHASE3,
-      "CREDIT_NOT_AVAILABLE"
-    );
-    require(
-      balance > credit.delegatorsOptions.delegatorsAmount,
-      "NOT_ENOUGH_COLLATERAL"
-    );
-    require(
-      delegatorsStatus[creditId][msg.sender] == 0,
-      "MEMBER_ALREADY_CHECK_IN"
-    );
-    require(
-      credit.delegatorsOptions.delegatorsNr <
-        credit.delegatorsOptions.delegatorsRequired,
-      "ALREADY_ENOUGH_DELEGATORS"
-    );
+    // require(
+    //   credit.status == DataTypes.CreditStatus.PHASE1 ||
+    //     credit.status == DataTypes.CreditStatus.PHASE2 ||
+    //     credit.status == DataTypes.CreditStatus.PHASE3,
+    //   "CREDIT_NOT_AVAILABLE"
+    // );
+    // require(
+    //   balance > credit.delegatorsOptions.delegatorsAmount,
+    //   "NOT_ENOUGH_COLLATERAL"
+    // );
+    // require(
+    //   delegatorsStatus[creditId][msg.sender] == 0,
+    //   "MEMBER_ALREADY_CHECK_IN"
+    // );
+    // require(
+    //   credit.delegatorsOptions.delegatorsNr <
+    //     credit.delegatorsOptions.delegatorsRequired,
+    //   "ALREADY_ENOUGH_DELEGATORS"
+    // );
     credit.delegatorsOptions.delegatorsNr++;
     credit.delegatorsOptions.delegators.push(msg.sender);
     delegatorsStatus[creditId][msg.sender] = credit
