@@ -119,10 +119,10 @@ task('deploy-state', 'create state').setAction(async ({}, hre) => {
 
 execSync("npm run deploy",{encoding: "utf8",stdio: 'inherit'})
 console.log('.....deployed')
-execSync("npm run task publish -- --only-address true",{encoding: "utf8",stdio: 'inherit'})
-console.log('.....publish to subgraph')
-execSync("npm run deploy-graph-local",{encoding: "utf8",stdio: 'inherit'})
-console.log('.....graph deployed')
+// execSync("npm run task publish -- --only-address true",{encoding: "utf8",stdio: 'inherit'})
+// console.log('.....publish to subgraph')
+// execSync("npm run deploy-graph-local",{encoding: "utf8",stdio: 'inherit'})
+// console.log('.....graph deployed')
 
 
 

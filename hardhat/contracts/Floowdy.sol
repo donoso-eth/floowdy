@@ -1044,17 +1044,13 @@ contract Floowdy is SuperAppBase, IERC777Recipient {
                uint256 bal = IERC20(debtToken).balanceOf(credit.requester); 
                  console.log(1045,bal);
                  console.log(1046,credit.repaymentOptions.installment);
-            IERC20(debtToken).transferFrom(
+  
+            try  IERC20(debtToken).transferFrom(
                     credit.requester,
                     address(this),
                   credit.repaymentOptions.installment
-                );
-            // try  IERC20(debtToken).transferFrom(
-            //         credit.requester,
-            //         address(this),
-            //       credit.repaymentOptions.installment
-            //     )
-            // returns (bool success) {
+                )
+            returns (bool success) {
                 credit.repaymentOptions.currentInstallment += 1;
                 emit Events.CreditInstallment(creditId);
 
@@ -1079,19 +1075,19 @@ contract Floowdy is SuperAppBase, IERC777Recipient {
             
 
                // uint256 bal = IERC20(debtToken).balanceOf(address(this)); 
-                //aavePool.repay(debtToken,credit.repaymentOptions.installmentPrincipal + credit.repaymentOptions.installmentRateAave, 1, address(this));
-                console.log(1075);
+                aavePool.repay(debtToken,credit.repaymentOptions.installmentPrincipal + credit.repaymentOptions.installmentRateAave, 1, address(this));
+         
                 poolByTimestamp[poolTimestamp].delegation.totalYieldCredit = poolByTimestamp[poolTimestamp].delegation.totalYieldCredit+ credit.repaymentOptions.installmentRatePool;
                 _poolRebalance();
                 emit Events.PoolUpdated(poolByTimestamp[poolTimestamp]);
             
-                //recalculate credit conditions
-        //     } catch {
-        //         credit.status = DataTypes.CreditStatus.LIQUIDATED;
-        //         /// Liquidate the credit
-        //         emit Events.CreditLiquidated(creditId);
+               // recalculate credit conditions
+            } catch {
+                credit.status = DataTypes.CreditStatus.LIQUIDATED;
+                /// Liquidate the credit
+                emit Events.CreditLiquidated(creditId);
            
-        //    }
+           }
         }
 
         if (

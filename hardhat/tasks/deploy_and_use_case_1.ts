@@ -117,10 +117,10 @@ task('usecase-1', 'use-case-1').setAction(async ({}, hre) => {
 execSync("npm run deploy",{encoding: "utf8",stdio: 'inherit'})
 
 console.log('.....deployed')
-execSync("npm run task publish -- --only-address true",{encoding: "utf8",stdio: 'inherit'})
-console.log('.....publish to subgraph')
-execSync("npm run deploy-graph-local",{encoding: "utf8",stdio: 'inherit'})
-console.log('.....graph deployed')
+// execSync("npm run task publish -- --only-address true",{encoding: "utf8",stdio: 'inherit'})
+// console.log('.....publish to subgraph')
+// execSync("npm run deploy-graph-local",{encoding: "utf8",stdio: 'inherit'})
+// console.log('.....graph deployed')
 
 
 
@@ -287,7 +287,7 @@ console.log('boorweaando')
 let balancedai = await debtToken.balanceOf(user1.address) 
 console.log(285,balancedai.toString())
 
-await waitForTx(pool.borrow(network_params.debtToken,100*10**6,1,0,floowdyAddress));
+await waitForTx(pool.borrow(network_params.debtToken,1000*10**6,1,0,floowdyAddress));
 
 balancedai = await debtToken.balanceOf(user1.address) 
 console.log(289,balancedai.toString())
