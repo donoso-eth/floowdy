@@ -50,7 +50,7 @@ export const GET_POOL = `
 
 export const GET_CREDITS = `
     {
-      credits(first: 5,  orderBy: initTimestamp, orderDirection: desc) {
+      credits(first: 5, where: {status_in:["1","2","3","4","5","8","9"]}, orderBy: initTimestamp, orderDirection: desc) {
         id
         initTimestamp
         finishPhaseTimestamp
@@ -129,6 +129,7 @@ export const GET_MEMBER = `
         id
         status
         finishPhaseTimestamp
+        delegatorsAmount
         amount
         rateAave
         ratePool

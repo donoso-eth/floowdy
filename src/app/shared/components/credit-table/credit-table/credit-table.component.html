@@ -50,8 +50,8 @@
                         </td>
                         <td style="width: 15%; ">{{displayAddress(credit.requester?.member)}}</td>
                         <td style="width: 10%; ">{{formatSmallEther(credit.amount)}}$</td>
-                        <td style="width: 5%;">{{credit.rate}}%</td>
-                        <td style="width: 10%;">{{formatSmallEther(credit.delegatorsAmount)}}$</td>
+                        <td style="width: 5%;">{{+credit.rateAave + +credit.ratePool  }}%</td>
+                        <td style="width: 10%;">{{formatSmallEther(credit.delegatorsNr)}}$</td>
                         <td style="width: 25%;">{{blockTimeToTime(credit.finishPhaseTimestamp)}}</td>
 
                         <td style="width: 10%; min-width: 2rem;text-align:center">{{credit.delegatorsNr}} of ({{credit.delegatorsRequired}})</td>
@@ -79,7 +79,7 @@
                         <td style="width: 15%; ">{{displayAddress(credit.requester.member)}}</td>
                         <td style="width: 10%; ">{{formatSmallEther(credit.amount)}}$</td>
                         <td style="width: 5%;">{{credit.rate}}%</td>
-                        <td style="width: 10%;">{{formatSmallEther(credit.delegatorsAmount)}}$</td>
+                       <td style="width: 10%;">{{formatSmallEther(+credit.delegatorsAmount)}}$</td>
                         <td style="width: 25%;">{{blockTimeToTime(credit.finishPhaseTimestamp)}}</td>
 
                         <td style="width: 10%; min-width: 2rem;text-align:center">{{credit.delegatorsNr}} of (5)</td>

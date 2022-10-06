@@ -18,14 +18,14 @@ credits!:Array<ICREDIT_REQUESTED>
  async getCredits() {
   let val =   await  this.graphqlService
   .getCredits()
-    console.log(val)
+
     if (!!val && !!val.data ) {
       this.credits = val.data.credits
     }
 
     val =   await  this.graphqlService
     .getFullSearchCredit("jav")
-      console.log(val)
+
       if (!!val && !!val.data ) {
         this.credits = val.data.credits
       }

@@ -36,7 +36,7 @@ export class UserBalanceComponent implements OnChanges {
   //// UPGRADE TOKENS
   async doUpgrade() {
 
-    console.log(this.poolToken)
+   
 
     if (this.toUpgradeAmountCtrl.value <= 0) {
       this.msg.add({  key: 'tst', severity: 'warn', summary: 'Missing info', detail: `Please add amount to Upgrade` });

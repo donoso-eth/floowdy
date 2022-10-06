@@ -169,7 +169,7 @@ this.barOptions = {
            this.totalTvl = utils.formatEther(BigNumber.from(this.currentPool.totalDeposit))
              
            let value = +this.currentPool.totalFlow * ( (new Date().getTime() / 1000)- +this.currentPool.timestamp);
-           console.log(value)
+ 
            let formated = this.global.prepareNumbers(
              +this.currentPool.totalDeposit + value 
            );

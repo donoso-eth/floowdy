@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { DappInjector } from 'angular-web3';
+import { DappInjector, Web3Actions } from 'angular-web3';
 import { constants, Contract, ethers, Signer, utils } from 'ethers';
 import { doSignerTransaction } from 'src/app/dapp-injector/classes/transactor';
 import {
@@ -10,6 +10,7 @@ import { ISuperToken } from 'src/assets/contracts/interfaces/ISuperToken';
 import { Floowdy } from 'src/assets/contracts/interfaces/Floowdy';
 import { IPOOL_STATE, IPOOL_TOKEN } from '../models/models';
 import { SuperFluidService } from 'src/app/dapp-injector/services/super-fluid/super-fluid-service.service';
+import { Store } from '@ngrx/store';
 
 @Injectable({
   providedIn: 'root',
@@ -31,7 +32,8 @@ export class GlobalService {
 
   constructor(
     public dapp: DappInjector,
-    public superfluid: SuperFluidService
+    public superfluid: SuperFluidService,
+    public store:Store
   ) {}
 
   async getPoolToken(): Promise<{poolToken:IPOOL_TOKEN, poolState:IPOOL_STATE}> {
@@ -118,12 +120,15 @@ export class GlobalService {
     await doSignerTransaction(
       (this.erc20 as Contract).connect(this.dapp.signer!)['mint(uint256)'](amount)
     );
+    this.store.dispatch(Web3Actions.chainBusyWithMessage({message: {body:'Approving the supertoken contract', header:'Un momento'}}))
+
     await doSignerTransaction(
       (this.erc20 as Contract).connect(this.dapp.signer!).approve(
         this.supertoken?.address,
         constants.MaxUint256
       )
     );
+    this.store.dispatch(Web3Actions.chainBusyWithMessage({message: {body:'Upgrading the usdc tokens to supertokens', header:'Un momento más'}}))
 
     const value = utils.parseEther('1000000').toString();
     await doSignerTransaction((this.supertoken as ISuperToken).connect(this.dapp.signer!).upgrade(value));

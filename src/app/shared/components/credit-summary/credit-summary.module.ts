@@ -9,6 +9,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { ButtonModule } from 'primeng/button';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 @NgModule({
   declarations: [
@@ -20,6 +21,7 @@ import { ButtonModule } from 'primeng/button';
     ReactiveFormsModule,
     LensProfileModule,
     InputTextModule,
+    ProgressSpinnerModule,
     StepsModule,
     ClipboardModule,
     ButtonModule

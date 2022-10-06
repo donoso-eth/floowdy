@@ -17,7 +17,7 @@ const contract_config = JSON.parse(
 ) as { [key: string]: any };
 
 task('misc', 'mint usdc aave').setAction(async ({}, hre) => {
-  const  [deployer, user1, user2, user3, user4, user5, user6, user7, user8, user9, user10]= await initEnv(hre); console.log(user1.address);
+  const  [deployer, user1, user2, user3, user4, user5, user6,]= await initEnv(hre); console.log(user1.address);
 
 
   let deployContract = 'floowdy';
@@ -28,22 +28,43 @@ task('misc', 'mint usdc aave').setAction(async ({}, hre) => {
       'utf-8'
     )
   );
+  let networks_config = JSON.parse(readFileSync( join(processDir,'networks.config.json'),'utf-8')) as INETWORK_CONFIG;
  
-  let floowdyAddress = floodyJson.address
+ let network_params = networks_config["goerli"]
+
+//0xDF1742fE5b0bFc12331D8EAec6b478DfDbD31464
+
+  let debtToken = new hre.ethers.Contract(
+    network_params.debtToken,
+    abi_erc20mint,
+    deployer 
+  ) as IERC20
+  console.log(deployer.address)
+  console.log(user1.address)
+  console.log(user2.address)
+  
+ let bal = await debtToken.balanceOf(user2.address)
+
+
+ console.log(bal.toString());
+  //await  waitForTx(debtToken.connect(deployer)["mint(uint256)"](2000000000000))
+
+
+
  
-  let floowdy:Floowdy = Floowdy__factory.connect(floowdyAddress, user1);
+  // let floowdyAddress = floodyJson.address
+ 
+  // let floowdy:Floowdy = Floowdy__factory.connect(floowdyAddress, user1);
  
 
-  let result2 = (await floowdy.checkStakeAvailable())[0]
-  console.log(result2)
+  // let result2 = (await floowdy.checkStakeAvailable())[0]
+  // console.log(result2)
 
 
 
   throw new Error("");
   
-  let networks_config = JSON.parse(readFileSync( join(processDir,'networks.config.json'),'utf-8')) as INETWORK_CONFIG;
- 
- let network_params = networks_config["goerli"]
+
 
  let result =   await floowdy.getAaveData()  
     console.log(result)

@@ -23,7 +23,6 @@ export class DetailsCreditComponent extends DappBaseComponent implements AfterVi
   
   async getCredit(id:string) {
     this.graphqlService.watchCredit(id).pipe(takeUntil(this.destroyQueries)).subscribe(( (val:any)=>{
-      console.log(val.data)
 
       if (!!val && !!val.data ) {
         this.credit = val.data.credit
@@ -35,7 +34,6 @@ export class DetailsCreditComponent extends DappBaseComponent implements AfterVi
    }
 
 checkRole() {
-    console.log(this.blockchain_status)
     if(this.blockchain_status == 'wallet-connected') {
 
       if (this.credit!== undefined) {
@@ -60,7 +58,7 @@ checkRole() {
  
     } else {
       this.role = 'none';
-      console.log('NOOOOOOOO')
+    
     }
     console.log(this.role)
   }
@@ -68,7 +66,7 @@ checkRole() {
   override ngAfterViewInit(): void {
     super.ngAfterViewInit()
     const id = this.route.snapshot.params['id'];
-    console.log(id)
+
 
     if (id == undefined) {
       this.router.navigateByUrl('dashboard');

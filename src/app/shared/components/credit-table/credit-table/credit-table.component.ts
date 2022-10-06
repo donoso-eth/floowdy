@@ -41,7 +41,7 @@ export class CreditTableComponent extends DappBaseComponent implements OnInit {
    }
 
   ngOnInit(): void {
-    console.log(this.credits)
+   
   }
 
 }

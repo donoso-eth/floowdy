@@ -30,8 +30,9 @@ export class RequestCreditComponent
   requestCreditForm: FormGroup;
   durations = [
     { name: 'hours', id: 1, factor: 3600 },
-    { name: 'days', id: 2, factor: 86400 },
-    { name: 'months', id: 3, factor: 2592000 },
+    { name: 'weeks', id: 2, factor: 25200 },
+    { name: 'days', id: 3, factor: 86400 },
+    { name: 'months', id: 4, factor: 2592000 },
   ];
   profile!: ILENS_PROFILE;
   stableBorrowAPY!: number;
@@ -71,7 +72,7 @@ export class RequestCreditComponent
     this.store.dispatch(Web3Actions.chainBusy({ status: true }));
     this.store.dispatch(Web3Actions.chainBusyWithMessage({message: {header:'Un momento...', body:'querying a random profile for you'}}))
     const val = await this.graphqlService.getMockProfile();
-    console.log(val)
+
     this.profile = val.data.profile;
  
   
@@ -84,7 +85,7 @@ export class RequestCreditComponent
 
   async requestCredit() {
     
-    let amount = this.requestCreditForm.controls.amountCtrl.value * 10 ** 6 ;
+    let amount = this.requestCreditForm.controls.amountCtrl.value *10 ** 6 ;
     let rate = this.requestCreditForm.controls.rateCtrl.value;
     let interval = this.requestCreditForm.controls.durationInCtrl.value.factor;
     let nrInstallments = this.requestCreditForm.controls.installementsCtrl.value;
@@ -112,7 +113,7 @@ export class RequestCreditComponent
 
    this.graphqlService.getReserveData()
     .then(val=> {
-      console.log(val.data)
+
       
       let RAY = 10**27 // 10 to the power 27
       let SECONDS_PER_YEAR = 31536000
@@ -126,16 +127,10 @@ export class RequestCreditComponent
       let variableBorrowAPR = reserveData.variableBorrowRate/RAY
       let stableBorrowAPR = reserveData.variableBorrowRate/RAY
 
-      console.log(depositAPR, variableBorrowAPR, stableBorrowAPR)
-
 
 
       let depositAPY = ((1 + (depositAPR/ SECONDS_PER_YEAR)) ** SECONDS_PER_YEAR) - 1
       let stableBorrowAPY = ((1 + (stableBorrowAPR / SECONDS_PER_YEAR)) ** SECONDS_PER_YEAR) - 1
-
-      console.log(depositAPY, stableBorrowAPY)
-
-
 
     })
    
@@ -144,7 +139,7 @@ export class RequestCreditComponent
     //console.log(valMember);
 
     let member = mockMember1;
-    console.log(member)
+   
 
     this.amountMax =  utils.formatEther(member.deposit);
 
@@ -176,10 +171,7 @@ export class RequestCreditComponent
    try {
       let result = await this.dapp.defaultContract?.instance.getAaveData();
       this.aaveLoading = 'found';
-      console.log(result)
-      console.log(+result?.depositAPR!/10**27)
-      console.log(+result?.stableBorrowAPR!/10**27)
-      console.log(+result?.availableBorrowsBase!)
+  
 
       this.availableBorrowsBase = +result?.availableBorrowsBase!;
 
@@ -188,7 +180,6 @@ export class RequestCreditComponent
       let depositAPY = ((1 + (+result?.depositAPR!/10**27/ SECONDS_PER_YEAR)) ** SECONDS_PER_YEAR) - 1
       this.stableBorrowAPY = ((1 + (+result?.stableBorrowAPR!/10**27 / SECONDS_PER_YEAR)) ** SECONDS_PER_YEAR) - 1
 
-      console.log(depositAPY, this.stableBorrowAPY)
       this.requestCreditForm.controls.aaveCtrl.setValue(true);
       this.store.dispatch(Web3Actions.chainBusy({ status: false }));
     } catch (error) {

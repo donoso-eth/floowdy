@@ -107,7 +107,7 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
     }
 
     let amount = utils.parseEther(this.depositAmountCtrl.value.toString());
-    console.log(amount);
+
     this.store.dispatch(Web3Actions.chainBusy({ status: true }));
     this.store.dispatch(Web3Actions.chainBusyWithMessage({message: {body:'Yes, yes your deposit is on the way', header:'Un momento'}}))
     await  this.erc777.depositIntoPool(amount);
@@ -125,7 +125,7 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
 
     this.poolToken = result.poolToken;
     this.poolState = result.poolState;
-    console.log(this.poolState);
+
 
 
   }
@@ -135,7 +135,9 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
     this.store.dispatch(Web3Actions.chainBusyWithMessage({message:{header:'A momnet...',body:'we are fetching last data for you'}}))
     if (this.blockchain_status == 'wallet-connected'){
      // this.getMember()
+ 
     }
+
   }
 
   requestCredit() {
@@ -149,7 +151,7 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
         .watchMember(this.dapp.signerAddress!)
         .pipe(takeUntil(this.destroyQueries))
         .subscribe((val: any) => {
-          console.log(val)
+     
 
 
           if (!!val && !!val.data && !!val.data.member) {
@@ -165,12 +167,9 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
                 creditsDelegated: queryMember.creditsDelegated.map((map:any)=> map.credit)
             }
 
-            console.log(this.member)
-
-            console.log(this.member.amountLocked);
-
+        
         let value = +this.member.flow * ( (new Date().getTime() / 1000)- +this.member.timestamp);
-        console.log(value)
+ 
 
         let formated = this.global.prepareNumbers(
           +this.member.deposit + value
@@ -215,7 +214,7 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
         this.store.dispatch(Web3Actions.chainBusy({ status: false }));
       }
       if (val.data.member == null) {
-        console.log('nulllllll')
+      
         this.member = {
           deposit:'0',
           timestamp:'0',
@@ -229,8 +228,7 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
         this.fourDec = '0000';
         this.store.dispatch(Web3Actions.chainBusy({ status: false }));
        }
-      
-       console.log(this.member)
+   
 
     });
 
@@ -240,7 +238,7 @@ export class DashboardComponent extends DappBaseComponent implements OnInit, OnD
   }
 
   override async hookContractConnected(): Promise<void> {
- 
+   
     await this.getMember();
     await this.refreshBalance();
   }

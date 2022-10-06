@@ -46,9 +46,9 @@
     </div>
    
   <div  class="col-12">
-    <div  *ngIf="display_step >=1 && display_step <=4 " style="height:420px" class="text-center card">
+    <div  *ngIf="display_step >=1 && display_step <=4 " style="" class="text-center card">
       <h5 style="margin: 20px auto 5px" class="mb-1">
-        <i (click)="doRefresh()" style="color: var(--primary-color); font-size: 30px;cursor:pointer;margin-right:10px" class="pi pi-refresh"></i>  Current Phase: <span style="color: var(--primary-color)">{{ stepItems[display_step-1].label }}</span> 
+         Current Phase: <span style="color: var(--primary-color)">{{ stepItems[display_step-1].label }}</span> 
       </h5>
     <p-steps
       class="col-12"
@@ -71,9 +71,9 @@
           <button (click)="checkInPhase()" pButton pRipple type="button" icon="pi pi-check" class="p-button-rounded p-button-outlined mr-2 mb-2"></button>
         </div>
         <div *ngIf="role == 'requester'">
-          <p style="color:orange;font-weight: bold;font-size:20px;;" [ngStyle]="{ lineHeight: '2.5rem' }">Some Patiente!!   <button (click)="cancelCredit()" pButton pRipple type="button" icon="pi pi-times" class="p-button-rounded p-button-danger p-button-outlined mr-2 mb-2"></button>
+          <p style="color:orange;font-weight: bold;font-size:20px;;" [ngStyle]="{ lineHeight: '2.5rem' }">You can always cancel, if not...Some Patiente!!  
           </p>
-        
+          <button (click)="cancelCredit()" pButton pRipple type="button" icon="pi pi-times" class="p-button-rounded p-button-danger p-button-outlined mr-2 mb-2"></button>
           </div>
 
         </div>
@@ -142,12 +142,37 @@
           <p [ngStyle]="{ lineHeight: '2.5rem' }">Nor Current Phase</p>
         </div>
       </div>
+      <div  style="align-items: center;
+      align-content: center;
+      justify-content: center;
+      display: flex;" class="col-12 lg:col-5 xl:col-5">
+        <div *ngIf="lensLoading">
+          <h6>Checking Your Lens Profile</h6>
+          <p-progressSpinner></p-progressSpinner>
+        </div>
+
+        <div *ngIf="lensLoading == false && lensProfile == false">
+          <h6 style="color:var(--pink-400);font-weight:bold;">OOPS Profile not found</h6>
+    
+        </div>
+
+    
+      </div>
+  
+    </div>
+    <div  style="margin-top:10px" *ngIf="lensLoading == false && lensProfile == true">
+      <h6>Lens Profile Requesting credit</h6>
+      <div  class="grid justify-content-center">
+        <lens-profile [profile]="profile"></lens-profile>
+      </div>
     </div>
   </div>
 
+
+
     <div  *ngIf="display_step == 5 " style="" class="text-center card">
       <h5 style="margin: 20px auto 25px 5px" class="mb-1">
-        <i (click)="doRefresh()" style="color: var(--primary-color); font-size: 30px;cursor:pointer;margin-right:10px" class="pi pi-refresh"></i>  Payment Plan <span style="color: var(--primary-color)"> Payment Plan </span> 
+         Payment Plan <span style="color: var(--primary-color)"> Payment Plan </span> 
       </h5>
       <div *ngIf="+credit.currentInstallment < +credit.nrInstallments">
         <div class="flex justify-content-center align-items-center">
@@ -202,7 +227,7 @@
 
       <div  *ngIf="display_step == 9 " style="" class="text-center card">
         <h5 style="margin: 20px auto 5px" class="mb-1">
-          <i (click)="doRefresh()" style="color: var(--primary-color); font-size: 30px;cursor:pointer;margin-right:10px" class="pi pi-refresh"></i>  Credit <span style="color: var(--primary-color)">LIQUIDATED </span> 
+           Credit <span style="color: var(--primary-color)">LIQUIDATED </span> 
         </h5>
   
         <div style="margin-top:20px">

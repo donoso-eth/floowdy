@@ -23,7 +23,7 @@ import { GraphQlModule } from './dapp-injector/services/graph-ql/graph-ql.module
 import { HttpClientModule } from '@angular/common/http';
 import { ClipboardModule } from '@angular/cdk/clipboard';
 
-const network = 'localhost';
+const network = 'goerli';
 
 @NgModule({
   declarations: [
